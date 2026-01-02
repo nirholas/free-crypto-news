@@ -1,0 +1,210 @@
+openapi: 3.1.0
+info:
+  title: Free Crypto News API
+  description: |
+    🆓 100% FREE crypto news API. No API keys required!
+    Aggregates real-time news from 7 major crypto sources.
+  version: 1.0.0
+  contact:
+    name: GitHub
+    url: https://github.com/nirholas/free-crypto-news
+
+servers:
+  - url: https://free-crypto-news.vercel.app
+
+paths:
+  /api/news:
+    get:
+      operationId: getLatestNews
+      summary: Get latest crypto news
+      description: Fetch the latest news from all 7 crypto news sources
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of articles to return (1-50)
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 50
+        - name: source
+          in: query
+          description: Filter by specific source
+          schema:
+            type: string
+            enum: [coindesk, theblock, decrypt, cointelegraph, bitcoinmagazine, blockworks, defiant]
+      responses:
+        '200':
+          description: Successfully retrieved news
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsResponse'
+
+  /api/search:
+    get:
+      operationId: searchNews
+      summary: Search news by keywords
+      description: Search across all sources for specific topics
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Comma-separated keywords to search for
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Maximum results (1-30)
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsResponse'
+
+  /api/defi:
+    get:
+      operationId: getDefiNews
+      summary: Get DeFi-specific news
+      description: News about DeFi, yield farming, DEXs, lending protocols
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: DeFi news
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsResponse'
+
+  /api/bitcoin:
+    get:
+      operationId: getBitcoinNews
+      summary: Get Bitcoin-specific news
+      description: News specifically about Bitcoin, Lightning Network, miners
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Bitcoin news
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsResponse'
+
+  /api/breaking:
+    get:
+      operationId: getBreakingNews
+      summary: Get breaking news
+      description: News from the last 2 hours
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 5
+      responses:
+        '200':
+          description: Breaking news
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsResponse'
+
+  /api/sources:
+    get:
+      operationId: getSources
+      summary: List all news sources
+      description: Get information about all available news sources and their status
+      responses:
+        '200':
+          description: Source list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourcesResponse'
+
+components:
+  schemas:
+    NewsArticle:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Article headline
+        link:
+          type: string
+          format: uri
+          description: URL to full article
+        description:
+          type: string
+          description: Article summary (max 200 chars)
+        pubDate:
+          type: string
+          format: date-time
+          description: Publication timestamp
+        source:
+          type: string
+          description: Source name (e.g., "CoinDesk")
+        sourceKey:
+          type: string
+          description: Source identifier
+        category:
+          type: string
+          enum: [general, bitcoin, defi]
+        timeAgo:
+          type: string
+          description: Human-readable time (e.g., "2h ago")
+
+    NewsResponse:
+      type: object
+      properties:
+        articles:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsArticle'
+        totalCount:
+          type: integer
+        sources:
+          type: array
+          items:
+            type: string
+        fetchedAt:
+          type: string
+          format: date-time
+
+    SourceInfo:
+      type: object
+      properties:
+        key:
+          type: string
+        name:
+          type: string
+        url:
+          type: string
+        category:
+          type: string
+        status:
+          type: string
+          enum: [active, unavailable]
+
+    SourcesResponse:
+      type: object
+      properties:
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourceInfo'
