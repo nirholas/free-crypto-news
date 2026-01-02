@@ -1,0 +1,19 @@
+{
+  "name": "@nicholasrq/free-crypto-news-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for free crypto news - use with Claude Desktop",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "free-crypto-news-mcp": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": ["mcp", "crypto", "news", "claude", "ai"],
+  "author": "nirholas",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  }
+}
