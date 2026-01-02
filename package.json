@@ -1,0 +1,37 @@
+{
+  "name": "free-crypto-news",
+  "version": "1.0.0",
+  "description": "🆓 100% FREE crypto news API. No API keys. No rate limits. No BS.",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "keywords": [
+    "crypto",
+    "news",
+    "api",
+    "bitcoin",
+    "defi",
+    "free",
+    "rss",
+    "aggregator"
+  ],
+  "author": "nirholas",
+  "license": "MIT",
+  "dependencies": {
+    "next": "^14.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
