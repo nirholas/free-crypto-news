@@ -220,7 +220,15 @@ Full schema: [`chatgpt/openapi.yaml`](chatgpt/openapi.yaml)
 
 ## 🔮 Claude Desktop (MCP)
 
-Add crypto news to Claude in 30 seconds.
+Add crypto news to Claude Desktop.
+
+**1. Clone & install:**
+```bash
+git clone https://github.com/nirholas/free-crypto-news.git
+cd free-crypto-news/mcp && npm install
+```
+
+**2. Add to config**
 
 **Edit** `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
@@ -228,8 +236,8 @@ Add crypto news to Claude in 30 seconds.
 {
   "mcpServers": {
     "crypto-news": {
-      "command": "npx",
-      "args": ["-y", "@nicholasrq/free-crypto-news-mcp"]
+      "command": "node",
+      "args": ["/path/to/free-crypto-news/mcp/index.js"]
     }
   }
 }

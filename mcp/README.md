@@ -4,27 +4,20 @@ Use Free Crypto News with Claude Desktop!
 
 ## Installation
 
-### Option 1: npx (Recommended)
-Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json` on Mac):
+### Quick Setup
 
-```json
-{
-  "mcpServers": {
-    "crypto-news": {
-      "command": "npx",
-      "args": ["-y", "@nicholasrq/free-crypto-news-mcp"]
-    }
-  }
-}
-```
-
-### Option 2: Local Install
+1. Clone the repo:
 ```bash
-cd mcp
+git clone https://github.com/nirholas/free-crypto-news.git
+cd free-crypto-news/mcp
 npm install
 ```
 
-Then add to Claude Desktop config:
+2. Add to Claude Desktop config:
+
+**Mac:** `~/Library/Application Support/Claude/claude_desktop_config.json`  
+**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+
 ```json
 {
   "mcpServers": {
@@ -35,6 +28,10 @@ Then add to Claude Desktop config:
   }
 }
 ```
+
+3. Restart Claude Desktop
+
+4. Ask: *"Get me the latest crypto news"*
 
 ## Available Tools
 
@@ -52,6 +49,7 @@ Then add to Claude Desktop config:
 - "Search for news about Ethereum ETF"
 - "What's happening in DeFi?"
 - "Any breaking crypto news?"
+- "Bitcoin news from today"
 
 ## No API Key Required!
 
