@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crypto News Widget</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    .crypto-news-widget {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 400px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      border-radius: 12px;
+      padding: 20px;
+      color: #fff;
+    }
+    
+    .widget-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .widget-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .widget-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .widget-tab {
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background 0.2s;
+    }
+    
+    .widget-tab:hover, .widget-tab.active {
+      background: rgba(255,255,255,0.2);
+    }
+    
+    .news-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .news-item {
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 12px;
+      transition: background 0.2s;
+    }
+    
+    .news-item:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    
+    .news-title {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    
+    .news-title a {
+      color: #fff;
+      text-decoration: none;
+    }
+    
+    .news-title a:hover {
+      text-decoration: underline;
+    }
+    
+    .news-meta {
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+      display: flex;
+      gap: 12px;
+    }
+    
+    .news-source {
+      color: #4ade80;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: rgba(255,255,255,0.6);
+    }
+    
+    .widget-footer {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+    }
+    
+    .widget-footer a {
+      color: rgba(255,255,255,0.6);
+    }
+  </style>
+</head>
+<body>
+  <div class="crypto-news-widget" id="crypto-news-widget">
+    <div class="widget-header">
+      <span class="widget-title">📰 Crypto News</span>
+      <span style="font-size: 12px; opacity: 0.6;">Live</span>
+    </div>
+    
+    <div class="widget-tabs">
+      <button class="widget-tab active" data-endpoint="/api/news">Latest</button>
+      <button class="widget-tab" data-endpoint="/api/breaking">Breaking</button>
+      <button class="widget-tab" data-endpoint="/api/defi">DeFi</button>
+      <button class="widget-tab" data-endpoint="/api/bitcoin">Bitcoin</button>
+    </div>
+    
+    <div class="news-list" id="news-list">
+      <div class="loading">Loading...</div>
+    </div>
+    
+    <div class="widget-footer">
+      Powered by <a href="https://github.com/nirholas/free-crypto-news" target="_blank">Free Crypto News API</a>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://free-crypto-news.vercel.app';
+    const newsList = document.getElementById('news-list');
+    const tabs = document.querySelectorAll('.widget-tab');
+    
+    async function fetchNews(endpoint) {
+      newsList.innerHTML = '<div class="loading">Loading...</div>';
+      
+      try {
+        const res = await fetch(`${API_BASE}${endpoint}?limit=5`);
+        const data = await res.json();
+        
+        if (data.articles && data.articles.length > 0) {
+          newsList.innerHTML = data.articles.map(article => `
+            <div class="news-item">
+              <div class="news-title">
+                <a href="${article.link}" target="_blank">${article.title}</a>
+              </div>
+              <div class="news-meta">
+                <span class="news-source">${article.source}</span>
+                <span>${article.timeAgo}</span>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          newsList.innerHTML = '<div class="loading">No news available</div>';
+        }
+      } catch (error) {
+        newsList.innerHTML = '<div class="loading">Failed to load news</div>';
+      }
+    }
+    
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        fetchNews(tab.dataset.endpoint);
+      });
+    });
+    
+    // Initial load
+    fetchNews('/api/news');
+    
+    // Auto-refresh every 5 minutes
+    setInterval(() => {
+      const activeTab = document.querySelector('.widget-tab.active');
+      fetchNews(activeTab.dataset.endpoint);
+    }, 5 * 60 * 1000);
+  </script>
+</body>
+</html>
