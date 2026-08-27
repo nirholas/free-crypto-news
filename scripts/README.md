@@ -38,6 +38,7 @@ scripts/
 ├── analyze-commits.js         # Compare commits against CHANGELOG.md
 ├── commit-stats.js            # Git repository statistics
 ├── CHANGELOG-AUTOMATION.md    # Full documentation for changelog tools
+├── check-source-health.mjs    # Probe every RSS source and classify failures
 ├── a11y-audit.js              # Accessibility audit runner
 ├── contrast-audit.js          # Color contrast checker
 ├── generate-pwa-icons.js      # Generate PWA icons from source
@@ -117,6 +118,44 @@ node scripts/commit-stats.js --json
 ```
 
 📚 **Full Documentation:** See [CHANGELOG-AUTOMATION.md](./CHANGELOG-AUTOMATION.md)
+
+## Source Health
+
+### Audit every news source
+
+The project's headline claim is "200+ sources", and nothing used to verify that
+those feeds still answer. `check-source-health.mjs` fetches every entry in
+`RSS_SOURCES` the way the app does and classifies the outcome, so a dead URL is
+distinguishable from a datacentre IP that Cloudflare refuses.
+
+```bash
+# Full audit, human-readable table
+node scripts/check-source-health.mjs
+
+# Quick sample while iterating
+node scripts/check-source-health.mjs --limit 40
+
+# Machine-readable report
+node scripts/check-source-health.mjs --json source-health.json
+
+# Just the entries that are repo bugs, tab separated
+node scripts/check-source-health.mjs --only dead
+
+# Fail the run past a threshold, for a scheduled check
+node scripts/check-source-health.mjs --max-dead 20
+```
+
+| State | Meaning | Whose bug |
+| --- | --- | --- |
+| `ok` | Parsed at least one `<item>` or `<entry>` | none |
+| `empty` | Valid feed, zero items | ours: wrong URL or drained feed |
+| `notfeed` | HTTP 200 but the body is not a feed | ours: URL now serves a web page |
+| `blocked` | 403 or 429, typically Cloudflare refusing a datacentre IP | theirs, may work from production |
+| `timeout` | No response inside the deadline | theirs |
+| `dead` | 404, 410, DNS failure or connection refused | ours: fix or remove the source |
+
+Flags: `--concurrency` (default 6), `--timeout` (default 15000 ms), `--limit`,
+`--json <path>`, `--only dead`, `--max-dead <n>`.
 
 ## Accessibility & Quality
 
