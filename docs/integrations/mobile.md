@@ -296,4 +296,4 @@ const CryptoDarkTheme = {
 
 ## License
 
-Source-available, all rights reserved; the hosted API is free to use. See [LICENSE](../LICENSE).
+Source-available, all rights reserved; the hosted API is free to use. See [LICENSE](../../LICENSE).

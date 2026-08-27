@@ -870,6 +870,6 @@ Get aggregated order book data.
 
 ## Next Steps
 
-- [Market Data APIs](market-coins.md) - Coin prices and market data
-- [OHLC & Charts](market-ohlc.md) - Candlestick data for charts
-- [Premium Signals](premium-signals.md) - Advanced AI signals
+- [Market Data APIs](market-data.md) - Coin prices and market data
+- [OHLC & Charts](market-data.md) - Candlestick data for charts
+- [Premium Signals](premium-features.md) - Advanced AI signals

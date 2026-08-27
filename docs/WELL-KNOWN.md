@@ -261,7 +261,7 @@ The MCP (Model Context Protocol) server can be discovered via:
 
 | Method | URL |
 |--------|-----|
-| **HTTP/SSE** | `https://plugins.support/sse` |
+| **HTTP/SSE** | `https://cryptocurrency.cv/api/mcp` |
 | **Local stdio** | `node mcp/index.js` |
 
 See [MCP Server Integration](integrations/mcp.md) for details.

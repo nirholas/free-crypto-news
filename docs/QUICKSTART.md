@@ -76,7 +76,7 @@ curl https://cryptocurrency.cv/api/sentiment
 
 ### 3. Use an SDK
 
-Install an SDK to skip boilerplate. Available for [Python](./sdks/python.md), [JavaScript](./sdks/javascript.md), [TypeScript](./sdks/typescript.md), [React](./sdks/react.md), [Go](./sdks/go.md), [PHP](./sdks/php.md), [Ruby](./sdks/ruby.md), [Rust](./sdks/rust.md), [Java](./sdks/java.md), [Kotlin](./sdks/kotlin.md), [Swift](./sdks/swift.md), [C#](./sdks/csharp.md), and [R](./sdks/r.md).
+Install an SDK to skip boilerplate. Available for [Python](./sdks/python.md), [JavaScript](./sdks/javascript.md), [TypeScript](./sdks/typescript.md), [React](./sdks/react.md), [Go](./sdks/go.md), [PHP](./sdks/php.md), [Ruby](./sdks/ruby.md), [Rust](./sdks/rust.md), [Java](../sdk/java/), [Kotlin](../sdk/kotlin/), [Swift](../sdk/swift/), [C#](../sdk/csharp/), and [R](../sdk/r/).
 
 **Python:**
 ```python

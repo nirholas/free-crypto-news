@@ -976,10 +976,10 @@ All examples are available as runnable files:
 
 | Language | Directory | Files |
 |----------|-----------|-------|
-| Python | [`examples/python/`](examples/python/) | `news.py`, `ai.py`, `market.py`, `trading.py`, `social.py`, `blockchain.py`, `regulatory.py`, `analytics.py`, `portfolio.py`, `premium.py`, `feeds.py` |
-| JavaScript | [`examples/javascript/`](examples/javascript/) | `news.js`, `ai.js`, `market.js`, `trading.js`, `streaming.js` |
-| Go | [`examples/go/`](examples/go/) | `client.go` |
-| cURL | [`examples/curl/`](examples/curl/) | `all-endpoints.sh` |
+| Python | [`examples/python/`](../examples/python/) | `news.py`, `ai.py`, `market.py`, `trading.py`, `social.py`, `blockchain.py`, `regulatory.py`, `analytics.py`, `portfolio.py`, `premium.py`, `feeds.py` |
+| JavaScript | [`examples/javascript/`](../examples/javascript/) | `news.js`, `ai.js`, `market.js`, `trading.js`, `streaming.js` |
+| Go | [`examples/go/`](../examples/go/) | `client.go` |
+| cURL | [`examples/curl/`](../examples/curl/) | `all-endpoints.sh` |
 
 ### Run Examples
 

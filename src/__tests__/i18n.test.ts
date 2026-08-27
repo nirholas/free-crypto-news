@@ -261,9 +261,12 @@ describe('README Translations', () => {
     expect(fs.existsSync(filePath)).toBe(true);
   });
 
+  // Translated READMEs live in locales/ so the repo root stays readable
+  const LOCALES_DIR = path.join(ROOT_DIR, 'locales');
+
   readmeLocales.forEach(locale => {
-    describe(`README.${locale}.md`, () => {
-      const filePath = path.join(ROOT_DIR, `README.${locale}.md`);
+    describe(`locales/README.${locale}.md`, () => {
+      const filePath = path.join(LOCALES_DIR, `README.${locale}.md`);
 
       it('should exist', () => {
         expect(fs.existsSync(filePath)).toBe(true);
@@ -290,7 +293,7 @@ describe('README Translations', () => {
         if (fs.existsSync(filePath)) {
           const content = fs.readFileSync(filePath, 'utf-8');
           expect(content).toContain('https://cryptocurrency.cv');
-          expect(content).toContain('github.com/nirholas/free-crypto-news');
+          expect(content).toContain('github.com/nirholas/cryptocurrency.cv');
         }
       });
 
@@ -311,7 +314,7 @@ describe('i18n Integration', () => {
       .filter(f => f.endsWith('.json'))
       .map(f => f.replace('.json', ''));
 
-    const readmeLocales = fs.readdirSync(ROOT_DIR)
+    const readmeLocales = fs.readdirSync(path.join(ROOT_DIR, 'locales'))
       .filter(f => f.startsWith('README.') && f.endsWith('.md') && f !== 'README.md')
       .map(f => f.replace('README.', '').replace('.md', ''));
 
@@ -352,7 +355,7 @@ describe('Translation Quality', () => {
         const content = fs.readFileSync(filePath, 'utf-8');
         
         // These exact phrases shouldn't appear (would indicate untranslated content)
-        commonEnglishPhrases.forEach(phrase => {
+        commonEnglishPhrases.forEach(_phrase => {
           // Allow if it's in a key name, but not as a value
           const messages = JSON.parse(content);
           const values = JSON.stringify(Object.values(messages));

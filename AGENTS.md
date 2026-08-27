@@ -59,23 +59,20 @@ Two ways to use the MCP server (40+ tools, full list in [mcp/README.md](mcp/READ
 claude mcp add --transport http crypto-news https://cryptocurrency.cv/api/mcp
 ```
 
-**Local stdio server** (package `free-crypto-news-mcp` in [mcp/](mcp/)):
-
-```bash
-git clone https://github.com/nirholas/cryptocurrency.cv.git
-cd cryptocurrency.cv/mcp && npm install && node index.js
-```
+**Local stdio server** (npm package `@nirholas/free-crypto-news-mcp`, source in [mcp/](mcp/)):
 
 ```json
 {
   "mcpServers": {
     "crypto-news": {
-      "command": "node",
-      "args": ["/path/to/cryptocurrency.cv/mcp/index.js"]
+      "command": "npx",
+      "args": ["-y", "@nirholas/free-crypto-news-mcp"]
     }
   }
 }
 ```
+
+From a checkout instead: `git clone https://github.com/nirholas/cryptocurrency.cv.git && cd cryptocurrency.cv/mcp && npm install && node index.js`.
 
 ------|-------------|
 | `get_crypto_news` | Latest news from 200+ sources (category, limit, ticker) |

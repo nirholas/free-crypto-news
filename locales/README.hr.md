@@ -114,11 +114,11 @@ Sve AI značajke su **BESPLATNE** putem Groq:
 
 | Jezik      | Paket                           |
 | ---------- | ------------------------------- |
-| Python     | `pip install fcn-sdk`           |
+| Python     | `sdk/python/crypto_news.py`        |
 | JavaScript | `npm install @fcn/sdk`          |
 | TypeScript | `npm install @fcn/sdk`          |
 | Go         | `go get github.com/fcn/sdk-go`  |
-| Rust       | `cargo add fcn-sdk`             |
+| Rust       | `sdk/rust/` (path dep)             |
 
 ---
 

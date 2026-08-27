@@ -318,4 +318,4 @@ end
 
 ## License
 
-MIT
+Source-available, all rights reserved; the hosted API is free to use. See LICENSE.

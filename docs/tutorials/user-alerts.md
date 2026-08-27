@@ -493,6 +493,6 @@ Trigger a test notification for an alert:
 
 ## Next Steps
 
-- [Newsletter Subscription](user-newsletter.md) - Email digests
-- [Portfolio Tracking](user-portfolio.md) - Track your holdings
+- [Newsletter Subscription](utility-endpoints.md) - Email digests
+- [Portfolio Tracking](portfolio-watchlist.md) - Track your holdings
 - [Real-Time Streaming](realtime-sse.md) - SSE streaming

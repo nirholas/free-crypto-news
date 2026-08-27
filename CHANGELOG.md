@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-08-27
+
+Maintenance release: reliability fixes for API consumers and a documentation cleanup.
+
+### Fixed
+- **curl and AI-agent requests no longer get 403** - the bot filter blocked non-browser user agents from the free API; scripted clients, curl, and MCP/agent traffic are served again.
+- **Empty news feed** - the aggregator returned an empty list when the first provider in the chain failed; the fallback chain now degrades through the remaining sources.
+- **x402 zero-address fail-open** - a missing or zero payment address no longer lets a paid request through unpaid; the middleware now fails closed and returns the 402 challenge.
+- **Sitemap** - regenerated with the correct canonical host and the blog routes, so search engines stop indexing dead URLs.
+
+### Added
+- **MCP server restored** - the local stdio server in `mcp/` runs again (`cd mcp && npm install && node index.js`) and a hosted Streamable-HTTP transport is served at `https://cryptocurrency.cv/api/mcp` (`claude mcp add --transport http crypto-news https://cryptocurrency.cv/api/mcp`).
+- **Blog post pages** - individual post routes with metadata, OpenGraph tags, and sitemap entries.
+
+### Changed
+- **README restructure** - shorter root README with a clear path from "call the API" to SDKs, agents, and self-hosting.
+- **Docs deduplication** - `docs/CHANGELOG.md`, `docs/CONTRIBUTING.md`, `docs/SCALABILITY.md`, and `docs/data-sources.md` are now pointers to their canonical copies; `docs/examples.md` merged into `docs/EXAMPLES.md` (removing a case-insensitive filename collision); `docs/README.md` is a short GitHub index and `docs/index.md` the MkDocs landing page; a "Which API doc do I read?" block explains `API.md` vs `API-INVENTORY.md` vs `EXTERNAL-API-ROUTES.md` vs `apis/`; dead package names (`@anthropic-ai/mcp-server-crypto-news`, `@cryptonews/*`, `crypto-news-cli`, `@x402/client`, PyPI `free-crypto-news`) replaced with the real install paths; license wording corrected to source-available / all rights reserved (hosted API free to use); repository URLs updated to `nirholas/cryptocurrency.cv`.
+
 ## [1.0.2] - 2026-02-21
 
 ### Added

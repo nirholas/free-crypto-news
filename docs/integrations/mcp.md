@@ -239,7 +239,7 @@ Be explicit about using the app and tool names:
 
 ## HTTP Server Mode (ChatGPT Developer Mode)
 
-**Live Server:** `https://plugins.support/sse`
+**Live Server:** `https://cryptocurrency.cv/api/mcp`
 
 Run locally:
 
@@ -276,7 +276,7 @@ curl -X POST http://localhost:3001/mcp \
 3. Configure:
    - **Name:** Free Crypto News
    - **Protocol:** SSE
-   - **Endpoint:** `https://plugins.support/sse`
+   - **Endpoint:** `https://cryptocurrency.cv/api/mcp`
    - **Authentication:** No Authentication
 4. Enable the app in a conversation
 

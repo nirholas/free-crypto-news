@@ -1,6 +1,6 @@
-# free-crypto-news
+# cryptocurrency.cv (Free Crypto News)
 
-> Free crypto news API - real-time aggregator for Bitcoin, Ethereum, DeFi, Solana & altcoins. No API key required. RSS/Atom feeds, JSON REST API, historical archive with market context, embeddable widgets, ChatGPT plugin, Claude MCP server, SDKs (Python, TypeScript, Go, React, PHP). AI/LLM ready. Vibe coding friendly. Open source.
+> Free crypto news API - real-time aggregator for Bitcoin, Ethereum, DeFi, Solana & altcoins. No API key required. RSS/Atom feeds, JSON REST API, historical archive with market context, embeddable widgets, ChatGPT plugin, MCP server (hosted at https://cryptocurrency.cv/api/mcp, local via `npx -y @nirholas/free-crypto-news-mcp`, source in mcp/), SDK examples in 12 languages. AI/LLM ready. Vibe coding friendly. Source-available (all rights reserved; the hosted API is free to use, see LICENSE).
 
 ## IMPORTANT RULES
 
@@ -13,14 +13,13 @@
 
 ### Git Identity & Commits
 
-- **Always commit and push as `nirholas`** — every commit must use this identity
+- Commit as `nirholas` when you commit; every commit must use this identity
 - Before committing, ensure Git is configured:
   ```bash
   git config user.name "nirholas"
   git config user.email "22895867+nirholas@users.noreply.github.com"
   ```
-- After making changes, **always commit and push** to the remote — do not leave uncommitted work
-- Use clear, descriptive commit messages
+- Commit with clear, descriptive messages; push only when asked
 
 ### Terminal Management
 

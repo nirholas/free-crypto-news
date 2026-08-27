@@ -28,7 +28,7 @@ Free Crypto News is a source-available project by [nirholas](https://github.com/
 - [Research](https://cryptocurrency.cv/api/ai/research): deep research mode on topics
 - [RAG](https://cryptocurrency.cv/api/rag): retrieval-augmented generation over news archive
 - [MCP server (hosted)](https://cryptocurrency.cv/api/mcp): Streamable-HTTP MCP endpoint for Claude Desktop, Claude Code, Cursor; zero install
-- [MCP server (local)](https://github.com/nirholas/cryptocurrency.cv/tree/main/mcp): stdio server, `git clone` then `cd mcp && npm install && node index.js`
+- [MCP server (local)](https://www.npmjs.com/package/@nirholas/free-crypto-news-mcp): stdio server, `npx -y @nirholas/free-crypto-news-mcp` (source in `mcp/`)
 - [ChatGPT plugin](https://cryptocurrency.cv/.well-known/ai-plugin.json): OpenAI plugin manifest
 
 ## Documentation

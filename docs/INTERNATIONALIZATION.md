@@ -362,7 +362,7 @@ curl "https://cryptocurrency.cv/api/news/international?region=asia&limit=20"
 curl "https://cryptocurrency.cv/api/news/international?region=europe"
 ```
 
-See [API.md](/docs/API.md#get-apinewsinternational) for full endpoint documentation.
+See [API.md](API.md#get-apinewsinternational) for full endpoint documentation.
 
 ---
 

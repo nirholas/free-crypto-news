@@ -641,6 +641,6 @@ Get sentiment aggregated from social media platforms.
 
 ## Next Steps
 
-- [AI Summarization](ai-summarization.md) - Summarize articles with AI
-- [AI Market Brief](ai-market-brief.md) - Daily AI market reports
-- [Narrative Detection](analytics-narratives.md) - Detect market narratives
+- [AI Summarization](ai-features.md) - Summarize articles with AI
+- [AI Market Brief](ai-features.md) - Daily AI market reports
+- [Narrative Detection](analytics-research.md) - Detect market narratives

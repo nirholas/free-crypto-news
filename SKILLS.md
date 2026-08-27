@@ -132,7 +132,7 @@
 
 | Protocol | Entry Point | Status |
 |----------|-------------|--------|
-| **MCP** (Claude Desktop, Claude Code, Cursor) | `https://cryptocurrency.cv/api/mcp` (Streamable HTTP, zero install) or local stdio server in [mcp/](mcp/README.md) | Production |
+| **MCP** (Claude Desktop, Claude Code, Cursor) | `https://cryptocurrency.cv/api/mcp` (Streamable HTTP, zero install) or `npx -y @nirholas/free-crypto-news-mcp` (local stdio, source in [mcp/](mcp/README.md)) | Production |
 | **OpenAI Plugin** | `/.well-known/ai-plugin.json` | Production |
 | **OpenAPI 3.1** | `/api/openapi.json` | Production |
 | **LangChain Tools** | See [AGENTS.md](AGENTS.md#langchain-integration) | Production |

@@ -391,8 +391,8 @@ All SDKs support method chaining for registering multiple hooks:
 
 Next, explore:
 
-* [Client / Server](/core-concepts/client-server) — roles and responsibilities
-* [Facilitator](/core-concepts/facilitator) — verification and settlement service
+* [Client / Server](https://docs.x402.org/core-concepts/client-server) — roles and responsibilities
+* [Facilitator](https://docs.x402.org/core-concepts/facilitator) — verification and settlement service
 
 
 # Client / Server
@@ -467,8 +467,8 @@ This interaction is stateless, HTTP-native, and compatible with both human appli
 
 Next, explore:
 
-* [Facilitator](/core-concepts/facilitator) — how servers verify and settle payments
-* [HTTP 402](/core-concepts/http-402) — how servers communicate payment requirements to clients
+* [Facilitator](https://docs.x402.org/core-concepts/facilitator) — how servers verify and settle payments
+* [HTTP 402](https://docs.x402.org/core-concepts/http-402) — how servers communicate payment requirements to clients
 
 
 # Facilitator
@@ -530,8 +530,8 @@ The facilitator acts as an independent verification and settlement layer within 
 
 Next, explore:
 
-* [Client / Server](/core-concepts/client-server) — understand the roles and responsibilities of clients and servers
-* [HTTP 402](/core-concepts/http-402) — understand how payment requirements are communicated to clients
+* [Client / Server](https://docs.x402.org/core-concepts/client-server) — understand the roles and responsibilities of clients and servers
+* [HTTP 402](https://docs.x402.org/core-concepts/http-402) — understand how payment requirements are communicated to clients
 
 
 # HTTP 402
@@ -829,10 +829,10 @@ Key takeaways:
 
 Next, explore:
 
-* [Quickstart for Sellers](/getting-started/quickstart-for-sellers) — Start accepting payments on supported networks
-* [Core Concepts](/core-concepts/http-402) — Learn how x402 works under the hood
-* [Facilitator](/core-concepts/facilitator) — Understand the role of facilitators
-* [MCP Server](/guides/mcp-server-with-x402) — Set up AI agents to use x402 payments
+* [Quickstart for Sellers](https://docs.x402.org/getting-started/quickstart-for-sellers) — Start accepting payments on supported networks
+* [Core Concepts](https://docs.x402.org/core-concepts/http-402) — Learn how x402 works under the hood
+* [Facilitator](https://docs.x402.org/core-concepts/facilitator) — Understand the role of facilitators
+* [MCP Server](https://docs.x402.org/guides/mcp-server-with-x402) — Set up AI agents to use x402 payments
 
 
 # Wallet
@@ -1327,7 +1327,7 @@ A: Listing is free. Services set their own prices per API call, paid via x402.
 A: Currently Base (`eip155:8453`) and Base Sepolia (`eip155:84532`) with USDC payments.
 
 **Q: Can I list non-x402 services?**
-A: No, only x402-compatible endpoints can be listed. See our [Quickstart for Sellers](/getting-started/quickstart-for-sellers) to make your API x402-compatible.
+A: No, only x402-compatible endpoints can be listed. See our [Quickstart for Sellers](https://docs.x402.org/getting-started/quickstart-for-sellers) to make your API x402-compatible.
 
 
 # FAQ
@@ -1942,7 +1942,7 @@ const affordableServices = services.items.filter((item) =>
 console.log("Available services:", affordableServices);
 ```
 
-Learn more about service discovery in the [Bazaar documentation](/extensions/bazaar).
+Learn more about service discovery in the [Bazaar documentation](https://docs.x402.org/extensions/bazaar).
 
 ### 5. Error Handling
 
@@ -1983,8 +1983,8 @@ try {
 
 **Next Steps:**
 
-* Explore [Advanced Concepts](/advanced-concepts/lifecycle-hooks) like lifecycle hooks for custom logic before/after verification/settlement
-* Explore [Extensions](/extensions/bazaar) like Bazaar for service discovery
+* Explore [Advanced Concepts](https://docs.x402.org/advanced-concepts/lifecycle-hooks) like lifecycle hooks for custom logic before/after verification/settlement
+* Explore [Extensions](https://docs.x402.org/extensions/bazaar) like Bazaar for service discovery
 
 **References:**
 
@@ -2441,13 +2441,13 @@ To verify:
 
 1. Make a request to your endpoint (e.g., `curl http://localhost:4021/weather`).
 2. The server responds with a 402 Payment Required, including payment instructions in the `PAYMENT-REQUIRED` header.
-3. Complete the payment using a compatible client, wallet, or automated agent. This typically involves signing a payment payload, which is handled by the client SDK detailed in the [Quickstart for Buyers](/getting-started/quickstart-for-buyers).
+3. Complete the payment using a compatible client, wallet, or automated agent. This typically involves signing a payment payload, which is handled by the client SDK detailed in the [Quickstart for Buyers](https://docs.x402.org/getting-started/quickstart-for-buyers).
 4. Retry the request, this time including the `PAYMENT-SIGNATURE` header containing the cryptographic proof of payment.
 5. The server verifies the payment via the facilitator and, if valid, returns your actual API response (e.g., `{ "data": "Your paid API response." }`).
 
 ### 4. Enhance Discovery with Metadata (Recommended)
 
-When using a facilitator that supports the Bazaar extension, your endpoints can be listed in the [x402 Bazaar](/extensions/bazaar), our discovery layer that helps buyers and AI agents find services. To enable discovery:
+When using a facilitator that supports the Bazaar extension, your endpoints can be listed in the [x402 Bazaar](https://docs.x402.org/extensions/bazaar), our discovery layer that helps buyers and AI agents find services. To enable discovery:
 
 ```typescript theme={null}
 {
@@ -2473,7 +2473,7 @@ When using a facilitator that supports the Bazaar extension, your endpoints can 
 }
 ```
 
-Learn more about the discovery layer in the [Bazaar documentation](/extensions/bazaar).
+Learn more about the discovery layer in the [Bazaar documentation](https://docs.x402.org/extensions/bazaar).
 
 ### 5. Error Handling
 
@@ -2649,16 +2649,16 @@ x402 v2 uses [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/cai
 | Solana Mainnet | `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp` |
 | Solana Devnet  | `solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1` |
 
-See [Network Support](/core-concepts/network-and-token-support) for the full list.
+See [Network Support](https://docs.x402.org/core-concepts/network-and-token-support) for the full list.
 
 ***
 
 ### Next Steps
 
 * Check out the [Advanced Example](https://github.com/coinbase/x402/tree/main/examples/typescript/servers/advanced) for a more complex payment flow
-* Explore [Advanced Concepts](/advanced-concepts/lifecycle-hooks) like lifecycle hooks for custom logic before/after verification/settlement
-* Explore [Extensions](/extensions/bazaar) like Bazaar for service discovery
-* Get started as a [buyer](/getting-started/quickstart-for-buyers)
+* Explore [Advanced Concepts](https://docs.x402.org/advanced-concepts/lifecycle-hooks) like lifecycle hooks for custom logic before/after verification/settlement
+* Explore [Extensions](https://docs.x402.org/extensions/bazaar) like Bazaar for service discovery
+* Get started as a [buyer](https://docs.x402.org/getting-started/quickstart-for-buyers)
 
 For questions or support, join our [Discord](https://discord.gg/cdp).
 
@@ -2987,7 +2987,7 @@ The example uses these x402 v2 packages:
 * [See the full example in the repo](https://github.com/coinbase/x402/tree/main/examples/typescript/clients/mcp)
 * Try integrating with your own x402-compatible APIs
 * Extend the MCP server with more tools or custom logic as needed
-* [Learn about building x402 servers](/getting-started/quickstart-for-sellers)
+* [Learn about building x402 servers](https://docs.x402.org/getting-started/quickstart-for-sellers)
 
 
 # Migration Guide: V1 to V2
@@ -3448,9 +3448,9 @@ The facilitator supports both V1 and V2 protocols. During migration, your V2 ser
 
 ## Next Steps
 
-* [Quickstart for Buyers](/getting-started/quickstart-for-buyers)
-* [Quickstart for Sellers](/getting-started/quickstart-for-sellers)
-* [Network and Token Support](/core-concepts/network-and-token-support)
+* [Quickstart for Buyers](https://docs.x402.org/getting-started/quickstart-for-buyers)
+* [Quickstart for Sellers](https://docs.x402.org/getting-started/quickstart-for-sellers)
+* [Network and Token Support](https://docs.x402.org/core-concepts/network-and-token-support)
 
 
 # Welcome to x402
@@ -3503,9 +3503,9 @@ At a high level, the flow is simple:
 
 For more detail, see:
 
-* [Client / Server](/core-concepts/client-server)
-* [Facilitator](/core-concepts/facilitator)
-* [HTTP 402](/core-concepts/http-402)
+* [Client / Server](https://docs.x402.org/core-concepts/client-server)
+* [Facilitator](https://docs.x402.org/core-concepts/facilitator)
+* [HTTP 402](https://docs.x402.org/core-concepts/http-402)
 
 The goal is to make programmatic commerce accessible, permissionless, and developer-friendly.
 
@@ -3513,9 +3513,9 @@ The goal is to make programmatic commerce accessible, permissionless, and develo
 
 Ready to build? Start here:
 
-* [Quickstart for Sellers](/getting-started/quickstart-for-sellers)
-* [Quickstart for Buyers](/getting-started/quickstart-for-buyers)
-* [Explore Core Concepts](/core-concepts/http-402)
+* [Quickstart for Sellers](https://docs.x402.org/getting-started/quickstart-for-sellers)
+* [Quickstart for Buyers](https://docs.x402.org/getting-started/quickstart-for-buyers)
+* [Explore Core Concepts](https://docs.x402.org/core-concepts/http-402)
 * [Join our community on Discord](https://discord.gg/invite/cdp)
 
 

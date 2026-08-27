@@ -114,11 +114,11 @@ Free Crypto News একটি **সম্পূর্ণ ইনস্টলয�
 
 | ভাষা       | প্যাকেজ                         |
 | ---------- | ------------------------------- |
-| Python     | `pip install fcn-sdk`           |
+| Python     | `sdk/python/crypto_news.py`        |
 | JavaScript | `npm install @fcn/sdk`          |
 | TypeScript | `npm install @fcn/sdk`          |
 | Go         | `go get github.com/fcn/sdk-go`  |
-| Rust       | `cargo add fcn-sdk`             |
+| Rust       | `sdk/rust/` (path dep)             |
 
 ---
 
