@@ -1,241 +1,138 @@
 # Embeddable Widgets
 
-Embed crypto news on any website with our JavaScript widgets.
+Embed live crypto news and market data on any website with a single script tag. Every loader is served from `https://cryptocurrency.cv/widget/` and works on plain HTML, React, Vue, WordPress, or any other stack.
 
-## Available Widgets
+## Available loaders
 
-1. **News Feed** - Scrolling list of articles
-2. **News Ticker** - Horizontal scrolling headlines
-3. **News Carousel** - Rotating news cards
-4. **Price Ticker** - Live price updates
+| File | What it does |
+|------|--------------|
+| `https://cryptocurrency.cv/widget/embed.js` | Universal iframe loader. Renders any `/embed/*` widget (ticker, news, coin, market, fear-greed, chart) and auto-resizes it. |
+| `https://cryptocurrency.cv/widget/ticker.js` | Standalone horizontal headline ticker rendered directly into your DOM (no iframe). |
+| `https://cryptocurrency.cv/widget/carousel.js` | Standalone rotating news-card carousel rendered directly into your DOM (no iframe). |
+
+The iframe loader is the recommended path: the widget UI is served by cryptocurrency.cv, so it stays current without you redeploying, and it cannot leak styles into your page.
 
 ## Quick Start
 
-Add this single line to any HTML page:
+Add this single line anywhere in your HTML:
 
 ```html
-<script src="https://cryptocurrency.cv/widget/crypto-news.js"></script>
+<script src="https://cryptocurrency.cv/widget/embed.js" data-type="news" data-theme="dark" data-count="10"></script>
 ```
 
-A news feed will automatically appear.
+A dark-themed feed of the 10 latest articles appears exactly where the script tag sits.
 
-## News Feed Widget
+## Iframe loader (`embed.js`)
 
-### Basic Usage
+Each `<script>` tag creates one widget. You can place several on the same page.
 
 ```html
-<div id="crypto-news-feed"></div>
-<script src="https://cryptocurrency.cv/widget/feed.js"></script>
+<!-- Scrolling headline ticker -->
+<script src="https://cryptocurrency.cv/widget/embed.js" data-type="ticker" data-theme="dark"></script>
+
+<!-- Latest news list -->
+<script src="https://cryptocurrency.cv/widget/embed.js" data-type="news" data-count="8" data-theme="light"></script>
+
+<!-- Single coin card -->
+<script src="https://cryptocurrency.cv/widget/embed.js" data-type="coin" data-coin="ethereum"></script>
+
+<!-- Market overview -->
+<script src="https://cryptocurrency.cv/widget/embed.js" data-type="market"></script>
+
+<!-- Fear and Greed gauge -->
+<script src="https://cryptocurrency.cv/widget/embed.js" data-type="fear-greed" data-title="false"></script>
+
+<!-- TradingView chart -->
+<script src="https://cryptocurrency.cv/widget/embed.js" data-type="chart" data-symbol="BINANCE:SOLUSDT" data-interval="60"></script>
 ```
 
-### With Options
+### Attributes
+
+| Attribute | Applies to | Default | Description |
+|-----------|-----------|---------|-------------|
+| `data-type` | all | `ticker` | One of `ticker`, `news`, `coin`, `market`, `fear-greed`, `chart` |
+| `data-theme` | all | `dark` | `dark`, `light`, or `auto` (follows the visitor's OS preference) |
+| `data-width` | all | `100%` | Any CSS width |
+| `data-title` | all | `true` | Set to `false` to hide the widget header |
+| `data-count` | `news` | `10` | Number of articles (1 to 50) |
+| `data-coin` | `coin` | `bitcoin` | CoinGecko coin id (`bitcoin`, `ethereum`, `solana`, ...) |
+| `data-symbol` | `chart` | `BINANCE:BTCUSDT` | TradingView symbol |
+| `data-interval` | `chart` | `D` | TradingView interval (`1`, `5`, `60`, `D`, `W`) |
+
+The iframe points at `https://cryptocurrency.cv/embed/<type>?...`. Those routes send `Content-Security-Policy: frame-ancestors *` and `Access-Control-Allow-Origin: *`, so they can be framed from any origin. The loader listens for `fcn-widget-resize` messages from the iframe and grows or shrinks it to fit the content.
+
+### Opening an embed directly
+
+Every widget is also a normal page you can link to or iframe by hand:
 
 ```html
-<div id="crypto-news-feed"></div>
+<iframe src="https://cryptocurrency.cv/embed/news?theme=light&count=5"
+        width="100%" height="520" style="border:0" loading="lazy"></iframe>
+```
+
+## Headline ticker (`ticker.js`)
+
+Renders into an element you own. Styles are scoped under `.crypto-ticker`.
+
+```html
+<div id="crypto-ticker" class="crypto-ticker"></div>
+<script src="https://cryptocurrency.cv/widget/ticker.js"></script>
 <script>
-  window.CryptoNewsFeed = {
-    container: '#crypto-news-feed',
-    limit: 10,
-    category: 'defi',
+  CryptoTicker.init('#crypto-ticker', {
+    limit: 15,          // number of headlines
+    speed: 30,          // seconds per full scroll
+    category: 'all',    // 'all' or any news category slug (bitcoin, defi, ethereum, ...)
     showSource: true,
     showTime: true,
-    showDescription: true,
-    theme: 'dark',
-    refreshInterval: 300000, // 5 minutes
-  };
+  });
 </script>
-<script src="https://cryptocurrency.cv/widget/feed.js"></script>
 ```
 
-### Options Reference
-
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `container` | string | `#crypto-news-feed` | CSS selector for container |
-| `limit` | number | `10` | Number of articles |
-| `category` | string | `null` | Filter by category |
-| `source` | string | `null` | Filter by source |
-| `showSource` | boolean | `true` | Show source name |
-| `showTime` | boolean | `true` | Show time ago |
-| `showDescription` | boolean | `true` | Show article description |
-| `theme` | string | `auto` | `light`, `dark`, or `auto` |
-| `refreshInterval` | number | `300000` | Auto-refresh (ms) |
-| `lang` | string | `en` | Language code |
-
-## News Ticker Widget
-
-Horizontal scrolling headlines for headers/footers.
-
-### Basic Usage
+Add `class="crypto-ticker light"` for the light theme or `compact` for a slimmer bar. Elements carrying `data-auto-init` initialise themselves without the `init` call:
 
 ```html
-<div id="crypto-ticker"></div>
+<div id="ticker" class="crypto-ticker" data-auto-init data-limit="20" data-category="bitcoin"></div>
 <script src="https://cryptocurrency.cv/widget/ticker.js"></script>
 ```
 
-### With Options
+## News carousel (`carousel.js`)
 
 ```html
-<div id="crypto-ticker"></div>
-<script>
-  window.CryptoNewsTicker = {
-    container: '#crypto-ticker',
-    limit: 20,
-    speed: 'normal', // 'slow', 'normal', 'fast'
-    pauseOnHover: true,
-    showSource: false,
-    theme: 'dark',
-  };
-</script>
-<script src="https://cryptocurrency.cv/widget/ticker.js"></script>
-```
-
-### Ticker Options
-
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `speed` | string | `normal` | Scroll speed |
-| `pauseOnHover` | boolean | `true` | Pause on mouse hover |
-| `direction` | string | `left` | `left` or `right` |
-| `gap` | number | `50` | Gap between items (px) |
-
-## News Carousel Widget
-
-Rotating news cards with transitions.
-
-### Basic Usage
-
-```html
-<div id="crypto-carousel"></div>
+<div id="crypto-carousel" class="crypto-carousel"></div>
 <script src="https://cryptocurrency.cv/widget/carousel.js"></script>
-```
-
-### With Options
-
-```html
-<div id="crypto-carousel"></div>
 <script>
-  window.CryptoNewsCarousel = {
-    container: '#crypto-carousel',
-    limit: 5,
-    autoPlay: true,
-    interval: 5000,
-    showDots: true,
-    showArrows: true,
-    transition: 'slide', // 'slide', 'fade'
-  };
+  CryptoCarousel.init('#crypto-carousel', {
+    limit: 6,           // number of cards
+    category: 'defi',   // 'all' or a category slug
+    interval: 5000,     // autoplay interval in ms
+  });
 </script>
-<script src="https://cryptocurrency.cv/widget/carousel.js"></script>
 ```
 
-## Price Ticker Widget
+Add the `grid` class to the container to show three cards per slide.
 
-Live cryptocurrency prices.
-
-### Basic Usage
-
-```html
-<div id="crypto-prices"></div>
-<script src="https://cryptocurrency.cv/widget/prices.js"></script>
-```
-
-### With Options
-
-```html
-<div id="crypto-prices"></div>
-<script>
-  window.CryptoPriceTicker = {
-    container: '#crypto-prices',
-    coins: ['bitcoin', 'ethereum', 'solana'],
-    showChange: true,
-    showIcon: true,
-    refreshInterval: 30000,
-    compact: false,
-  };
-</script>
-<script src="https://cryptocurrency.cv/widget/prices.js"></script>
-```
-
-## Styling
-
-### CSS Variables
-
-Override default styles with CSS variables:
-
-```css
-:root {
-  --fcn-bg: #1a1a2e;
-  --fcn-text: #ffffff;
-  --fcn-link: #4a9eff;
-  --fcn-border: #333;
-  --fcn-source: #888;
-  --fcn-time: #666;
-  --fcn-positive: #00c853;
-  --fcn-negative: #ff1744;
-  --fcn-font: 'Inter', sans-serif;
-  --fcn-radius: 8px;
-}
-```
-
-### Custom CSS
-
-```html
-<style>
-  .fcn-article {
-    padding: 16px;
-    border-bottom: 1px solid var(--fcn-border);
-  }
-  
-  .fcn-article-title {
-    font-size: 16px;
-    font-weight: 600;
-  }
-  
-  .fcn-article-description {
-    font-size: 14px;
-    color: var(--fcn-text);
-    opacity: 0.8;
-  }
-</style>
-```
-
-### Themes
-
-```javascript
-// Light theme
-window.CryptoNewsFeed = { theme: 'light' };
-
-// Dark theme
-window.CryptoNewsFeed = { theme: 'dark' };
-
-// Auto (matches system preference)
-window.CryptoNewsFeed = { theme: 'auto' };
-```
-
-## Framework Integration
+## Framework examples
 
 ### React
 
 ```jsx
 import { useEffect, useRef } from 'react';
 
-function CryptoNewsWidget() {
-  const containerRef = useRef(null);
+export function CryptoNews({ type = 'news', theme = 'dark', count = 10 }) {
+  const ref = useRef(null);
 
   useEffect(() => {
-    window.CryptoNewsFeed = {
-      container: containerRef.current,
-      limit: 10,
-    };
-    
+    const host = ref.current;
     const script = document.createElement('script');
-    script.src = 'https://cryptocurrency.cv/widget/feed.js';
-    document.body.appendChild(script);
-    
-    return () => script.remove();
-  }, []);
+    script.src = 'https://cryptocurrency.cv/widget/embed.js';
+    script.dataset.type = type;
+    script.dataset.theme = theme;
+    script.dataset.count = String(count);
+    host.appendChild(script);
+    return () => { host.innerHTML = ''; };
+  }, [type, theme, count]);
 
-  return <div ref={containerRef} />;
+  return <div ref={ref} />;
 }
 ```
 
@@ -243,61 +140,44 @@ function CryptoNewsWidget() {
 
 ```vue
 <template>
-  <div ref="newsContainer"></div>
+  <div ref="host"></div>
 </template>
 
 <script>
 export default {
   mounted() {
-    window.CryptoNewsFeed = {
-      container: this.$refs.newsContainer,
-      limit: 10,
-    };
-    
     const script = document.createElement('script');
-    script.src = 'https://cryptocurrency.cv/widget/feed.js';
-    document.body.appendChild(script);
-  }
+    script.src = 'https://cryptocurrency.cv/widget/embed.js';
+    script.dataset.type = 'news';
+    script.dataset.theme = 'dark';
+    this.$refs.host.appendChild(script);
+  },
 };
 </script>
 ```
 
 ### WordPress
 
-Use shortcode in any post or page:
-
-```
-[crypto_news limit="10" category="defi" theme="dark"]
-```
-
-Or add to theme:
+Paste the script tag into a Custom HTML block, or add it to a theme template:
 
 ```php
 function crypto_news_widget() {
-  ?>
-  <div id="crypto-news-feed"></div>
-  <script>
-    window.CryptoNewsFeed = { limit: 10, theme: 'dark' };
-  </script>
-  <script src="https://cryptocurrency.cv/widget/feed.js"></script>
-  <?php
+  echo '<script src="https://cryptocurrency.cv/widget/embed.js" data-type="news" data-count="10" data-theme="dark"></script>';
 }
 ```
 
-## Self-Hosting Widgets
+## Self-hosting
 
-Host widgets on your own server:
+The loaders are plain JavaScript with no dependencies. To serve them yourself:
 
 ```bash
-# Download widgets
-curl -O https://cryptocurrency.cv/widget/feed.js
+curl -O https://cryptocurrency.cv/widget/embed.js
 curl -O https://cryptocurrency.cv/widget/ticker.js
 curl -O https://cryptocurrency.cv/widget/carousel.js
-
-# Configure API endpoint
-sed -i 's|https://cryptocurrency.cv|https://your-domain.com|g' *.js
 ```
 
-## Source Code
+`ticker.js` and `carousel.js` call `https://cryptocurrency.cv/api/news` (and `/api/<category>`) directly, which allows cross-origin requests. `embed.js` frames `https://cryptocurrency.cv/embed/*`; if you run your own deployment, change the `BASE_URL` constant at the top of the file.
 
-View widget source code: [widget/](https://github.com/nirholas/cryptocurrency.cv/tree/main/widget)
+## Source code
+
+The loaders live in [`widget/`](https://github.com/nirholas/cryptocurrency.cv/tree/main/widget) and are published from [`public/widget/`](https://github.com/nirholas/cryptocurrency.cv/tree/main/public/widget). The embed pages themselves are in [`src/app/embed/`](https://github.com/nirholas/cryptocurrency.cv/tree/main/src/app/embed).
