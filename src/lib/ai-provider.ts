@@ -16,6 +16,11 @@
 
 import { parseGroqJson, simpleHash, CACHE_TTL as AI_CACHE_TTL } from './groq';
 import { aiCache, generateCacheKey, withCache } from './cache';
+// Shared defaults. Read the env var here rather than trusting the module-level
+// constant alone: a constant is resolved once at import, so a process that sets
+// (or a test that overrides) MODEL after this module loads would otherwise be
+// silently ignored. The constant stays the single place a default lives.
+import { ANTHROPIC_MODEL, GROQ_MODEL, OPENAI_MODEL, OPENROUTER_MODEL } from './ai-models';
 
 export type AIProvider = 'openai' | 'anthropic' | 'groq' | 'openrouter' | 'gemini';
 
@@ -74,19 +79,19 @@ export interface AICompleteOptions {
 const providerFactories: Record<AIProvider, () => AIConfig | null> = {
   openai: () =>
     process.env.OPENAI_API_KEY
-      ? { provider: 'openai', model: process.env.OPENAI_MODEL || 'gpt-4o', apiKey: process.env.OPENAI_API_KEY }
+      ? { provider: 'openai', model: process.env.OPENAI_MODEL || OPENAI_MODEL, apiKey: process.env.OPENAI_API_KEY }
       : null,
   anthropic: () =>
     process.env.ANTHROPIC_API_KEY
-      ? { provider: 'anthropic', model: process.env.ANTHROPIC_MODEL || 'claude-3-5-sonnet-20241022', apiKey: process.env.ANTHROPIC_API_KEY }
+      ? { provider: 'anthropic', model: process.env.ANTHROPIC_MODEL || ANTHROPIC_MODEL, apiKey: process.env.ANTHROPIC_API_KEY }
       : null,
   groq: () =>
     process.env.GROQ_API_KEY
-      ? { provider: 'groq', model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile', apiKey: process.env.GROQ_API_KEY, baseUrl: 'https://api.groq.com/openai/v1' }
+      ? { provider: 'groq', model: process.env.GROQ_MODEL || GROQ_MODEL, apiKey: process.env.GROQ_API_KEY, baseUrl: 'https://api.groq.com/openai/v1' }
       : null,
   openrouter: () =>
     process.env.OPENROUTER_API_KEY
-      ? { provider: 'openrouter', model: process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.3-70b-instruct', apiKey: process.env.OPENROUTER_API_KEY, baseUrl: 'https://openrouter.ai/api/v1' }
+      ? { provider: 'openrouter', model: process.env.OPENROUTER_MODEL || OPENROUTER_MODEL, apiKey: process.env.OPENROUTER_API_KEY, baseUrl: 'https://openrouter.ai/api/v1' }
       : null,
   gemini: () =>
     process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY
