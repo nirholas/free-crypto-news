@@ -14,6 +14,13 @@ import { getMessages, setRequestLocale } from 'next-intl/server';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
+/**
+ * Vercel injects VERCEL=1 at build time. Production runs on Cloud Run, where the
+ * /_vercel/insights and /_vercel/speed-insights scripts 404 and throw on every
+ * pageview, so the collectors only render on a Vercel deployment.
+ */
+const isVercelHosted = process.env.VERCEL === '1';
+
 import { ThemeProvider, ThemeScript } from '@/components/ThemeProvider';
 import { ToastProvider } from '@/components/Toast';
 import { BookmarksProvider } from '@/components/BookmarksProvider';
@@ -223,8 +230,12 @@ export default async function LocaleLayout({ children, params }: Props) {
               </ToastProvider>
             </ThemeProvider>
           </NextIntlClientProvider>
-          <Analytics />
-          <SpeedInsights />
+          {isVercelHosted && (
+            <>
+              <Analytics />
+              <SpeedInsights />
+            </>
+          )}
         </ClientOnly>
       </body>
     </html>

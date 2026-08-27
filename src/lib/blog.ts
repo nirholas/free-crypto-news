@@ -56,7 +56,7 @@ function loadExternalPosts(): Record<string, string> {
         return posts;
       }
     }
-  } catch (error) {
+  } catch {
     // Silently fail - we'll use inline posts as fallback
     console.warn('Could not load external blog posts, using inline fallback');
   }
@@ -986,6 +986,34 @@ const BLOG_POSTS_RAW: Record<string, string> = {
 // BLOG POST FUNCTIONS
 // =============================================================================
 
+/** Frontmatter spellings that map onto a canonical BlogCategory */
+const CATEGORY_ALIASES: Record<string, BlogCategory> = {
+  guide: 'guides',
+  tutorial: 'tutorials',
+  howto: 'tutorials',
+  'how-to': 'tutorials',
+  market: 'analysis',
+  markets: 'analysis',
+  btc: 'bitcoin',
+  eth: 'ethereum',
+  alts: 'altcoins',
+  safety: 'security',
+};
+
+/** Resolve a frontmatter category value to a known BlogCategory (unknown values fall back to 'news') */
+export function normalizeCategory(value: unknown): BlogCategory {
+  const key = String(value ?? '').trim().toLowerCase();
+  if (key in CATEGORIES) return key as BlogCategory;
+  return CATEGORY_ALIASES[key] ?? 'news';
+}
+
+/** gray-matter parses unquoted YAML dates into Date objects; keep every date a YYYY-MM-DD string */
+function toIsoDate(value: unknown): string {
+  if (value instanceof Date && !isNaN(value.getTime())) return value.toISOString().slice(0, 10);
+  if (typeof value === 'string' && value.trim()) return value.trim();
+  return new Date().toISOString().slice(0, 10);
+}
+
 /**
  * Parse a raw blog post into structured data
  */
@@ -999,11 +1027,11 @@ function parsePost(slug: string, raw: string): BlogPost | null {
       title: data.title || 'Untitled',
       description: data.description || '',
       content,
-      date: data.date || new Date().toISOString(),
-      updatedAt: data.updatedAt,
+      date: toIsoDate(data.date),
+      updatedAt: data.updatedAt ? toIsoDate(data.updatedAt) : undefined,
       author: AUTHORS[data.author] || AUTHORS.team,
-      category: data.category || 'news',
-      tags: data.tags || [],
+      category: normalizeCategory(data.category),
+      tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
       image: data.image,
       imageAlt: data.imageAlt,
       readingTime: stats.text,
@@ -1123,10 +1151,44 @@ export function getAllTags(): string[] {
 }
 
 /**
- * Get all slugs for static generation
+ * Get all slugs for static generation (published posts only)
  */
 export function getAllSlugs(): string[] {
-  return Object.keys(BLOG_POSTS_RAW);
+  return getAllPosts().map(post => post.slug);
+}
+
+/** Number of published posts per category, only categories that have at least one post */
+export function getCategoryCounts(): Array<{ slug: BlogCategory; name: string; description: string; icon: string; count: number }> {
+  const counts = new Map<BlogCategory, number>();
+  for (const post of getAllPosts()) {
+    counts.set(post.category, (counts.get(post.category) ?? 0) + 1);
+  }
+  return (Object.keys(CATEGORIES) as BlogCategory[])
+    .filter(slug => counts.has(slug))
+    .map(slug => ({ slug, ...CATEGORIES[slug], count: counts.get(slug) ?? 0 }));
+}
+
+/** Categories that currently have published posts (drives static params and the sitemap) */
+export function getActiveCategories(): BlogCategory[] {
+  return getCategoryCounts().map(c => c.slug);
+}
+
+/** Type guard for a category route param */
+export function isBlogCategory(value: string): value is BlogCategory {
+  return value in CATEGORIES;
+}
+
+/**
+ * Newer and older neighbours of a post in date order (posts are sorted newest first)
+ */
+export function getAdjacentPosts(slug: string): { newer: BlogPostMeta | null; older: BlogPostMeta | null } {
+  const posts = getAllPostsMeta();
+  const index = posts.findIndex(post => post.slug === slug);
+  if (index === -1) return { newer: null, older: null };
+  return {
+    newer: index > 0 ? posts[index - 1] : null,
+    older: index < posts.length - 1 ? posts[index + 1] : null,
+  };
 }
 
 export default {
@@ -1139,4 +1201,7 @@ export default {
   getRelatedPosts,
   getAllTags,
   getAllSlugs,
+  getCategoryCounts,
+  getActiveCategories,
+  getAdjacentPosts,
 };

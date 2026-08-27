@@ -2,104 +2,37 @@
  * @copyright 2024-2026 nirholas. All rights reserved.
  * @license SPDX-License-Identifier: SEE LICENSE IN LICENSE
  * @see https://github.com/nirholas/free-crypto-news
+ *
+ * This file is part of free-crypto-news.
+ * Unauthorized copying, modification, or distribution is strictly prohibited.
+ * For licensing inquiries: nirholas@users.noreply.github.com
  */
 
 import { setRequestLocale } from "next-intl/server";
+import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShareSection from "@/components/PageShareSection";
 import { Link } from "@/i18n/navigation";
-import { generateSEOMetadata } from "@/lib/seo";
-import { Badge } from "@/components/ui/Badge";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/Card";
-import type { Metadata } from "next";
-import fs from "node:fs";
-import path from "node:path";
+import { Card, CardContent } from "@/components/ui/Card";
+import { CollectionPageStructuredData } from "@/components/StructuredData";
+import { BlogPostCard } from "@/components/blog/BlogPostCard";
+import { canonicalUrl, pageMetadata, SITE_NAME } from "@/lib/blog-seo";
+import { SITE_URL } from "@/lib/constants";
+import { getAllPostsMeta, getCategoryCounts } from "@/lib/blog";
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
 
-interface BlogPost {
-  slug: string;
-  title: string;
-  description: string;
-  date: string;
-  category: string;
-  tags: string[];
-  featured: boolean;
-}
-
-function parseFrontmatter(raw: string): Record<string, unknown> {
-  const match = raw.match(/^---\n([\s\S]*?)\n---/);
-  if (!match) return {};
-  const block = match[1];
-  const data: Record<string, unknown> = {};
-  for (const line of block.split("\n")) {
-    const m = line.match(/^(\w+):\s*(.*)/);
-    if (!m) continue;
-    const [, key, value] = m;
-    let v = value.trim();
-    // Strip quotes
-    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
-      v = v.slice(1, -1);
-    }
-    // Parse arrays
-    if (v.startsWith("[") && v.endsWith("]")) {
-      data[key] = v
-        .slice(1, -1)
-        .split(",")
-        .map((s) => s.trim().replace(/^["']|["']$/g, ""));
-    } else if (v === "true") {
-      data[key] = true;
-    } else if (v === "false") {
-      data[key] = false;
-    } else {
-      data[key] = v;
-    }
-  }
-  return data;
-}
-
-function getBlogPosts(): BlogPost[] {
-  const blogDir = path.join(process.cwd(), "content", "blog");
-  if (!fs.existsSync(blogDir)) return [];
-
-  const files = fs.readdirSync(blogDir).filter((f) => f.endsWith(".md") && f !== "README.md");
-  const posts: BlogPost[] = [];
-
-  for (const file of files) {
-    const raw = fs.readFileSync(path.join(blogDir, file), "utf-8");
-    const fm = parseFrontmatter(raw);
-    posts.push({
-      slug: file.replace(/\.md$/, ""),
-      title: (fm.title as string) || file.replace(/\.md$/, "").replace(/-/g, " "),
-      description: (fm.description as string) || "",
-      date: (fm.date as string) || "",
-      category: (fm.category as string) || "general",
-      tags: (fm.tags as string[]) || [],
-      featured: (fm.featured as boolean) || false,
-    });
-  }
-
-  // Sort by date descending
-  posts.sort((a, b) => (b.date > a.date ? 1 : -1));
-  return posts;
-}
+const DESCRIPTION =
+  "In-depth articles, guides, and analysis on Bitcoin, Ethereum, DeFi, trading strategies, and the crypto ecosystem.";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  return generateSEOMetadata({
-    title: "Blog — Crypto Vision News",
-    description:
-      "In-depth articles, guides, and analysis on Bitcoin, Ethereum, DeFi, trading strategies, and the crypto ecosystem.",
+  return pageMetadata({
+    title: "Blog",
+    description: DESCRIPTION,
     path: "/blog",
     locale,
     tags: ["crypto blog", "bitcoin articles", "ethereum guides", "defi analysis"],
@@ -110,15 +43,28 @@ export default async function BlogPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const posts = getBlogPosts();
+  const posts = getAllPostsMeta();
   const featured = posts.filter((p) => p.featured);
   const regular = posts.filter((p) => !p.featured);
+  const categories = getCategoryCounts();
+  const url = canonicalUrl(locale, "/blog");
 
   return (
     <>
+      <CollectionPageStructuredData
+        name="Blog"
+        description={DESCRIPTION}
+        url={url}
+        articles={posts.slice(0, 50).map((post) => ({
+          title: post.title,
+          url: `${SITE_URL}/blog/${post.slug}`,
+          datePublished: post.date,
+          image: post.image ? `${SITE_URL}${post.image}` : undefined,
+        }))}
+      />
       <Header />
-      <main className="container-main py-10">
-        <section className="mb-12">
+      <main id="main-content" className="container-main py-10">
+        <section className="mb-10">
           <h1 className="font-serif text-3xl md:text-4xl font-bold mb-3 text-text-primary">
             Blog
           </h1>
@@ -128,10 +74,31 @@ export default async function BlogPage({ params }: Props) {
           </p>
         </section>
 
-        {/* Featured Posts */}
+        {categories.length > 0 && (
+          <nav aria-label="Blog categories" className="mb-12">
+            <ul className="flex flex-wrap gap-2">
+              {categories.map((c) => (
+                <li key={c.slug}>
+                  <Link
+                    href={`/blog/category/${c.slug}`}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-sm text-text-secondary hover:border-accent hover:text-accent transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  >
+                    <span aria-hidden="true">{c.icon}</span>
+                    {c.name}
+                    <span className="text-xs opacity-70">{c.count}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
+
         {featured.length > 0 && (
-          <section className="mb-12">
-            <h2 className="font-serif text-2xl font-bold mb-6 text-text-primary">
+          <section className="mb-12" aria-labelledby="featured-heading">
+            <h2
+              id="featured-heading"
+              className="font-serif text-2xl font-bold mb-6 text-text-primary"
+            >
               Featured
             </h2>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -142,9 +109,11 @@ export default async function BlogPage({ params }: Props) {
           </section>
         )}
 
-        {/* All Posts */}
-        <section>
-          <h2 className="font-serif text-2xl font-bold mb-6 text-text-primary">
+        <section aria-labelledby="all-heading">
+          <h2
+            id="all-heading"
+            className="font-serif text-2xl font-bold mb-6 text-text-primary"
+          >
             All Articles
           </h2>
           {posts.length === 0 ? (
@@ -171,7 +140,6 @@ export default async function BlogPage({ params }: Props) {
           )}
         </section>
 
-        {/* CTA */}
         <div className="mt-12 pt-8 border-t border-border">
           <div className="flex gap-4 flex-wrap">
             <Link
@@ -190,46 +158,11 @@ export default async function BlogPage({ params }: Props) {
         </div>
       </main>
       <PageShareSection
-        title="Crypto Vision News Blog — Insights & Analysis"
+        title={`${SITE_NAME} Blog: Insights & Analysis`}
         description="In-depth crypto insights, market analysis, and project deep-dives."
-        url={`https://cryptocurrency.cv/${locale}/blog`}
+        url={url}
       />
       <Footer />
     </>
-  );
-}
-
-function BlogPostCard({ post }: { post: BlogPost }) {
-  const formattedDate = post.date
-    ? new Date(post.date).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : "";
-
-  return (
-    <Card className="flex flex-col h-full hover:border-accent transition-colors">
-      <CardHeader>
-        <div className="flex items-center gap-2 mb-2">
-          <Badge>{post.category}</Badge>
-          {post.featured && (
-            <Badge variant="breaking">Featured</Badge>
-          )}
-        </div>
-        <CardTitle className="text-base">{post.title}</CardTitle>
-        <CardDescription>{post.description}</CardDescription>
-      </CardHeader>
-      <CardFooter className="mt-auto">
-        <div className="flex items-center justify-between w-full">
-          <span className="text-xs text-text-secondary">
-            {formattedDate}
-          </span>
-          <span className="text-xs text-accent font-medium">
-            Read →
-          </span>
-        </div>
-      </CardFooter>
-    </Card>
   );
 }

@@ -9,11 +9,24 @@
  */
 
 import { setRequestLocale } from "next-intl/server";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/blog-seo";
 import DashboardOverview from "@/components/dashboard/DashboardOverview";
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMetadata({
+    title: "Developer Dashboard",
+    description: "Overview of your API keys, request usage, and account status.",
+    path: "/dashboard",
+    locale,
+    noindex: true,
+  });
+}
 
 export default async function DashboardPage({ params }: Props) {
   const { locale } = await params;
