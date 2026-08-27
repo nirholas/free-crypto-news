@@ -1,13 +1,13 @@
 /**
- * AUTO-GENERATED — Do not edit manually.
- * Run: node scripts/generate-route-manifest.js
- *
- * Generated: 2026-08-27T06:05:07.908Z
- * Total routes: 391
- */
+	 * AUTO-GENERATED — Do not edit manually.
+	 * Run: node scripts/generate-route-manifest.js
+	 *
+	 * Generated: 2026-08-27T13:49:46.947Z
+	 * Total routes: 394
+	 */
 
-/** All discoverable API routes with their category. */
-export const ROUTE_MANIFEST: { path: string; category: string }[] = [
+	/** All discoverable API routes with their category. */
+	export const ROUTE_MANIFEST: { path: string; category: string }[] = [
   {
     "path": "/api/.well-known/x402",
     "category": "Other"
@@ -567,6 +567,14 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
   {
     "path": "/api/fear-greed",
     "category": "Market Data"
+  },
+  {
+    "path": "/api/feeds",
+    "category": "Other"
+  },
+  {
+    "path": "/api/fever",
+    "category": "Other"
   },
   {
     "path": "/api/flows",
@@ -1261,6 +1269,10 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
     "category": "News & Content"
   },
   {
+    "path": "/api/sources/health",
+    "category": "News & Content"
+  },
+  {
     "path": "/api/sse",
     "category": "Other"
   },
@@ -1574,11 +1586,11 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
   }
 ];
 
-/** Total discoverable routes. */
-export const ROUTE_COUNT = 391;
+	/** Total discoverable routes. */
+	export const ROUTE_COUNT = 394;
 
-/** All categories. */
-export const ROUTE_CATEGORIES = [
+	/** All categories. */
+	export const ROUTE_CATEGORIES = [
   "AI Analysis",
   "API v1",
   "Analytics & Intelligence",
@@ -1610,3 +1622,4 @@ export const ROUTE_CATEGORIES = [
   "Sui",
   "Trading & Derivatives"
 ] as const;
+	

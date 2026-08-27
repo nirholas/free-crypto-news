@@ -8,8 +8,8 @@
  * AUTO-GENERATED — Do not edit manually.
  * Run: node scripts/generate-endpoint-metadata.js
  *
- * Generated: 2026-08-27T06:05:08.525Z
- * Total endpoints: 391
+ * Generated: 2026-08-27T13:49:47.315Z
+ * Total endpoints: 394
  *
  * Comprehensive endpoint metadata for OpenAPI spec generation,
  * x402 Bazaar agent discovery, and API documentation.
@@ -23,7 +23,7 @@ export interface EndpointMetaExtended extends EndpointMeta {
 }
 
 /**
- * Complete endpoint metadata for all 391 discoverable API routes.
+ * Complete endpoint metadata for all 394 discoverable API routes.
  * Used by the OpenAPI generator, documentation tools, and agent discovery.
  */
 export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
@@ -1127,6 +1127,18 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     description: "Crypto Fear & Greed Index with historical data",
     parameters: {
       days: { type: "number", description: "Number of days of historical data", default: "30" },
+    },
+  },
+
+  "/api/feeds": {
+    description: "Feeds - Other",
+  },
+
+  "/api/fever": {
+    description: "Fever - Other",
+    methods: ["GET", "POST"],
+    parameters: {
+      api_key: { type: "string", description: "Filter by api key" },
     },
   },
 
@@ -2360,6 +2372,16 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     description: "News source listings and metadata",
     parameters: {
       token: { type: "string", description: "Filter by token" },
+      status: { type: "string", description: "Filter by status" },
+    },
+  },
+
+  "/api/sources/health": {
+    description: "Sources - Health - News & Content",
+    parameters: {
+      status: { type: "string", description: "Filter by status" },
+      category: { type: "string", description: "Filter by category" },
+      summary: { type: "string", description: "Filter by summary" },
     },
   },
 
@@ -2979,4 +3001,4 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
 };
 
 /** Total documented endpoints. */
-export const ENDPOINT_COUNT = 391;
+export const ENDPOINT_COUNT = 394;

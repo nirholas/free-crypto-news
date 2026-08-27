@@ -3,12 +3,12 @@
 > Auto-generated from endpoint metadata. Do not edit manually.
 > Run: `node scripts/generate-api-docs.js`
 >
-> Generated: 2026-08-27T06:05:08.581Z
-> Total endpoints: 391
+> Generated: 2026-08-27T13:49:47.421Z
+> Total endpoints: 394
 
 ## Overview
 
-This API provides 391 endpoints across 30 categories covering cryptocurrency news, market data, DeFi, derivatives, on-chain analytics, AI analysis, social intelligence, NFTs, multi-chain data, and premium features.
+This API provides 394 endpoints across 30 categories covering cryptocurrency news, market data, DeFi, derivatives, on-chain analytics, AI analysis, social intelligence, NFTs, multi-chain data, and premium features.
 
 **Base URL:** `https://cryptocurrency.cv`
 
@@ -30,10 +30,10 @@ This API provides 391 endpoints across 30 categories covering cryptocurrency new
 - [Macro & Traditional](#macro-traditional) (6 endpoints)
 - [Market Data](#market-data) (62 endpoints)
 - [NFTs](#nfts) (7 endpoints)
-- [News & Content](#news-content) (34 endpoints)
+- [News & Content](#news-content) (35 endpoints)
 - [On-Chain & Whales](#on-chain-whales) (23 endpoints)
 - [Oracles](#oracles) (3 endpoints)
-- [Other](#other) (26 endpoints)
+- [Other](#other) (28 endpoints)
 - [Portfolio & Alerts](#portfolio-alerts) (16 endpoints)
 - [Premium](#premium) (1 endpoints)
 - [Premium AI](#premium-ai) (5 endpoints)
@@ -2815,6 +2815,21 @@ News source listings and metadata
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `token` | string | No | — | Filter by token |
+| `status` | string | No | — | Filter by status |
+
+---
+
+### `GET /api/sources/health`
+
+Sources - Health - News & Content
+
+**Price:** `$0.001/request`
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `status` | string | No | — | Filter by status |
+| `category` | string | No | — | Filter by category |
+| `summary` | string | No | — | Filter by summary |
 
 ---
 
@@ -3375,6 +3390,27 @@ Extract structured data from crypto news articles
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `url` | string | No | — | Filter by url |
+
+---
+
+### `GET /api/feeds`
+
+Feeds - Other
+
+**Price:** `$0.001/request`
+
+---
+
+### `GET /api/fever`
+### `POST /api/fever`
+
+Fever - Other
+
+**Price:** `$0.001/request`
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `api_key` | string | No | — | Filter by api key |
 
 ---
 
@@ -4901,10 +4937,10 @@ Trading signals with confidence scores
 | Macro & Traditional | 6 |
 | Market Data | 62 |
 | NFTs | 7 |
-| News & Content | 34 |
+| News & Content | 35 |
 | On-Chain & Whales | 23 |
 | Oracles | 3 |
-| Other | 26 |
+| Other | 28 |
 | Portfolio & Alerts | 16 |
 | Premium | 1 |
 | Premium AI | 5 |
@@ -4919,7 +4955,7 @@ Trading signals with confidence scores
 | Stablecoins | 6 |
 | Sui | 4 |
 | Trading & Derivatives | 32 |
-| **Total** | **391** |
+| **Total** | **394** |
 
 ---
 
