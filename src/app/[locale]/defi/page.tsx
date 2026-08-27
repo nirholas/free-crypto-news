@@ -25,7 +25,6 @@ import {
   type StablecoinEntry,
 } from '@/components/DefiCharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { getDefiNews, type NewsResponse } from '@/lib/crypto-news';
 import {
@@ -38,6 +37,7 @@ import {
 import { getTopYields } from '@/lib/defi-yields';
 import { generateSEOMetadata } from '@/lib/seo';
 import { cn } from '@/lib/utils';
+import { swrCached } from '@/lib/page-cache';
 
 export const revalidate = 300;
 
@@ -154,16 +154,32 @@ export default async function DefiPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  /* ── fetch all data in parallel ── */
+  /* ── fetch all data in parallel, behind a shared SWR window ──
+     The six upstreams (DefiLlama TVL, yields, DEX volumes, stablecoins,
+     bridges, news) took ~8.7 s combined on a cold render and the locale
+     layout forces dynamic rendering, so every visitor paid that cost. One
+     render now fills the window and the rest are served from memory while a
+     refresh runs behind them. */
   const [summaryResult, yieldsResult, newsResult, dexResult, stableResult, bridgeResult] =
-    await Promise.allSettled([
-      getDefiSummary(),
-      getTopYields({ limit: 20 }),
-      getDefiNews(9),
-      getDexVolumes(),
-      getStablecoins(),
-      getBridges(),
-    ]);
+    await swrCached(
+      'page:defi',
+      () =>
+        Promise.allSettled([
+          getDefiSummary(),
+          getTopYields({ limit: 20 }),
+          getDefiNews(9),
+          getDexVolumes(),
+          getStablecoins(),
+          getBridges(),
+        ]),
+      {
+        fresh: 300,
+        maxAge: 3600,
+        // An all-rejected result means every upstream was down: hand it back
+        // for this render but do not pin it for the next five minutes.
+        shouldCache: (results) => results.some((r) => r.status === 'fulfilled'),
+      },
+    );
 
   const summary: DefiSummary | null =
     summaryResult.status === 'fulfilled' ? summaryResult.value : null;
