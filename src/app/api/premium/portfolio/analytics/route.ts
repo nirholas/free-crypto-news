@@ -29,6 +29,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { withX402 } from '@/lib/x402';
 import { getHistoricalPrices, getCoinDetails } from '@/lib/market-data';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 export const runtime = 'nodejs';
 
 interface PortfolioHolding {
@@ -186,16 +187,17 @@ function calculateVaR95(returns: number[], portfolioValue: number): number {
  */
 async function generateRebalancingSuggestions(
   assets: AssetMetrics[],
-  totalValue: number
+  totalValue: number,
 ): Promise<RebalanceSuggestion[]> {
   const suggestions: RebalanceSuggestion[] = [];
 
   // Fetch real market caps from CoinGecko for proper weighting
-  const coinIds = assets.map(a => a.coinId).join(',');
+  const coinIds = assets.map((a) => a.coinId).join(',');
   const marketCaps: Record<string, number> = {};
   try {
-    const res = await fetch(
-      `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=usd&include_market_cap=true`
+    const res = await resilientFetchResponse(
+      `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=usd&include_market_cap=true`,
+      { service: 'coingecko', timeoutMs: 8000, retries: 1 },
     );
     if (res.ok) {
       const data = await res.json();
@@ -249,12 +251,12 @@ async function generateRebalancingSuggestions(
  * Handler for portfolio analytics endpoint
  */
 async function handler(
-  request: NextRequest
+  request: NextRequest,
 ): Promise<NextResponse<PortfolioAnalyticsResponse | { error: string; message: string }>> {
   if (request.method !== 'POST') {
     return NextResponse.json(
       { error: 'Method not allowed', message: 'Use POST request' },
-      { status: 405 }
+      { status: 405 },
     );
   }
 
@@ -264,7 +266,7 @@ async function handler(
   } catch {
     return NextResponse.json(
       { error: 'Invalid JSON', message: 'Request body must be valid JSON' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -273,14 +275,14 @@ async function handler(
   if (!holdings || !Array.isArray(holdings) || holdings.length === 0) {
     return NextResponse.json(
       { error: 'Invalid holdings', message: 'holdings array is required' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   if (holdings.length > 50) {
     return NextResponse.json(
       { error: 'Too many holdings', message: 'Maximum 50 holdings allowed' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -386,7 +388,7 @@ async function handler(
         portfolioReturns.reduce((acc: number[], r, i) => {
           acc.push((acc[i - 1] || 1000) * (1 + r));
           return acc;
-        }, [])
+        }, []),
       ),
       valueAtRisk95: calculateVaR95(portfolioReturns, totalValue),
       betaToMarket: (() => {
@@ -398,7 +400,8 @@ async function handler(
         const pSlice = portfolioReturns.slice(0, minLen);
         const bMean = bSlice.reduce((s, v) => s + v, 0) / minLen;
         const pMean = pSlice.reduce((s, v) => s + v, 0) / minLen;
-        let cov = 0, varB = 0;
+        let cov = 0,
+          varB = 0;
         for (let k = 0; k < minLen; k++) {
           const bDev = bSlice[k] - bMean;
           const pDev = pSlice[k] - pMean;
@@ -435,13 +438,13 @@ async function handler(
         headers: {
           'Cache-Control': 'private, no-store',
         },
-      }
+      },
     );
   } catch (error) {
     console.error('Error in premium portfolio analytics:', error);
     return NextResponse.json(
       { error: 'Analytics failed', message: 'An internal error occurred. Please try again later.' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

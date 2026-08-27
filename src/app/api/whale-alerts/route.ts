@@ -17,6 +17,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { COINGECKO_BASE } from '@/lib/constants';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 interface WhaleTransaction {
   id: string;
   blockchain: string;
@@ -119,7 +120,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch whale alerts',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -127,46 +128,44 @@ export async function GET(request: NextRequest) {
 /**
  * Fetch large Ethereum transactions from Etherscan API
  */
-async function fetchEthereumWhaleTransactions(
-  minValueUsd: number
-): Promise<WhaleTransaction[]> {
+async function fetchEthereumWhaleTransactions(minValueUsd: number): Promise<WhaleTransaction[]> {
   const transactions: WhaleTransaction[] = [];
 
   try {
     // Use Etherscan API to get recent large ETH transfers
     // Note: Requires ETHERSCAN_API_KEY for production use
     const apiKey = process.env.ETHERSCAN_API_KEY;
-    
+
     // Get current ETH price
     const priceResponse = await fetch(
       `${COINGECKO_BASE}/simple/price?ids=ethereum&vs_currencies=usd`,
-      { next: { revalidate: 60 } }
+      { next: { revalidate: 60 } },
     );
     const priceData = await priceResponse.json();
     const ethPrice = priceData.ethereum?.usd || 3000;
-    
+
     // Minimum ETH value based on USD threshold
     const minEthValue = minValueUsd / ethPrice;
-    
+
     if (apiKey) {
       // Fetch recent blocks and their transactions
-      const response = await fetch(
+      const response = await resilientFetchResponse(
         `https://api.etherscan.io/api?module=account&action=txlist&address=0x28c6c06298d514db089934071355e5743bf21d60&startblock=0&endblock=99999999&page=1&offset=100&sort=desc&apikey=${apiKey}`,
-        { next: { revalidate: 30 } }
+        { service: 'etherscan', timeoutMs: 8000, retries: 1, next: { revalidate: 30 } },
       );
-      
+
       if (response.ok) {
         const data = await response.json();
-        
+
         if (data.status === '1' && Array.isArray(data.result)) {
           for (const tx of data.result) {
             const valueEth = parseFloat(tx.value) / 1e18;
             const valueUsd = valueEth * ethPrice;
-            
+
             if (valueUsd >= minValueUsd) {
               const fromAddress = tx.from.toLowerCase();
               const toAddress = tx.to.toLowerCase();
-              
+
               transactions.push({
                 id: `eth-${tx.hash}`,
                 blockchain: 'Ethereum',
@@ -193,25 +192,25 @@ async function fetchEthereumWhaleTransactions(
         }
       }
     }
-    
+
     // Also fetch from public whale watching APIs
-    const publicResponse = await fetch(
+    const publicResponse = await resilientFetchResponse(
       'https://api.blockchair.com/ethereum/transactions?limit=25&s=value(desc)',
-      { next: { revalidate: 60 } }
+      { service: 'blockchair', timeoutMs: 8000, retries: 1, next: { revalidate: 60 } },
     );
-    
+
     if (publicResponse.ok) {
       const publicData = await publicResponse.json();
-      
+
       if (publicData.data && Array.isArray(publicData.data)) {
         for (const tx of publicData.data) {
           const valueEth = parseFloat(tx.value) / 1e18;
           const valueUsd = valueEth * ethPrice;
-          
-          if (valueUsd >= minValueUsd && !transactions.find(t => t.hash === tx.hash)) {
+
+          if (valueUsd >= minValueUsd && !transactions.find((t) => t.hash === tx.hash)) {
             const fromAddress = (tx.sender || '').toLowerCase();
             const toAddress = (tx.recipient || '').toLowerCase();
-            
+
             transactions.push({
               id: `eth-${tx.hash}`,
               blockchain: 'Ethereum',
@@ -247,34 +246,32 @@ async function fetchEthereumWhaleTransactions(
 /**
  * Fetch large Bitcoin transactions from Blockchain.com API
  */
-async function fetchBitcoinWhaleTransactions(
-  minValueUsd: number
-): Promise<WhaleTransaction[]> {
+async function fetchBitcoinWhaleTransactions(minValueUsd: number): Promise<WhaleTransaction[]> {
   const transactions: WhaleTransaction[] = [];
 
   try {
     // Get current BTC price
     const priceResponse = await fetch(
       `${COINGECKO_BASE}/simple/price?ids=bitcoin&vs_currencies=usd`,
-      { next: { revalidate: 60 } }
+      { next: { revalidate: 60 } },
     );
     const priceData = await priceResponse.json();
     const btcPrice = priceData.bitcoin?.usd || 95000;
-    
+
     // Fetch large BTC transactions from Blockchair
-    const response = await fetch(
+    const response = await resilientFetchResponse(
       'https://api.blockchair.com/bitcoin/transactions?limit=25&s=output_total(desc)',
-      { next: { revalidate: 60 } }
+      { service: 'blockchair', timeoutMs: 8000, retries: 1, next: { revalidate: 60 } },
     );
-    
+
     if (response.ok) {
       const data = await response.json();
-      
+
       if (data.data && Array.isArray(data.data)) {
         for (const tx of data.data) {
           const valueBtc = tx.output_total / 1e8;
           const valueUsd = valueBtc * btcPrice;
-          
+
           if (valueUsd >= minValueUsd) {
             transactions.push({
               id: `btc-${tx.hash}`,
@@ -299,23 +296,24 @@ async function fetchBitcoinWhaleTransactions(
         }
       }
     }
-    
+
     // Also try Blockchain.info API for unconfirmed transactions
-    const mempoolResponse = await fetch(
+    const mempoolResponse = await resilientFetchResponse(
       'https://blockchain.info/unconfirmed-transactions?format=json',
-      { next: { revalidate: 30 } }
+      { service: 'blockchain-info', timeoutMs: 8000, retries: 1, next: { revalidate: 30 } },
     );
-    
+
     if (mempoolResponse.ok) {
       const mempoolData = await mempoolResponse.json();
-      
+
       if (mempoolData.txs && Array.isArray(mempoolData.txs)) {
         for (const tx of mempoolData.txs.slice(0, 50)) {
-          const totalOutput = tx.out?.reduce((sum: number, out: { value: number }) => sum + out.value, 0) || 0;
+          const totalOutput =
+            tx.out?.reduce((sum: number, out: { value: number }) => sum + out.value, 0) || 0;
           const valueBtc = totalOutput / 1e8;
           const valueUsd = valueBtc * btcPrice;
-          
-          if (valueUsd >= minValueUsd && !transactions.find(t => t.hash === tx.hash)) {
+
+          if (valueUsd >= minValueUsd && !transactions.find((t) => t.hash === tx.hash)) {
             transactions.push({
               id: `btc-${tx.hash}`,
               blockchain: 'Bitcoin',
@@ -348,7 +346,7 @@ async function fetchBitcoinWhaleTransactions(
 
 function determineTransactionType(
   fromAddress: string,
-  toAddress: string
+  toAddress: string,
 ): WhaleTransaction['transactionType'] {
   const fromIsExchange = !!EXCHANGE_ADDRESSES[fromAddress.toLowerCase()];
   const toIsExchange = !!EXCHANGE_ADDRESSES[toAddress.toLowerCase()];
@@ -359,12 +357,10 @@ function determineTransactionType(
   return 'unknown';
 }
 
-function determineSignificance(
-  symbol: string,
-  valueUsd: number
-): WhaleTransaction['significance'] {
-  const thresholds = SIGNIFICANCE_THRESHOLDS[symbol as keyof typeof SIGNIFICANCE_THRESHOLDS] 
-    || SIGNIFICANCE_THRESHOLDS.default;
+function determineSignificance(symbol: string, valueUsd: number): WhaleTransaction['significance'] {
+  const thresholds =
+    SIGNIFICANCE_THRESHOLDS[symbol as keyof typeof SIGNIFICANCE_THRESHOLDS] ||
+    SIGNIFICANCE_THRESHOLDS.default;
 
   if (valueUsd >= thresholds.massive) return 'massive';
   if (valueUsd >= thresholds.notable) return 'notable';
@@ -373,11 +369,16 @@ function determineSignificance(
 
 function calculateSummary(transactions: WhaleTransaction[]): WhaleAlertsResponse['summary'] {
   const totalValueUsd = transactions.reduce((sum, tx) => sum + tx.amountUsd, 0);
-  const exchangeDeposits = transactions.filter(tx => tx.transactionType === 'exchange_deposit').length;
-  const exchangeWithdrawals = transactions.filter(tx => tx.transactionType === 'exchange_withdrawal').length;
-  const largestTransaction = transactions.length > 0
-    ? transactions.reduce((max, tx) => tx.amountUsd > max.amountUsd ? tx : max)
-    : null;
+  const exchangeDeposits = transactions.filter(
+    (tx) => tx.transactionType === 'exchange_deposit',
+  ).length;
+  const exchangeWithdrawals = transactions.filter(
+    (tx) => tx.transactionType === 'exchange_withdrawal',
+  ).length;
+  const largestTransaction =
+    transactions.length > 0
+      ? transactions.reduce((max, tx) => (tx.amountUsd > max.amountUsd ? tx : max))
+      : null;
 
   return {
     totalTransactions: transactions.length,

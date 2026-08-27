@@ -13,11 +13,12 @@ import { getPipelineGas } from '@/lib/data-pipeline';
 import { registry } from '@/lib/providers/registry';
 import type { GasPrice } from '@/lib/providers/adapters/gas';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 export const revalidate = 30;
 
 /**
  * GET /api/gas
- * 
+ *
  * Get current Ethereum gas prices
  * Uses pipeline cache → provider framework (Etherscan + Blocknative) → direct Etherscan fallback
  */
@@ -27,53 +28,68 @@ export async function GET() {
     try {
       const pipelineData = await getPipelineGas();
       if (pipelineData) {
-        return NextResponse.json({
-          ...pipelineData,
-          _cache: 'pipeline',
-        }, {
-          headers: {
-            'Cache-Control': 'public, s-maxage=15, stale-while-revalidate=30',
+        return NextResponse.json(
+          {
+            ...pipelineData,
+            _cache: 'pipeline',
           },
-        });
+          {
+            headers: {
+              'Cache-Control': 'public, s-maxage=15, stale-while-revalidate=30',
+            },
+          },
+        );
       }
-    } catch { /* pipeline miss — try provider chain */ }
+    } catch {
+      /* pipeline miss — try provider chain */
+    }
 
     // Layer 2: Provider framework (fallback between Etherscan + Blocknative with circuit breakers)
     try {
       const result = await registry.fetch<GasPrice>('gas-fees');
-      return NextResponse.json({
-        ...result.data,
-        _cache: 'provider',
-        _provider: result.lineage.provider,
-        _confidence: result.lineage.confidence,
-      }, {
-        headers: {
-          'Cache-Control': 'public, s-maxage=15, stale-while-revalidate=30',
+      return NextResponse.json(
+        {
+          ...result.data,
+          _cache: 'provider',
+          _provider: result.lineage.provider,
+          _confidence: result.lineage.confidence,
         },
-      });
-    } catch { /* provider chain miss — fall through to direct call */ }
+        {
+          headers: {
+            'Cache-Control': 'public, s-maxage=15, stale-while-revalidate=30',
+          },
+        },
+      );
+    } catch {
+      /* provider chain miss — fall through to direct call */
+    }
 
     // Layer 3: Direct Etherscan fallback (legacy)
     const etherscanKey = process.env.ETHERSCAN_API_KEY || '';
     const etherscanUrl = `https://api.etherscan.io/api?module=gastracker&action=gasoracle${etherscanKey ? `&apikey=${etherscanKey}` : ''}`;
-    
+
     const response = await fetch(etherscanUrl, {
       next: { revalidate: 30 },
     });
-    
+
     if (response.ok) {
       const data = await response.json();
-      
+
       if (data.status === '1' && data.result) {
         // Fetch ETH price for USD conversion
         let ethPriceUsd: number | null = null;
         try {
-          const ethRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd', { next: { revalidate: 60 } });
+          const ethRes = await resilientFetchResponse(
+            'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd',
+            { service: 'coingecko', timeoutMs: 8000, retries: 1, next: { revalidate: 60 } },
+          );
           if (ethRes.ok) {
             const ethData = await ethRes.json();
             ethPriceUsd = ethData?.ethereum?.usd ?? null;
           }
-        } catch { /* ETH price fetch failed — USD will be null */ }
+        } catch {
+          /* ETH price fetch failed — USD will be null */
+        }
 
         // Standard transfer gas: 21000 units. USD = gwei * 21000 * 1e-9 * ethPrice
         const gweiToUsd = (gwei: number) =>
@@ -119,9 +135,6 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Gas API error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch gas prices' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch gas prices' }, { status: 500 });
   }
 }

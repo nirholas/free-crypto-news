@@ -24,6 +24,7 @@ import { ApiError } from '@/lib/api-error';
 import { createRequestLogger } from '@/lib/logger';
 import { COINGECKO_BASE } from '@/lib/constants';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 export const runtime = 'nodejs';
 export const revalidate = 60;
 
@@ -78,11 +79,12 @@ function determineTransactionType(from: string, to: string): WhaleTransaction['t
 }
 
 function determineSignificance(symbol: string, valueUsd: number): WhaleTransaction['significance'] {
-  const thresholds = symbol === 'BTC'
-    ? { notable: 10_000_000, massive: 50_000_000 }
-    : symbol === 'ETH'
-      ? { notable: 5_000_000, massive: 25_000_000 }
-      : { notable: 1_000_000, massive: 10_000_000 };
+  const thresholds =
+    symbol === 'BTC'
+      ? { notable: 10_000_000, massive: 50_000_000 }
+      : symbol === 'ETH'
+        ? { notable: 5_000_000, massive: 25_000_000 }
+        : { notable: 1_000_000, massive: 10_000_000 };
 
   if (valueUsd >= thresholds.massive) return 'massive';
   if (valueUsd >= thresholds.notable) return 'notable';
@@ -96,15 +98,15 @@ async function fetchEthereumWhaleTransactions(minValueUsd: number): Promise<Whal
     // Get current ETH price
     const priceResponse = await fetch(
       `${COINGECKO_BASE}/simple/price?ids=ethereum&vs_currencies=usd`,
-      { next: { revalidate: 60 } }
+      { next: { revalidate: 60 } },
     );
     const priceData = await priceResponse.json();
     const ethPrice = priceData.ethereum?.usd || 3000;
 
     // Fetch large transactions from public API
-    const publicResponse = await fetch(
+    const publicResponse = await resilientFetchResponse(
       'https://api.blockchair.com/ethereum/transactions?limit=25&s=value(desc)',
-      { next: { revalidate: 60 } }
+      { service: 'blockchair', timeoutMs: 8000, retries: 1, next: { revalidate: 60 } },
     );
 
     if (publicResponse.ok) {
@@ -157,14 +159,14 @@ async function fetchBitcoinWhaleTransactions(minValueUsd: number): Promise<Whale
   try {
     const priceResponse = await fetch(
       `${COINGECKO_BASE}/simple/price?ids=bitcoin&vs_currencies=usd`,
-      { next: { revalidate: 60 } }
+      { next: { revalidate: 60 } },
     );
     const priceData = await priceResponse.json();
     const btcPrice = priceData.bitcoin?.usd || 60000;
 
-    const publicResponse = await fetch(
+    const publicResponse = await resilientFetchResponse(
       'https://api.blockchair.com/bitcoin/transactions?limit=25&s=output_total(desc)',
-      { next: { revalidate: 60 } }
+      { service: 'blockchair', timeoutMs: 8000, retries: 1, next: { revalidate: 60 } },
     );
 
     if (publicResponse.ok) {
@@ -230,11 +232,16 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       .slice(0, limit);
 
     const totalValueUsd = allTransactions.reduce((sum, t) => sum + t.amountUsd, 0);
-    const exchangeDeposits = allTransactions.filter(t => t.transactionType === 'exchange_deposit').length;
-    const exchangeWithdrawals = allTransactions.filter(t => t.transactionType === 'exchange_withdrawal').length;
-    const largestTransaction = allTransactions.length > 0
-      ? allTransactions.reduce((max, t) => t.amountUsd > max.amountUsd ? t : max)
-      : null;
+    const exchangeDeposits = allTransactions.filter(
+      (t) => t.transactionType === 'exchange_deposit',
+    ).length;
+    const exchangeWithdrawals = allTransactions.filter(
+      (t) => t.transactionType === 'exchange_withdrawal',
+    ).length;
+    const largestTransaction =
+      allTransactions.length > 0
+        ? allTransactions.reduce((max, t) => (t.amountUsd > max.amountUsd ? t : max))
+        : null;
 
     logger.request(request.method, request.nextUrl.pathname, 200, Date.now() - startTime);
 
@@ -263,7 +270,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           'Access-Control-Allow-Origin': '*',
           'X-Data-Source': 'Blockchair',
         },
-      }
+      },
     );
   } catch (error) {
     logger.error('Failed to fetch whale alerts', error);

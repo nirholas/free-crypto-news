@@ -13,6 +13,7 @@ import { getStablecoins } from '@/lib/apis/defillama';
 import { registry } from '@/lib/providers/registry';
 import type { StablecoinFlow } from '@/lib/providers/adapters/stablecoin-flows';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 export const runtime = 'edge';
 
 const CORS_HEADERS = {
@@ -39,23 +40,32 @@ export async function GET(request: NextRequest) {
 
     // Chain breakdown mode — direct fetch (not covered by provider chain)
     if (showChains) {
-      const response = await fetch('https://stablecoins.llama.fi/stablecoinchains');
+      const response = await resilientFetchResponse(
+        'https://stablecoins.llama.fi/stablecoinchains',
+        { service: 'defillama', timeoutMs: 8000, retries: 1 },
+      );
       if (!response.ok) {
-        return NextResponse.json({ error: `API error: ${response.status}` }, { status: 502, headers: CORS_HEADERS });
+        return NextResponse.json(
+          { error: `API error: ${response.status}` },
+          { status: 502, headers: CORS_HEADERS },
+        );
       }
 
       const chains = await response.json();
-      return NextResponse.json({
-        type: 'chain-breakdown',
-        count: Array.isArray(chains) ? chains.length : 0,
-        data: chains,
-        timestamp: new Date().toISOString(),
-      }, {
-        headers: {
-          ...CORS_HEADERS,
-          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      return NextResponse.json(
+        {
+          type: 'chain-breakdown',
+          count: Array.isArray(chains) ? chains.length : 0,
+          data: chains,
+          timestamp: new Date().toISOString(),
         },
-      });
+        {
+          headers: {
+            ...CORS_HEADERS,
+            'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+          },
+        },
+      );
     }
 
     // Layer 1: Provider framework (broadcast across DefiLlama, Glassnode, Artemis, Dune, CryptoQuant)
@@ -70,26 +80,31 @@ export async function GET(request: NextRequest) {
         pegType: f.pegType,
         circulatingUsd: f.circulatingUsd,
         price: f.price,
-        chains: f.chainDistribution.map(c => c.chain),
+        chains: f.chainDistribution.map((c) => c.chain),
       }));
 
       const totalMarketCap = assets.reduce((sum, a) => sum + a.circulatingUsd, 0);
 
-      return NextResponse.json({
-        type: 'stablecoins',
-        totalMarketCap,
-        count: assets.length,
-        data: assets,
-        timestamp: new Date().toISOString(),
-      }, {
-        headers: {
-          ...CORS_HEADERS,
-          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
-          'X-Provider': result.lineage.provider,
-          'X-Cache': result.cached ? 'HIT' : 'MISS',
+      return NextResponse.json(
+        {
+          type: 'stablecoins',
+          totalMarketCap,
+          count: assets.length,
+          data: assets,
+          timestamp: new Date().toISOString(),
         },
-      });
-    } catch { /* provider chain miss — fall through to direct fetch */ }
+        {
+          headers: {
+            ...CORS_HEADERS,
+            'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+            'X-Provider': result.lineage.provider,
+            'X-Cache': result.cached ? 'HIT' : 'MISS',
+          },
+        },
+      );
+    } catch {
+      /* provider chain miss — fall through to direct fetch */
+    }
 
     // Layer 2: Direct DefiLlama fallback (legacy)
     const stablecoins = await getStablecoins();
@@ -107,22 +122,28 @@ export async function GET(request: NextRequest) {
     });
 
     // Calculate total market cap
-    const totalMarketCap = assets.reduce((sum: number, a: { circulatingUsd: number }) => sum + a.circulatingUsd, 0);
+    const totalMarketCap = assets.reduce(
+      (sum: number, a: { circulatingUsd: number }) => sum + a.circulatingUsd,
+      0,
+    );
 
-    return NextResponse.json({
-      type: 'stablecoins',
-      totalMarketCap,
-      count: assets.length,
-      data: assets,
-      timestamp: new Date().toISOString(),
-    }, {
-      headers: {
-        ...CORS_HEADERS,
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
-        'X-Cache': 'DIRECT',
+    return NextResponse.json(
+      {
+        type: 'stablecoins',
+        totalMarketCap,
+        count: assets.length,
+        data: assets,
+        timestamp: new Date().toISOString(),
       },
-    });
-  } catch (error) {
+      {
+        headers: {
+          ...CORS_HEADERS,
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+          'X-Cache': 'DIRECT',
+        },
+      },
+    );
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch stablecoin data' },
       { status: 500, headers: CORS_HEADERS },

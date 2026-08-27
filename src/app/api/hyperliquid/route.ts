@@ -10,6 +10,7 @@
 
 import { type NextRequest, NextResponse } from 'next/server';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 export const runtime = 'edge';
 
 const CORS_HEADERS = {
@@ -35,7 +36,10 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get('type') ?? 'all';
     const symbolFilter = searchParams.get('symbol')?.toUpperCase();
 
-    const response = await fetch('https://api.hyperliquid.xyz/info', {
+    const response = await resilientFetchResponse('https://api.hyperliquid.xyz/info', {
+      service: 'hyperliquid',
+      timeoutMs: 8000,
+      retries: 1,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'metaAndAssetCtxs' }),
@@ -88,18 +92,21 @@ export async function GET(request: NextRequest) {
       }));
     }
 
-    return NextResponse.json({
-      exchange: 'hyperliquid',
-      count: markets.length,
-      data: markets,
-      timestamp: new Date().toISOString(),
-    }, {
-      headers: {
-        ...CORS_HEADERS,
-        'Cache-Control': 'public, s-maxage=15, stale-while-revalidate=30',
+    return NextResponse.json(
+      {
+        exchange: 'hyperliquid',
+        count: markets.length,
+        data: markets,
+        timestamp: new Date().toISOString(),
       },
-    });
-  } catch (error) {
+      {
+        headers: {
+          ...CORS_HEADERS,
+          'Cache-Control': 'public, s-maxage=15, stale-while-revalidate=30',
+        },
+      },
+    );
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch Hyperliquid data' },
       { status: 500, headers: CORS_HEADERS },

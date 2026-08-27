@@ -21,6 +21,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
 import { getValidNewsletterIds } from '@/lib/newsletters';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 export const runtime = 'edge';
 
 interface SubscriptionRequest {
@@ -165,17 +166,23 @@ export async function POST(request: NextRequest) {
     // Try Buttondown
     if (buttondownApiKey) {
       try {
-        const response = await fetch('https://api.buttondown.email/v1/subscribers', {
-          method: 'POST',
-          headers: {
-            Authorization: `Token ${buttondownApiKey}`,
-            'Content-Type': 'application/json',
+        const response = await resilientFetchResponse(
+          'https://api.buttondown.email/v1/subscribers',
+          {
+            service: 'buttondown',
+            timeoutMs: 8000,
+            retries: 1,
+            method: 'POST',
+            headers: {
+              Authorization: `Token ${buttondownApiKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: normalizedEmail,
+              tags: ['crypto-news', 'website-signup', ...selectedNewsletters],
+            }),
           },
-          body: JSON.stringify({
-            email: normalizedEmail,
-            tags: ['crypto-news', 'website-signup', ...selectedNewsletters],
-          }),
-        });
+        );
 
         if (response.ok || response.status === 409) {
           // 409 means already subscribed, which is also a success
@@ -196,9 +203,12 @@ export async function POST(request: NextRequest) {
     // Try ConvertKit
     if (convertKitApiKey && convertKitFormId) {
       try {
-        const response = await fetch(
+        const response = await resilientFetchResponse(
           `https://api.convertkit.com/v3/forms/${convertKitFormId}/subscribe`,
           {
+            service: 'convertkit',
+            timeoutMs: 8000,
+            retries: 1,
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -227,9 +237,12 @@ export async function POST(request: NextRequest) {
     if (mailchimpApiKey && mailchimpListId) {
       try {
         const dc = mailchimpApiKey.split('-')[1]; // Extract data center
-        const response = await fetch(
+        const response = await resilientFetchResponse(
           `https://${dc}.api.mailchimp.com/3.0/lists/${mailchimpListId}/members`,
           {
+            service: 'external',
+            timeoutMs: 8000,
+            retries: 1,
             method: 'POST',
             headers: {
               Authorization: `Bearer ${mailchimpApiKey}`,
@@ -258,7 +271,10 @@ export async function POST(request: NextRequest) {
           }
         }
       } catch (error) {
-        logger.error({ err: error instanceof Error ? error : undefined }, 'Mailchimp subscription error');
+        logger.error(
+          { err: error instanceof Error ? error : undefined },
+          'Mailchimp subscription error',
+        );
       }
     }
 
@@ -275,7 +291,10 @@ export async function POST(request: NextRequest) {
       newsletters: selectedNewsletters,
     } as SubscriptionResponse);
   } catch (error) {
-    logger.error({ err: error instanceof Error ? error : undefined }, 'Newsletter subscription error');
+    logger.error(
+      { err: error instanceof Error ? error : undefined },
+      'Newsletter subscription error',
+    );
     return NextResponse.json(
       {
         success: false,

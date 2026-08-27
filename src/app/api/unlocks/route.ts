@@ -9,6 +9,7 @@
  */
 
 import { type NextRequest, NextResponse } from 'next/server';
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 import {
   getUpcomingUnlocks,
   getTokenUnlockSchedule,
@@ -62,7 +63,12 @@ export async function GET(request: NextRequest) {
       const cal = await getUnlockCalendar();
       if (cal.length) {
         return NextResponse.json(
-          { count: cal.length, calendar: cal, source: 'tokenunlocks', timestamp: new Date().toISOString() },
+          {
+            count: cal.length,
+            calendar: cal,
+            source: 'tokenunlocks',
+            timestamp: new Date().toISOString(),
+          },
           { headers },
         );
       }
@@ -71,60 +77,69 @@ export async function GET(request: NextRequest) {
     // Try Token Unlocks API first
     const tokenUnlocks = await getUpcomingUnlocks();
     if (tokenUnlocks.length) {
-      return NextResponse.json({
-        count: Math.min(tokenUnlocks.length, limit),
-        unlocks: tokenUnlocks.slice(0, limit),
-        timestamp: new Date().toISOString(),
-        source: 'tokenunlocks',
-      }, { headers });
+      return NextResponse.json(
+        {
+          count: Math.min(tokenUnlocks.length, limit),
+          unlocks: tokenUnlocks.slice(0, limit),
+          timestamp: new Date().toISOString(),
+          source: 'tokenunlocks',
+        },
+        { headers },
+      );
     }
 
     // Fallback: DefiLlama unlocks data
-    
-    const response = await fetch('https://api.llama.fi/unlocks', {
+
+    const response = await resilientFetchResponse('https://api.llama.fi/unlocks', {
+      service: 'defillama',
+      timeoutMs: 8000,
+      retries: 1,
       next: { revalidate: 3600 },
     });
 
     if (response.ok) {
       const data = await response.json();
-      
+
       // Filter for upcoming unlocks and sort by date
       const now = Date.now();
       const upcoming = (data.protocols || data || [])
         .filter((p: { events?: Array<{ timestamp: number }> }) => {
           // Find next unlock event
-          const nextEvent = p.events?.find(e => e.timestamp * 1000 > now);
+          const nextEvent = p.events?.find((e) => e.timestamp * 1000 > now);
           return nextEvent;
         })
-        .map((p: {
-          name: string;
-          symbol: string;
-          events?: Array<{
-            timestamp: number;
-            unlockAmount: number;
-            unlockValue: number;
-            unlockPercent: number;
-          }>;
-          totalLocked: number;
-          mcap: number;
-        }) => {
-          const nextEvent = p.events?.find(e => e.timestamp * 1000 > now);
-          return {
-            name: p.name,
-            symbol: p.symbol,
-            nextUnlock: {
-              date: nextEvent ? new Date(nextEvent.timestamp * 1000).toISOString() : null,
-              amount: nextEvent?.unlockAmount,
-              valueUsd: nextEvent?.unlockValue,
-              percentOfCirculating: nextEvent?.unlockPercent,
-            },
-            totalLocked: p.totalLocked,
-            marketCap: p.mcap,
-          };
-        })
+        .map(
+          (p: {
+            name: string;
+            symbol: string;
+            events?: Array<{
+              timestamp: number;
+              unlockAmount: number;
+              unlockValue: number;
+              unlockPercent: number;
+            }>;
+            totalLocked: number;
+            mcap: number;
+          }) => {
+            const nextEvent = p.events?.find((e) => e.timestamp * 1000 > now);
+            return {
+              name: p.name,
+              symbol: p.symbol,
+              nextUnlock: {
+                date: nextEvent ? new Date(nextEvent.timestamp * 1000).toISOString() : null,
+                amount: nextEvent?.unlockAmount,
+                valueUsd: nextEvent?.unlockValue,
+                percentOfCirculating: nextEvent?.unlockPercent,
+              },
+              totalLocked: p.totalLocked,
+              marketCap: p.mcap,
+            };
+          },
+        )
         .filter((p: { nextUnlock: { date: string | null } }) => p.nextUnlock.date)
-        .sort((a: { nextUnlock: { date: string } }, b: { nextUnlock: { date: string } }) => 
-          new Date(a.nextUnlock.date).getTime() - new Date(b.nextUnlock.date).getTime()
+        .sort(
+          (a: { nextUnlock: { date: string } }, b: { nextUnlock: { date: string } }) =>
+            new Date(a.nextUnlock.date).getTime() - new Date(b.nextUnlock.date).getTime(),
         )
         .slice(0, limit);
 
@@ -193,9 +208,6 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Unlocks API error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch token unlocks' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch token unlocks' }, { status: 500 });
   }
 }

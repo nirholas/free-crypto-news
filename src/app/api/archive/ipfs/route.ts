@@ -21,6 +21,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createHash } from 'crypto';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 interface ArchivedItem {
   id: string;
   cid: string; // IPFS CID or Arweave TX
@@ -60,14 +61,12 @@ async function uploadToIPFS(
   const nftStorageKey = process.env.NFT_STORAGE_API_KEY;
   if (nftStorageKey) {
     try {
-      const res = await fetch('https://api.nft.storage/upload', {
-        method: 'POST',
+      const res = await resilientFetchResponse('https://api.nft.storage/upload', { service: 'nft-storage', timeoutMs: 8000, retries: 1, method: 'POST',
         headers: {
           Authorization: `Bearer ${nftStorageKey}`,
           'Content-Type': 'text/plain',
         },
-        body: content,
-      });
+        body: content });
       if (res.ok) {
         const data = await res.json();
         return data.value?.cid ?? null;
@@ -81,11 +80,9 @@ async function uploadToIPFS(
     try {
       const form = new FormData();
       form.append('file', new Blob([content], { type: 'text/plain' }), filename);
-      const res = await fetch('https://api.pinata.cloud/pinning/pinFileToIPFS', {
-        method: 'POST',
+      const res = await resilientFetchResponse('https://api.pinata.cloud/pinning/pinFileToIPFS', { service: 'pinata', timeoutMs: 8000, retries: 1, method: 'POST',
         headers: { Authorization: `Bearer ${pinataJwt}` },
-        body: form,
-      });
+        body: form });
       if (res.ok) {
         const data = await res.json();
         return data.IpfsHash ?? null;
@@ -101,11 +98,9 @@ async function uploadToIPFS(
  */
 async function getEthBlockHeight(): Promise<number | null> {
   try {
-    const res = await fetch('https://cloudflare-eth.com', {
-      method: 'POST',
+    const res = await resilientFetchResponse('https://cloudflare-eth.com', { service: 'cloudflare-eth', timeoutMs: 8000, retries: 1, method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ jsonrpc: '2.0', method: 'eth_blockNumber', params: [], id: 1 }),
-    });
+      body: JSON.stringify({ jsonrpc: '2.0', method: 'eth_blockNumber', params: [], id: 1 }) });
     if (!res.ok) return null;
     const data = await res.json();
     return data.result ? parseInt(data.result, 16) : null;
@@ -119,10 +114,7 @@ async function getEthBlockHeight(): Promise<number | null> {
  */
 async function getArchiveStats(): Promise<{ totalArticles: number; lastUpdated: string | null }> {
   try {
-    const res = await fetch(
-      'https://raw.githubusercontent.com/nirholas/free-crypto-news/main/archive/meta/stats.json',
-      { next: { revalidate: 3600 } }
-    );
+    const res = await resilientFetchResponse('https://raw.githubusercontent.com/nirholas/free-crypto-news/main/archive/meta/stats.json', { service: 'github-raw', timeoutMs: 8000, retries: 1, next: { revalidate: 3600 } });
     if (res.ok) {
       const data = await res.json();
       return {
@@ -315,9 +307,7 @@ export async function POST(request: NextRequest) {
       let articleCount = 0;
       try {
         const [year, month] = date.split('-');
-        const archiveRes = await fetch(
-          `https://raw.githubusercontent.com/nirholas/free-crypto-news/main/archive/articles/${year}-${month}.jsonl`
-        );
+        const archiveRes = await resilientFetchResponse(`https://raw.githubusercontent.com/nirholas/free-crypto-news/main/archive/articles/${year}-${month}.jsonl`, { service: 'github-raw', timeoutMs: 8000, retries: 1 });
         if (archiveRes.ok) {
           const text = await archiveRes.text();
           articleCount = text.split('\n').filter(l => l.trim()).length;
@@ -370,11 +360,9 @@ export async function POST(request: NextRequest) {
       const pinataJwt = process.env.PINATA_JWT;
       if (pinataJwt) {
         try {
-          const res = await fetch('https://api.pinata.cloud/pinning/pinByHash', {
-            method: 'POST',
+          const res = await resilientFetchResponse('https://api.pinata.cloud/pinning/pinByHash', { service: 'pinata', timeoutMs: 8000, retries: 1, method: 'POST',
             headers: { Authorization: `Bearer ${pinataJwt}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ hashToPin: cid }),
-          });
+            body: JSON.stringify({ hashToPin: cid }) });
           if (res.ok) {
             return NextResponse.json({ success: true, pinned: true, cid, service: 'pinata', message: `CID ${cid} pinned to Pinata` });
           }

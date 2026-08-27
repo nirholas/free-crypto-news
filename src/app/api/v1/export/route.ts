@@ -24,6 +24,7 @@ import { ApiError } from '@/lib/api-error';
 import { createRequestLogger } from '@/lib/logger';
 import { COINGECKO_BASE } from '@/lib/constants';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 const ENDPOINT = '/api/v1/export';
 
 export async function GET(request: NextRequest) {
@@ -63,7 +64,7 @@ export async function GET(request: NextRequest) {
             'User-Agent': 'CryptoDataAggregator/1.0',
           },
           next: { revalidate: 300 },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -72,7 +73,10 @@ export async function GET(request: NextRequest) {
 
       data = await response.json();
     } else if (type === 'defi') {
-      const response = await fetch('https://api.llama.fi/protocols', {
+      const response = await resilientFetchResponse('https://api.llama.fi/protocols', {
+        service: 'defillama',
+        timeoutMs: 8000,
+        retries: 1,
         headers: {
           Accept: 'application/json',
           'User-Agent': 'CryptoDataAggregator/1.0',
@@ -136,7 +140,7 @@ export async function GET(request: NextRequest) {
         headers: {
           'X-Export-Count': data.length.toString(),
         },
-      }
+      },
     );
   } catch (error) {
     logger.error('Failed to export data', error, { format, type });
@@ -179,7 +183,7 @@ function convertToCSV(data: Record<string, unknown>[]): string {
 
         return str;
       })
-      .join(',')
+      .join(','),
   );
 
   return [headerRow, ...rows].join('\n');

@@ -15,6 +15,7 @@
 
 import { type NextRequest, NextResponse } from 'next/server';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 interface Holding {
   coinId: string;
   symbol: string;
@@ -75,16 +76,10 @@ export async function POST(request: NextRequest) {
     const { holdings, timeframe = '30d' } = body;
 
     if (!holdings || !Array.isArray(holdings) || holdings.length === 0) {
-      return NextResponse.json(
-        { error: 'Holdings array required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Holdings array required' }, { status: 400 });
     }
 
-    const performance = await calculatePerformance(
-      holdings as Holding[],
-      timeframe
-    );
+    const performance = await calculatePerformance(holdings as Holding[], timeframe);
 
     return NextResponse.json(performance);
   } catch (error) {
@@ -93,14 +88,14 @@ export async function POST(request: NextRequest) {
         error: 'Failed to calculate performance',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 async function calculatePerformance(
   holdings: Holding[],
-  timeframe: string
+  timeframe: string,
 ): Promise<PerformanceData> {
   // Calculate date range
   const endDate = new Date();
@@ -142,9 +137,7 @@ async function calculatePerformance(
   const points: PerformancePoint[] = [];
   let prevValue = 0;
 
-  const days = Math.ceil(
-    (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
-  );
+  const days = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
   const interval = days > 90 ? 7 : days > 30 ? 3 : 1;
 
   for (let i = 0; i <= days; i += interval) {
@@ -178,28 +171,20 @@ async function calculatePerformance(
   const highValue = Math.max(...values);
   const lowValue = Math.min(...values);
   const totalChange = endValue - startValue;
-  const totalChangePercent =
-    startValue > 0 ? (totalChange / startValue) * 100 : 0;
+  const totalChangePercent = startValue > 0 ? (totalChange / startValue) * 100 : 0;
 
   // Calculate volatility (standard deviation of daily returns)
   const returns = points
     .slice(1)
-    .map((p, i) =>
-      points[i].value > 0
-        ? (p.value - points[i].value) / points[i].value
-        : 0
-    );
+    .map((p, i) => (points[i].value > 0 ? (p.value - points[i].value) / points[i].value : 0));
   const avgReturn = returns.reduce((a, b) => a + b, 0) / returns.length;
-  const variance =
-    returns.reduce((sum, r) => sum + Math.pow(r - avgReturn, 2), 0) /
-    returns.length;
+  const variance = returns.reduce((sum, r) => sum + Math.pow(r - avgReturn, 2), 0) / returns.length;
   const volatility = Math.sqrt(variance) * Math.sqrt(365) * 100;
 
   // Simple Sharpe ratio (assuming risk-free rate of 4%)
   const riskFreeRate = 0.04;
   const annualizedReturn = totalChangePercent * (365 / days);
-  const sharpeRatio =
-    volatility > 0 ? (annualizedReturn - riskFreeRate) / volatility : 0;
+  const sharpeRatio = volatility > 0 ? (annualizedReturn - riskFreeRate) / volatility : 0;
 
   // Calculate current allocation
   const currentPrices = await fetchCurrentPrices(coinIds);
@@ -226,8 +211,7 @@ async function calculatePerformance(
 
   // Calculate percentages
   allocation.forEach((a) => {
-    a.percentage =
-      totalPortfolioValue > 0 ? (a.value / totalPortfolioValue) * 100 : 0;
+    a.percentage = totalPortfolioValue > 0 ? (a.value / totalPortfolioValue) * 100 : 0;
     a.value = Math.round(a.value * 100) / 100;
     a.percentage = Math.round(a.percentage * 10) / 10;
   });
@@ -274,28 +258,29 @@ async function calculatePerformance(
 async function fetchPriceHistory(
   coinIds: string[],
   startDate: Date,
-  endDate: Date
+  endDate: Date,
 ): Promise<Record<string, Record<string, number>>> {
   const history: Record<string, Record<string, number>> = {};
 
   // Calculate days for CoinGecko API (determines data granularity)
-  const days = Math.ceil(
-    (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
-  );
+  const days = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
 
   // Fetch historical data for each coin from CoinGecko
   const fetchPromises = coinIds.map(async (coinId) => {
     try {
       // CoinGecko market_chart API - returns prices for the specified range
       // For 1-90 days: hourly data, 90+ days: daily data
-      const response = await fetch(
+      const response = await resilientFetchResponse(
         `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=${days}&interval=daily`,
-        { 
+        {
+          service: 'coingecko',
+          timeoutMs: 8000,
+          retries: 1,
           next: { revalidate: 300 }, // Cache for 5 minutes
           headers: {
-            'Accept': 'application/json',
-          }
-        }
+            Accept: 'application/json',
+          },
+        },
       );
 
       if (!response.ok) {
@@ -316,7 +301,7 @@ async function fetchPriceHistory(
 
   for (const { coinId, data } of results) {
     history[coinId] = {};
-    
+
     if (data?.prices && Array.isArray(data.prices)) {
       // CoinGecko returns [timestamp, price] pairs
       for (const [timestamp, price] of data.prices) {
@@ -329,15 +314,15 @@ async function fetchPriceHistory(
       // This is a fallback for rate limiting, not mock data
       console.warn(`Using fallback price data for ${coinId}`);
       try {
-        const priceResponse = await fetch(
+        const priceResponse = await resilientFetchResponse(
           `https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd`,
-          { next: { revalidate: 60 } }
+          { service: 'coingecko', timeoutMs: 8000, retries: 1, next: { revalidate: 60 } },
         );
-        
+
         if (priceResponse.ok) {
           const priceData = await priceResponse.json();
           const currentPrice = priceData[coinId]?.usd || 0;
-          
+
           // Fill history with current price (no false returns shown)
           for (let i = 0; i <= days; i++) {
             const date = new Date(startDate);
@@ -358,7 +343,7 @@ async function fetchPriceHistory(
 function getPriceForDate(
   priceHistory: Record<string, Record<string, number>>,
   coinId: string,
-  date: string
+  date: string,
 ): number {
   const coinHistory = priceHistory[coinId];
   if (!coinHistory) return 0;
@@ -376,13 +361,11 @@ function getPriceForDate(
   return Object.values(coinHistory)[0] || 0;
 }
 
-async function fetchCurrentPrices(
-  coinIds: string[]
-): Promise<Record<string, number>> {
+async function fetchCurrentPrices(coinIds: string[]): Promise<Record<string, number>> {
   try {
-    const response = await fetch(
+    const response = await resilientFetchResponse(
       `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds.join(',')}&vs_currencies=usd`,
-      { next: { revalidate: 60 } }
+      { service: 'coingecko', timeoutMs: 8000, retries: 1, next: { revalidate: 60 } },
     );
 
     if (!response.ok) {
@@ -405,7 +388,7 @@ async function fetchCurrentPrices(
         acc[id] = 0;
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
   }
 }

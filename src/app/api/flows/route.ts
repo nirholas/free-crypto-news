@@ -26,6 +26,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { callGroq, isGroqConfigured } from '@/lib/groq';
 import { COINGECKO_BASE, BLOCKCHAIN_INFO_BASE } from '@/lib/constants';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 export const runtime = 'edge';
 export const revalidate = 300; // 5-minute cache
 
@@ -34,15 +35,22 @@ export const revalidate = 300; // 5-minute cache
 // ──────────────────────────────────────────────────────────────────────────────
 
 const COINGECKO_IDS: Record<string, string> = {
-  bitcoin: 'bitcoin', btc: 'bitcoin',
-  ethereum: 'ethereum', eth: 'ethereum',
-  solana: 'solana', sol: 'solana',
+  bitcoin: 'bitcoin',
+  btc: 'bitcoin',
+  ethereum: 'ethereum',
+  eth: 'ethereum',
+  solana: 'solana',
+  sol: 'solana',
   bnb: 'binancecoin',
   xrp: 'ripple',
-  cardano: 'cardano', ada: 'cardano',
-  avalanche: 'avalanche-2', avax: 'avalanche-2',
-  dogecoin: 'dogecoin', doge: 'dogecoin',
-  polkadot: 'polkadot', dot: 'polkadot',
+  cardano: 'cardano',
+  ada: 'cardano',
+  avalanche: 'avalanche-2',
+  avax: 'avalanche-2',
+  dogecoin: 'dogecoin',
+  doge: 'dogecoin',
+  polkadot: 'polkadot',
+  dot: 'polkadot',
 };
 
 function getCoinGeckoId(coin: string): string {
@@ -67,7 +75,7 @@ async function fetchCoinGeckoMarket(coinId: string): Promise<MarketData | null> 
   try {
     const res = await fetch(
       `${COINGECKO_BASE}/coins/${coinId}?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false`,
-      { next: { revalidate: 300 } }
+      { next: { revalidate: 300 } },
     );
     if (!res.ok) return null;
     const data = await res.json();
@@ -81,7 +89,9 @@ async function fetchCoinGeckoMarket(coinId: string): Promise<MarketData | null> 
       symbol: data.symbol?.toUpperCase() ?? coinId.toUpperCase(),
       name: data.name ?? coinId,
     };
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
 interface BtcExchangeFlow {
@@ -95,7 +105,7 @@ async function fetchBtcExchangeFlow(btcPrice: number): Promise<BtcExchangeFlow |
   try {
     const res = await fetch(
       `${BLOCKCHAIN_INFO_BASE}/charts/exchange-balance?timespan=2days&format=json&cors=true`,
-      { next: { revalidate: 300 } }
+      { next: { revalidate: 300 } },
     );
     if (!res.ok) return null;
     const data: { values: Array<{ x: number; y: number }> } = await res.json();
@@ -104,22 +114,34 @@ async function fetchBtcExchangeFlow(btcPrice: number): Promise<BtcExchangeFlow |
     const current = values[values.length - 1].y;
     const previous = values[Math.max(0, values.length - 2)].y;
     const netChange = current - previous;
-    return { currentBalance: current, previousBalance: previous, netChange, netChangeUsd: netChange * btcPrice };
-  } catch { return null; }
+    return {
+      currentBalance: current,
+      previousBalance: previous,
+      netChange,
+      netChangeUsd: netChange * btcPrice,
+    };
+  } catch {
+    return null;
+  }
 }
 
-interface DexVolume { total24h: number; change24h: number | null; }
+interface DexVolume {
+  total24h: number;
+  change24h: number | null;
+}
 
 async function fetchDexVolume(): Promise<DexVolume | null> {
   try {
-    const res = await fetch(
+    const res = await resilientFetchResponse(
       'https://api.llama.fi/overview/dexes?excludeTotalDataChartBreakdown=true&excludeTotalDataChart=false',
-      { next: { revalidate: 300 } }
+      { service: 'defillama', timeoutMs: 8000, retries: 1, next: { revalidate: 300 } },
     );
     if (!res.ok) return null;
     const data = await res.json();
     return { total24h: data.total24h ?? 0, change24h: data.change_1d ?? null };
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -130,26 +152,27 @@ async function generateInterpretation(
   coin: string,
   market: MarketData | null,
   btcFlow: BtcExchangeFlow | null,
-  dex: DexVolume | null
+  dex: DexVolume | null,
 ): Promise<string> {
   const dataPoints: string[] = [];
 
   if (market) {
     dataPoints.push(
       `${market.name} (${market.symbol}): $${market.price.toLocaleString()}, ${market.priceChangePercent24h > 0 ? '+' : ''}${market.priceChangePercent24h.toFixed(2)}% in 24h`,
-      `24h trading volume: $${(market.volume24h / 1e9).toFixed(2)}B`
+      `24h trading volume: $${(market.volume24h / 1e9).toFixed(2)}B`,
     );
   }
   if (btcFlow && coin === 'bitcoin') {
-    const direction = btcFlow.netChange < 0 ? 'outflow (accumulation)' : 'inflow (selling pressure)';
+    const direction =
+      btcFlow.netChange < 0 ? 'outflow (accumulation)' : 'inflow (selling pressure)';
     dataPoints.push(
       `BTC on exchanges: ${btcFlow.currentBalance.toFixed(0)} BTC total`,
-      `24h net flow: ${btcFlow.netChange > 0 ? '+' : ''}${btcFlow.netChange.toFixed(0)} BTC (${direction}) = $${Math.abs(btcFlow.netChangeUsd / 1e6).toFixed(1)}M`
+      `24h net flow: ${btcFlow.netChange > 0 ? '+' : ''}${btcFlow.netChange.toFixed(0)} BTC (${direction}) = $${Math.abs(btcFlow.netChangeUsd / 1e6).toFixed(1)}M`,
     );
   }
   if (dex) {
     dataPoints.push(
-      `DEX volume (24h): $${(dex.total24h / 1e9).toFixed(2)}B${dex.change24h !== null ? ` (${dex.change24h > 0 ? '+' : ''}${dex.change24h.toFixed(1)}% vs yesterday)` : ''}`
+      `DEX volume (24h): $${(dex.total24h / 1e9).toFixed(2)}B${dex.change24h !== null ? ` (${dex.change24h > 0 ? '+' : ''}${dex.change24h.toFixed(1)}% vs yesterday)` : ''}`,
     );
   }
 
@@ -168,13 +191,17 @@ async function generateInterpretation(
   try {
     const response = await callGroq(
       [
-        { role: 'system', content: 'You are a concise on-chain analyst. Give a clear 2-3 sentence read of the data.' },
+        {
+          role: 'system',
+          content:
+            'You are a concise on-chain analyst. Give a clear 2-3 sentence read of the data.',
+        },
         {
           role: 'user',
           content: `On-chain and market data for ${coin}:\n${dataPoints.join('\n')}\n\nWrite 2-3 sentences interpreting what these flows signal for ${coin} over the next 24-48 hours. Be specific and direct — no "may" or "might".`,
         },
       ],
-      { maxTokens: 200, temperature: 0.3 }
+      { maxTokens: 200, temperature: 0.3 },
     );
     return response.content.trim();
   } catch {
@@ -194,13 +221,24 @@ export async function GET(request: NextRequest) {
     // CryptoQuant takes priority if API key is set
     const cryptoquantKey = process.env.CRYPTOQUANT_API_KEY;
     if (cryptoquantKey) {
-      const res = await fetch(
+      const res = await resilientFetchResponse(
         `https://api.cryptoquant.com/v1/btc/exchange-flows/netflow?window=day`,
-        { headers: { Authorization: `Bearer ${cryptoquantKey}` }, next: { revalidate: 300 } }
+        {
+          service: 'cryptoquant',
+          timeoutMs: 8000,
+          retries: 1,
+          headers: { Authorization: `Bearer ${cryptoquantKey}` },
+          next: { revalidate: 300 },
+        },
       );
       if (res.ok) {
         const data = await res.json();
-        return NextResponse.json({ coin, flows: data.result, source: 'cryptoquant', timestamp: new Date().toISOString() });
+        return NextResponse.json({
+          coin,
+          flows: data.result,
+          source: 'cryptoquant',
+          timestamp: new Date().toISOString(),
+        });
       }
     }
 
@@ -222,10 +260,16 @@ export async function GET(request: NextRequest) {
     const interpretation = await generateInterpretation(coin, market, btcFlow, dex);
 
     const signal = btcFlow
-      ? btcFlow.netChange < 0 ? 'accumulation' : 'distribution'
+      ? btcFlow.netChange < 0
+        ? 'accumulation'
+        : 'distribution'
       : market
-      ? market.priceChangePercent24h > 1 ? 'bullish' : market.priceChangePercent24h < -1 ? 'bearish' : 'neutral'
-      : 'unknown';
+        ? market.priceChangePercent24h > 1
+          ? 'bullish'
+          : market.priceChangePercent24h < -1
+            ? 'bearish'
+            : 'neutral'
+        : 'unknown';
 
     return NextResponse.json({
       coin: market?.name?.toLowerCase() ?? coin,
@@ -264,4 +308,3 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to fetch exchange flows' }, { status: 500 });
   }
 }
-

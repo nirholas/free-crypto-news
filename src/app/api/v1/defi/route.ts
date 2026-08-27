@@ -22,6 +22,7 @@ import { hybridAuthMiddleware } from '@/lib/x402';
 import { ApiError } from '@/lib/api-error';
 import { createRequestLogger } from '@/lib/logger';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 const ENDPOINT = '/api/v1/defi';
 
 export async function GET(request: NextRequest) {
@@ -40,7 +41,10 @@ export async function GET(request: NextRequest) {
   try {
     logger.info('Fetching DeFi protocols', { limit, chain, category });
 
-    const response = await fetch('https://api.llama.fi/protocols', {
+    const response = await resilientFetchResponse('https://api.llama.fi/protocols', {
+      service: 'defillama',
+      timeoutMs: 8000,
+      retries: 1,
       headers: {
         Accept: 'application/json',
         'User-Agent': 'CryptoDataAggregator/1.0',
@@ -59,14 +63,14 @@ export async function GET(request: NextRequest) {
       protocols = protocols.filter(
         (p: { chain: string; chains?: string[] }) =>
           p.chain?.toLowerCase() === chain.toLowerCase() ||
-          p.chains?.some((c: string) => c.toLowerCase() === chain.toLowerCase())
+          p.chains?.some((c: string) => c.toLowerCase() === chain.toLowerCase()),
       );
     }
 
     // Filter by category if specified
     if (category) {
       protocols = protocols.filter(
-        (p: { category: string }) => p.category?.toLowerCase() === category.toLowerCase()
+        (p: { category: string }) => p.category?.toLowerCase() === category.toLowerCase(),
       );
     }
 
@@ -93,7 +97,7 @@ export async function GET(request: NextRequest) {
           logo: string;
           slug: string;
         },
-        index: number
+        index: number,
       ) => ({
         rank: index + 1,
         name: p.name,
@@ -111,7 +115,7 @@ export async function GET(request: NextRequest) {
         url: p.url,
         logo: p.logo,
         slug: p.slug,
-      })
+      }),
     );
 
     // Calculate totals
@@ -143,7 +147,7 @@ export async function GET(request: NextRequest) {
           'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
           'X-Data-Source': 'DefiLlama',
         },
-      }
+      },
     );
   } catch (error) {
     logger.error('Failed to fetch DeFi data', error);

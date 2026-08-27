@@ -26,6 +26,7 @@ import { createRequestLogger } from '@/lib/logger';
 import { registry } from '@/lib/providers/registry';
 import type { FearGreedIndex } from '@/lib/providers/adapters/fear-greed';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 export const runtime = 'nodejs';
 export const revalidate = 300;
 
@@ -51,13 +52,15 @@ function calculateTrend(historical: FearGreedData[]) {
   const data7d = historical.slice(0, 7);
   const data30d = historical.slice(0, 30);
 
-  const avg7d = data7d.length > 0
-    ? data7d.reduce((sum, d: FearGreedData) => sum + d.value, 0) / data7d.length
-    : current;
+  const avg7d =
+    data7d.length > 0
+      ? data7d.reduce((sum, d: FearGreedData) => sum + d.value, 0) / data7d.length
+      : current;
 
-  const avg30d = data30d.length > 0
-    ? data30d.reduce((sum, d: FearGreedData) => sum + d.value, 0) / data30d.length
-    : current;
+  const avg30d =
+    data30d.length > 0
+      ? data30d.reduce((sum, d: FearGreedData) => sum + d.value, 0) / data30d.length
+      : current;
 
   const value7dAgo = historical[6]?.value || current;
   const value30dAgo = historical[29]?.value || current;
@@ -112,13 +115,28 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       // Build partial historical from adapter data (previousClose, weekAgo, monthAgo)
       const historical: FearGreedData[] = [current];
       if (fg.previousClose !== null) {
-        historical.push({ value: fg.previousClose, valueClassification: getClassification(fg.previousClose), timestamp: Date.now() - 86_400_000, timeUntilUpdate: '' });
+        historical.push({
+          value: fg.previousClose,
+          valueClassification: getClassification(fg.previousClose),
+          timestamp: Date.now() - 86_400_000,
+          timeUntilUpdate: '',
+        });
       }
       if (fg.weekAgo !== null) {
-        historical.push({ value: fg.weekAgo, valueClassification: getClassification(fg.weekAgo), timestamp: Date.now() - 7 * 86_400_000, timeUntilUpdate: '' });
+        historical.push({
+          value: fg.weekAgo,
+          valueClassification: getClassification(fg.weekAgo),
+          timestamp: Date.now() - 7 * 86_400_000,
+          timeUntilUpdate: '',
+        });
       }
       if (fg.monthAgo !== null) {
-        historical.push({ value: fg.monthAgo, valueClassification: getClassification(fg.monthAgo), timestamp: Date.now() - 30 * 86_400_000, timeUntilUpdate: '' });
+        historical.push({
+          value: fg.monthAgo,
+          valueClassification: getClassification(fg.monthAgo),
+          timestamp: Date.now() - 30 * 86_400_000,
+          timeUntilUpdate: '',
+        });
       }
 
       const trend = calculateTrend(historical);
@@ -148,14 +166,26 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             'X-Confidence': String(result.lineage.confidence),
             'X-Cache': result.cached ? 'HIT' : 'MISS',
           },
-        }
+        },
       );
-    } catch { /* provider chain miss — fall through to direct fetch */ }
+    } catch {
+      /* provider chain miss — fall through to direct fetch */
+    }
 
     // Layer 2: Direct Alternative.me fallback (full historical data)
     const [currentResponse, historicalResponse] = await Promise.all([
-      fetch('https://api.alternative.me/fng/', { next: { revalidate: 300 } }),
-      fetch(`https://api.alternative.me/fng/?limit=${days}`, { next: { revalidate: 3600 } }),
+      resilientFetchResponse('https://api.alternative.me/fng/', {
+        service: 'alternative-me',
+        timeoutMs: 8000,
+        retries: 1,
+        next: { revalidate: 300 },
+      }),
+      resilientFetchResponse(`https://api.alternative.me/fng/?limit=${days}`, {
+        service: 'alternative-me',
+        timeoutMs: 8000,
+        retries: 1,
+        next: { revalidate: 3600 },
+      }),
     ]);
 
     if (!currentResponse.ok || !historicalResponse.ok) {
@@ -182,7 +212,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         valueClassification: getClassification(parseInt(item.value)),
         timestamp: parseInt(item.timestamp) * 1000,
         timeUntilUpdate: item.time_until_update || '',
-      })
+      }),
     );
 
     const trend = calculateTrend(historical);
@@ -210,7 +240,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           'X-Data-Source': 'Alternative.me',
           'X-Cache': 'DIRECT',
         },
-      }
+      },
     );
   } catch (error) {
     logger.error('Failed to fetch Fear & Greed index', error);

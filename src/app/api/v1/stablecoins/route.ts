@@ -31,6 +31,7 @@ import { createRequestLogger } from '@/lib/logger';
 import { registry } from '@/lib/providers/registry';
 import type { StablecoinFlow } from '@/lib/providers/adapters/stablecoin-flows';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 export const runtime = 'nodejs';
 export const revalidate = 300;
 
@@ -81,10 +82,16 @@ export async function GET(request: NextRequest) {
         circulatingPrevDay: f.circulatingUsd - f.circulatingChange24h,
         circulatingPrevWeek: f.circulatingUsd - f.circulatingChange7d,
         circulatingPrevMonth: f.circulatingUsd,
-        change1d: f.circulatingChange24h !== 0 ? (f.circulatingChange24h / (f.circulatingUsd - f.circulatingChange24h)) * 100 : 0,
-        change7d: f.circulatingChange7d !== 0 ? (f.circulatingChange7d / (f.circulatingUsd - f.circulatingChange7d)) * 100 : 0,
+        change1d:
+          f.circulatingChange24h !== 0
+            ? (f.circulatingChange24h / (f.circulatingUsd - f.circulatingChange24h)) * 100
+            : 0,
+        change7d:
+          f.circulatingChange7d !== 0
+            ? (f.circulatingChange7d / (f.circulatingUsd - f.circulatingChange7d)) * 100
+            : 0,
         change30d: 0,
-        chains: f.chainDistribution.map(c => c.chain),
+        chains: f.chainDistribution.map((c) => c.chain),
         price: f.price,
         depeg: Math.abs(f.price - 1) > 0.01,
       }));
@@ -101,33 +108,47 @@ export async function GET(request: NextRequest) {
       stablecoins.sort((a, b) => b.circulating - a.circulating);
 
       const totalSupply = stablecoins.reduce((s, c) => s + c.circulating, 0);
-      const totalChange1d = stablecoins.reduce((s, c) => s + (c.circulating - c.circulatingPrevDay), 0);
+      const totalChange1d = stablecoins.reduce(
+        (s, c) => s + (c.circulating - c.circulatingPrevDay),
+        0,
+      );
       const depegged = stablecoins.filter((s) => s.depeg).map((s) => s.symbol);
 
-      return NextResponse.json({
-        count: stablecoins.length,
-        totalSupply: Math.round(totalSupply),
-        netFlow1d: Math.round(totalChange1d),
-        depeggedTokens: depegged,
-        stablecoins: stablecoins.slice(0, 50),
-        source: result.lineage.provider,
-        timestamp: new Date().toISOString(),
-        latencyMs: Date.now() - start,
-      }, {
-        headers: {
-          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
-          'X-Provider': result.lineage.provider,
-          'X-Confidence': String(result.lineage.confidence),
-          'X-Cache': result.cached ? 'HIT' : 'MISS',
+      return NextResponse.json(
+        {
+          count: stablecoins.length,
+          totalSupply: Math.round(totalSupply),
+          netFlow1d: Math.round(totalChange1d),
+          depeggedTokens: depegged,
+          stablecoins: stablecoins.slice(0, 50),
+          source: result.lineage.provider,
+          timestamp: new Date().toISOString(),
+          latencyMs: Date.now() - start,
         },
-      });
-    } catch { /* provider chain miss — fall through to direct fetch */ }
+        {
+          headers: {
+            'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+            'X-Provider': result.lineage.provider,
+            'X-Confidence': String(result.lineage.confidence),
+            'X-Cache': result.cached ? 'HIT' : 'MISS',
+          },
+        },
+      );
+    } catch {
+      /* provider chain miss — fall through to direct fetch */
+    }
 
     // Layer 2: Direct DefiLlama fallback (legacy)
-    const res = await fetch('https://stablecoins.llama.fi/stablecoins?includePrices=true', {
-      headers: { 'User-Agent': 'free-crypto-news/2.0' },
-      next: { revalidate: 300 },
-    });
+    const res = await resilientFetchResponse(
+      'https://stablecoins.llama.fi/stablecoins?includePrices=true',
+      {
+        service: 'defillama',
+        timeoutMs: 8000,
+        retries: 1,
+        headers: { 'User-Agent': 'free-crypto-news/2.0' },
+        next: { revalidate: 300 },
+      },
+    );
 
     if (!res.ok) throw new Error(`DefiLlama stablecoins ${res.status}`);
 
@@ -136,9 +157,15 @@ export async function GET(request: NextRequest) {
 
     let stablecoins: StablecoinData[] = rawData.map((s: Record<string, unknown>) => {
       const circulating = extractCirculating(s.circulating as Record<string, unknown> | undefined);
-      const prevDay = extractCirculating(s.circulatingPrevDay as Record<string, unknown> | undefined);
-      const prevWeek = extractCirculating(s.circulatingPrevWeek as Record<string, unknown> | undefined);
-      const prevMonth = extractCirculating(s.circulatingPrevMonth as Record<string, unknown> | undefined);
+      const prevDay = extractCirculating(
+        s.circulatingPrevDay as Record<string, unknown> | undefined,
+      );
+      const prevWeek = extractCirculating(
+        s.circulatingPrevWeek as Record<string, unknown> | undefined,
+      );
+      const prevMonth = extractCirculating(
+        s.circulatingPrevMonth as Record<string, unknown> | undefined,
+      );
       const price = (s.price as number) ?? 1;
 
       return {
@@ -175,24 +202,30 @@ export async function GET(request: NextRequest) {
 
     // Aggregated stats
     const totalSupply = stablecoins.reduce((s, c) => s + c.circulating, 0);
-    const totalChange1d = stablecoins.reduce((s, c) => s + (c.circulating - c.circulatingPrevDay), 0);
+    const totalChange1d = stablecoins.reduce(
+      (s, c) => s + (c.circulating - c.circulatingPrevDay),
+      0,
+    );
     const depegged = stablecoins.filter((s) => s.depeg).map((s) => s.symbol);
 
-    return NextResponse.json({
-      count: stablecoins.length,
-      totalSupply: Math.round(totalSupply),
-      netFlow1d: Math.round(totalChange1d),
-      depeggedTokens: depegged,
-      stablecoins: stablecoins.slice(0, 50),
-      source: 'defillama',
-      timestamp: new Date().toISOString(),
-      latencyMs: Date.now() - start,
-    }, {
-      headers: {
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
-        'X-Cache': 'DIRECT',
+    return NextResponse.json(
+      {
+        count: stablecoins.length,
+        totalSupply: Math.round(totalSupply),
+        netFlow1d: Math.round(totalChange1d),
+        depeggedTokens: depegged,
+        stablecoins: stablecoins.slice(0, 50),
+        source: 'defillama',
+        timestamp: new Date().toISOString(),
+        latencyMs: Date.now() - start,
       },
-    });
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+          'X-Cache': 'DIRECT',
+        },
+      },
+    );
   } catch (error) {
     logger.error('Stablecoin fetch failed', { error: String(error) });
     return ApiError.upstream('DefiLlama stablecoins');

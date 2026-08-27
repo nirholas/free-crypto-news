@@ -10,13 +10,14 @@
 
 /**
  * Chart Data API Endpoint
- * 
+ *
  * Fetches historical price and OHLC data for coins
  * Supports multiple time ranges: 1h, 24h, 7d, 30d, 90d, 1y, all
  */
 
 import { type NextRequest, NextResponse } from 'next/server';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 export const runtime = 'edge';
 export const revalidate = 60; // Cache for 60 seconds
 
@@ -37,13 +38,13 @@ interface OHLCData {
 
 // Map time range to CoinGecko days parameter
 const TIME_RANGE_TO_DAYS: Record<string, number | 'max'> = {
-  '1h': 1,       // Will filter to last hour
+  '1h': 1, // Will filter to last hour
   '24h': 1,
   '7d': 7,
   '30d': 30,
   '90d': 90,
   '1y': 365,
-  'all': 'max',
+  all: 'max',
 };
 
 // Get CoinGecko interval based on days
@@ -56,7 +57,7 @@ function getInterval(days: number | 'max'): string | undefined {
 // Fetch market chart data from CoinGecko
 async function fetchMarketChart(
   coinId: string,
-  days: number | 'max'
+  days: number | 'max',
 ): Promise<CoinGeckoMarketChart | null> {
   try {
     const params = new URLSearchParams({
@@ -69,14 +70,17 @@ async function fetchMarketChart(
       params.set('interval', interval);
     }
 
-    const response = await fetch(
+    const response = await resilientFetchResponse(
       `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?${params}`,
       {
+        service: 'coingecko',
+        timeoutMs: 8000,
+        retries: 1,
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
         },
         next: { revalidate: 60 },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -92,23 +96,23 @@ async function fetchMarketChart(
 }
 
 // Fetch OHLC data from CoinGecko
-async function fetchOHLC(
-  coinId: string,
-  days: number
-): Promise<number[][] | null> {
+async function fetchOHLC(coinId: string, days: number): Promise<number[][] | null> {
   try {
     // CoinGecko OHLC only supports 1, 7, 14, 30, 90, 180, 365, max
     const validDays = [1, 7, 14, 30, 90, 180, 365];
-    const ohlcDays = validDays.find(d => d >= days) || 'max';
+    const ohlcDays = validDays.find((d) => d >= days) || 'max';
 
-    const response = await fetch(
+    const response = await resilientFetchResponse(
       `https://api.coingecko.com/api/v3/coins/${coinId}/ohlc?vs_currency=usd&days=${ohlcDays}`,
       {
+        service: 'coingecko',
+        timeoutMs: 8000,
+        retries: 1,
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
         },
         next: { revalidate: 60 },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -135,12 +139,9 @@ function transformOHLC(data: number[][]): OHLCData[] {
 }
 
 // Filter data to specific time range
-function filterByTimeRange(
-  data: [number, number][],
-  range: string
-): [number, number][] {
+function filterByTimeRange(data: [number, number][], range: string): [number, number][] {
   if (range !== '1h') return data;
-  
+
   const oneHourAgo = Date.now() - 60 * 60 * 1000;
   return data.filter(([timestamp]) => timestamp >= oneHourAgo);
 }
@@ -152,34 +153,23 @@ export async function GET(request: NextRequest) {
     const range = searchParams.get('range') || '24h';
 
     if (!coinId) {
-      return NextResponse.json(
-        { error: 'Missing coin parameter' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Missing coin parameter' }, { status: 400 });
     }
 
     // Validate time range
     const days = TIME_RANGE_TO_DAYS[range];
     if (days === undefined) {
-      return NextResponse.json(
-        { error: 'Invalid time range' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid time range' }, { status: 400 });
     }
 
     // Fetch both market chart and OHLC data in parallel
     const [marketChart, ohlcRaw] = await Promise.all([
       fetchMarketChart(coinId, days),
-      typeof days === 'number' && days <= 365 
-        ? fetchOHLC(coinId, days) 
-        : null,
+      typeof days === 'number' && days <= 365 ? fetchOHLC(coinId, days) : null,
     ]);
 
     if (!marketChart) {
-      return NextResponse.json(
-        { error: 'Failed to fetch chart data' },
-        { status: 502 }
-      );
+      return NextResponse.json({ error: 'Failed to fetch chart data' }, { status: 502 });
     }
 
     // Filter and transform data
@@ -197,18 +187,17 @@ export async function GET(request: NextRequest) {
     const ohlc = ohlcRaw ? transformOHLC(ohlcRaw) : [];
 
     // Calculate stats
-    const allPrices = prices.map(p => p[1]);
+    const allPrices = prices.map((p) => p[1]);
     const stats = {
       high: allPrices.length > 0 ? Math.max(...allPrices) : 0,
       low: allPrices.length > 0 ? Math.min(...allPrices) : 0,
       open: allPrices[0] ?? 0,
       close: allPrices[allPrices.length - 1] ?? 0,
-      change: allPrices.length > 0 
-        ? allPrices[allPrices.length - 1] - allPrices[0] 
-        : 0,
-      changePercent: allPrices.length > 0 && allPrices[0] !== 0
-        ? ((allPrices[allPrices.length - 1] - allPrices[0]) / allPrices[0]) * 100
-        : 0,
+      change: allPrices.length > 0 ? allPrices[allPrices.length - 1] - allPrices[0] : 0,
+      changePercent:
+        allPrices.length > 0 && allPrices[0] !== 0
+          ? ((allPrices[allPrices.length - 1] - allPrices[0]) / allPrices[0]) * 100
+          : 0,
     };
 
     return NextResponse.json({
@@ -221,9 +210,6 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Chart API error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -29,6 +29,7 @@ import { hybridAuthMiddleware } from '@/lib/x402';
 import { ApiError } from '@/lib/api-error';
 import { createRequestLogger } from '@/lib/logger';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 export const runtime = 'nodejs';
 export const revalidate = 30;
 
@@ -110,13 +111,15 @@ export async function GET(request: NextRequest) {
     await Promise.allSettled(fetchPromises);
 
     // Aggregations
-    const avgFundingRate = fundingRates.length > 0
-      ? fundingRates.reduce((sum, f) => sum + f.fundingRate, 0) / fundingRates.length
-      : 0;
+    const avgFundingRate =
+      fundingRates.length > 0
+        ? fundingRates.reduce((sum, f) => sum + f.fundingRate, 0) / fundingRates.length
+        : 0;
     const totalOiUsd = openInterest.reduce((sum, oi) => sum + oi.openInterestUsd, 0);
-    const avgOiChange = openInterest.length > 0
-      ? openInterest.reduce((s, oi) => s + oi.change24h, 0) / openInterest.length
-      : 0;
+    const avgOiChange =
+      openInterest.length > 0
+        ? openInterest.reduce((s, oi) => s + oi.change24h, 0) / openInterest.length
+        : 0;
 
     const sentiment = deriveSentiment(avgFundingRate);
 
@@ -161,9 +164,15 @@ async function fetchBinanceDerivatives(
 
   try {
     if (dataType === 'all' || dataType === 'funding') {
-      const res = await fetch(
+      const res = await resilientFetchResponse(
         `https://fapi.binance.com/fapi/v1/premiumIndex?symbol=${pair}`,
-        { headers: { 'User-Agent': 'free-crypto-news/2.0' }, next: { revalidate: 30 } },
+        {
+          service: 'binance',
+          timeoutMs: 8000,
+          retries: 1,
+          headers: { 'User-Agent': 'free-crypto-news/2.0' },
+          next: { revalidate: 30 },
+        },
       );
       if (res.ok) {
         const d = await res.json();
@@ -181,17 +190,30 @@ async function fetchBinanceDerivatives(
     }
 
     if (dataType === 'all' || dataType === 'oi') {
-      const res = await fetch(
+      const res = await resilientFetchResponse(
         `https://fapi.binance.com/fapi/v1/openInterest?symbol=${pair}`,
-        { headers: { 'User-Agent': 'free-crypto-news/2.0' }, next: { revalidate: 30 } },
+        {
+          service: 'binance',
+          timeoutMs: 8000,
+          retries: 1,
+          headers: { 'User-Agent': 'free-crypto-news/2.0' },
+          next: { revalidate: 30 },
+        },
       );
       if (res.ok) {
         const d = await res.json();
         const oiAmount = parseFloat(d.openInterest);
         // Get current price for USD conversion
         const [priceRes, oiHistRes] = await Promise.all([
-          fetch(`https://fapi.binance.com/fapi/v1/ticker/price?symbol=${pair}`),
-          fetch(`https://fapi.binance.com/futures/data/openInterestHist?symbol=${pair}&period=5m&limit=288`),
+          resilientFetchResponse(`https://fapi.binance.com/fapi/v1/ticker/price?symbol=${pair}`, {
+            service: 'binance',
+            timeoutMs: 8000,
+            retries: 1,
+          }),
+          resilientFetchResponse(
+            `https://fapi.binance.com/futures/data/openInterestHist?symbol=${pair}&period=5m&limit=288`,
+            { service: 'binance', timeoutMs: 8000, retries: 1 },
+          ),
         ]);
         const priceData = priceRes.ok ? await priceRes.json() : { price: '0' };
         const price = parseFloat(priceData.price);
@@ -230,9 +252,15 @@ async function fetchBybitDerivatives(
   sources: string[],
 ): Promise<void> {
   try {
-    const res = await fetch(
+    const res = await resilientFetchResponse(
       `https://api.bybit.com/v5/market/tickers?category=linear&symbol=${symbol}USDT`,
-      { headers: { 'User-Agent': 'free-crypto-news/2.0' }, next: { revalidate: 30 } },
+      {
+        service: 'bybit',
+        timeoutMs: 8000,
+        retries: 1,
+        headers: { 'User-Agent': 'free-crypto-news/2.0' },
+        next: { revalidate: 30 },
+      },
     );
     if (!res.ok) return;
 
@@ -280,9 +308,15 @@ async function fetchOkxDerivatives(
 
   try {
     if (dataType === 'all' || dataType === 'funding') {
-      const res = await fetch(
+      const res = await resilientFetchResponse(
         `https://www.okx.com/api/v5/public/funding-rate?instId=${instId}`,
-        { headers: { 'User-Agent': 'free-crypto-news/2.0' }, next: { revalidate: 30 } },
+        {
+          service: 'okx',
+          timeoutMs: 8000,
+          retries: 1,
+          headers: { 'User-Agent': 'free-crypto-news/2.0' },
+          next: { revalidate: 30 },
+        },
       );
       if (res.ok) {
         const json = await res.json();
@@ -303,9 +337,15 @@ async function fetchOkxDerivatives(
     }
 
     if (dataType === 'all' || dataType === 'oi') {
-      const res = await fetch(
+      const res = await resilientFetchResponse(
         `https://www.okx.com/api/v5/public/open-interest?instType=SWAP&instId=${instId}`,
-        { headers: { 'User-Agent': 'free-crypto-news/2.0' }, next: { revalidate: 30 } },
+        {
+          service: 'okx',
+          timeoutMs: 8000,
+          retries: 1,
+          headers: { 'User-Agent': 'free-crypto-news/2.0' },
+          next: { revalidate: 30 },
+        },
       );
       if (res.ok) {
         const json = await res.json();

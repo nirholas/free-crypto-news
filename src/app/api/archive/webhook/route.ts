@@ -42,6 +42,7 @@ import { notifyIndexNow } from '@/lib/indexnow';
 import { callGroq, isGroqConfigured } from '@/lib/groq';
 import { logger } from '@/lib/logger';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 export const runtime = 'nodejs';
 export const maxDuration = 60;
 
@@ -292,15 +293,10 @@ async function commitToGitHub(
 
   try {
     // Get current file (if exists)
-    const getResponse = await fetch(
-      `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`,
-      {
-        headers: {
+    const getResponse = await resilientFetchResponse(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, { service: 'github', timeoutMs: 8000, retries: 1, headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/vnd.github.v3+json',
-        },
-      }
-    );
+        } });
 
     let existingContent = '';
     let existingSha: string | undefined;
@@ -343,10 +339,7 @@ async function commitToGitHub(
       : newLines + '\n';
 
     // Commit to GitHub
-    const commitResponse = await fetch(
-      `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`,
-      {
-        method: 'PUT',
+    const commitResponse = await resilientFetchResponse(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, { service: 'github', timeoutMs: 8000, retries: 1, method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/vnd.github.v3+json',
@@ -357,9 +350,7 @@ async function commitToGitHub(
           content: Buffer.from(newContent).toString('base64'),
           sha: existingSha,
           branch: 'main',
-        }),
-      }
-    );
+        }) });
 
     if (!commitResponse.ok) {
       const error = await commitResponse.text();

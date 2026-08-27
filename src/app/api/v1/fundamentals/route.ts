@@ -29,6 +29,7 @@ import { hybridAuthMiddleware } from '@/lib/x402';
 import { ApiError } from '@/lib/api-error';
 import { createRequestLogger } from '@/lib/logger';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 export const runtime = 'nodejs';
 export const revalidate = 300;
 
@@ -71,14 +72,23 @@ export async function GET(request: NextRequest) {
 
     // Fetch protocols and fees from DefiLlama (free, no API key needed)
     const [protocolsRes, feesRes] = await Promise.allSettled([
-      fetch('https://api.llama.fi/protocols', {
+      resilientFetchResponse('https://api.llama.fi/protocols', {
+        service: 'defillama',
+        timeoutMs: 8000,
+        retries: 1,
         headers: { 'User-Agent': 'free-crypto-news/2.0' },
         next: { revalidate: 300 },
       }),
-      fetch('https://api.llama.fi/overview/fees?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true', {
-        headers: { 'User-Agent': 'free-crypto-news/2.0' },
-        next: { revalidate: 300 },
-      }),
+      resilientFetchResponse(
+        'https://api.llama.fi/overview/fees?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true',
+        {
+          service: 'defillama',
+          timeoutMs: 8000,
+          retries: 1,
+          headers: { 'User-Agent': 'free-crypto-news/2.0' },
+          next: { revalidate: 300 },
+        },
+      ),
     ]);
 
     let protocols: Record<string, unknown>[] = [];
@@ -90,14 +100,11 @@ export async function GET(request: NextRequest) {
 
     if (feesRes.status === 'fulfilled' && feesRes.value.ok) {
       const feesData = await feesRes.value.json();
-      for (const p of (feesData.protocols || [])) {
-        feesMap.set(
-          (p.name as string)?.toLowerCase() || '',
-          {
-            fees30d: p.total30d || 0,
-            revenue30d: p.totalRevenue30d || p.total30d * 0.3 || 0, // Estimate if not available
-          },
-        );
+      for (const p of feesData.protocols || []) {
+        feesMap.set((p.name as string)?.toLowerCase() || '', {
+          fees30d: p.total30d || 0,
+          revenue30d: p.totalRevenue30d || p.total30d * 0.3 || 0, // Estimate if not available
+        });
       }
     }
 
@@ -138,8 +145,9 @@ export async function GET(request: NextRequest) {
     // Apply filter
     if (protocolFilter) {
       fundamentals = fundamentals.filter(
-        (f) => f.name.toLowerCase().includes(protocolFilter) ||
-               f.symbol.toLowerCase() === protocolFilter,
+        (f) =>
+          f.name.toLowerCase().includes(protocolFilter) ||
+          f.symbol.toLowerCase() === protocolFilter,
       );
     }
 
@@ -157,20 +165,23 @@ export async function GET(request: NextRequest) {
     const totalTvl = fundamentals.reduce((s, f) => s + f.tvl, 0);
     const totalRevenue = fundamentals.reduce((s, f) => s + f.revenueAnnualized, 0);
 
-    return NextResponse.json({
-      count: fundamentals.length,
-      totalTvl: Math.round(totalTvl),
-      totalAnnualizedRevenue: Math.round(totalRevenue),
-      sort,
-      protocols: fundamentals,
-      sources: ['defillama'],
-      timestamp: new Date().toISOString(),
-      latencyMs: Date.now() - start,
-    }, {
-      headers: {
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+    return NextResponse.json(
+      {
+        count: fundamentals.length,
+        totalTvl: Math.round(totalTvl),
+        totalAnnualizedRevenue: Math.round(totalRevenue),
+        sort,
+        protocols: fundamentals,
+        sources: ['defillama'],
+        timestamp: new Date().toISOString(),
+        latencyMs: Date.now() - start,
       },
-    });
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        },
+      },
+    );
   } catch (error) {
     logger.error('Fundamentals fetch failed', { error: String(error) });
     return ApiError.upstream('DefiLlama protocols');

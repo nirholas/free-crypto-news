@@ -10,12 +10,13 @@
 
 import { type NextRequest, NextResponse } from 'next/server';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 export const runtime = 'edge';
 export const revalidate = 300; // 5 minutes
 
 /**
  * GET /api/yields
- * 
+ *
  * Get top DeFi yields from lending, staking, and liquidity protocols
  * Uses DeFiLlama API (free)
  */
@@ -26,7 +27,10 @@ export async function GET(request: NextRequest) {
 
   try {
     // Fetch from DeFiLlama yields API
-    const response = await fetch('https://yields.llama.fi/pools', {
+    const response = await resilientFetchResponse('https://yields.llama.fi/pools', {
+      service: 'defillama',
+      timeoutMs: 8000,
+      retries: 1,
       next: { revalidate: 300 },
     });
 
@@ -40,9 +44,7 @@ export async function GET(request: NextRequest) {
     // Filter by chain if specified
     if (chain) {
       const chainLower = chain.toLowerCase();
-      pools = pools.filter((p: { chain: string }) => 
-        p.chain.toLowerCase() === chainLower
-      );
+      pools = pools.filter((p: { chain: string }) => p.chain.toLowerCase() === chainLower);
     }
 
     // Sort by APY and take top pools
@@ -50,31 +52,33 @@ export async function GET(request: NextRequest) {
       .filter((p: { apy: number; tvlUsd: number }) => p.apy > 0 && p.tvlUsd > 100000)
       .sort((a: { apy: number }, b: { apy: number }) => b.apy - a.apy)
       .slice(0, limit)
-      .map((p: {
-        pool: string;
-        chain: string;
-        project: string;
-        symbol: string;
-        tvlUsd: number;
-        apy: number;
-        apyBase: number;
-        apyReward: number;
-        stablecoin: boolean;
-        ilRisk: string;
-      }) => ({
-        pool: p.pool,
-        chain: p.chain,
-        project: p.project,
-        symbol: p.symbol,
-        tvlUsd: Math.round(p.tvlUsd),
-        apy: {
-          total: p.apy?.toFixed(2),
-          base: p.apyBase?.toFixed(2),
-          reward: p.apyReward?.toFixed(2),
-        },
-        stablecoin: p.stablecoin || false,
-        ilRisk: p.ilRisk || 'unknown',
-      }));
+      .map(
+        (p: {
+          pool: string;
+          chain: string;
+          project: string;
+          symbol: string;
+          tvlUsd: number;
+          apy: number;
+          apyBase: number;
+          apyReward: number;
+          stablecoin: boolean;
+          ilRisk: string;
+        }) => ({
+          pool: p.pool,
+          chain: p.chain,
+          project: p.project,
+          symbol: p.symbol,
+          tvlUsd: Math.round(p.tvlUsd),
+          apy: {
+            total: p.apy?.toFixed(2),
+            base: p.apyBase?.toFixed(2),
+            reward: p.apyReward?.toFixed(2),
+          },
+          stablecoin: p.stablecoin || false,
+          ilRisk: p.ilRisk || 'unknown',
+        }),
+      );
 
     return NextResponse.json({
       chain: chain || 'all',
@@ -85,9 +89,6 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Yields API error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch DeFi yields' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch DeFi yields' }, { status: 500 });
   }
 }

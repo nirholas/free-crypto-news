@@ -27,6 +27,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { withX402 } from '@/lib/x402';
 import { getCoinDetails } from '@/lib/market-data';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 export const runtime = 'nodejs';
 
 interface WhaleTransaction {
@@ -83,61 +84,80 @@ interface WhaleAlertsResponse {
 async function fetchWhaleTransactions(
   coins: string[],
   coinPrices: Map<string, number>,
-  minThreshold: number
+  minThreshold: number,
 ): Promise<WhaleTransaction[]> {
   const transactions: WhaleTransaction[] = [];
   const apiKey = process.env.WHALE_ALERT_API_KEY;
-  
+
   // Map coin names to Whale Alert symbols
   const coinToSymbol: Record<string, string> = {
-    'bitcoin': 'btc',
-    'ethereum': 'eth',
-    'ripple': 'xrp',
-    'tether': 'usdt',
-    'usdc': 'usdc',
-    'binancecoin': 'bnb',
-    'dogecoin': 'doge',
-    'cardano': 'ada',
-    'solana': 'sol',
-    'polkadot': 'dot',
+    bitcoin: 'btc',
+    ethereum: 'eth',
+    ripple: 'xrp',
+    tether: 'usdt',
+    usdc: 'usdc',
+    binancecoin: 'bnb',
+    dogecoin: 'doge',
+    cardano: 'ada',
+    solana: 'sol',
+    polkadot: 'dot',
   };
-  
+
   if (apiKey) {
     // Use Whale Alert API
     try {
       const now = Math.floor(Date.now() / 1000);
-      const response = await fetch(
+      const response = await resilientFetchResponse(
         `https://api.whale-alert.io/v1/transactions?min_value=${minThreshold}&start=${now - 86400}`,
         {
+          service: 'whale-alert',
+          timeoutMs: 8000,
+          retries: 1,
           headers: { 'X-WA-API-KEY': apiKey },
           next: { revalidate: 60 },
-        }
+        },
       );
-      
+
       if (response.ok) {
         const data = await response.json();
         for (const tx of data.transactions || []) {
-          const coinId = Object.keys(coinToSymbol).find(k => coinToSymbol[k] === tx.symbol.toLowerCase());
+          const coinId = Object.keys(coinToSymbol).find(
+            (k) => coinToSymbol[k] === tx.symbol.toLowerCase(),
+          );
           if (!coinId || !coins.includes(coinId)) continue;
-          
+
           const price = coinPrices.get(coinId) || 1;
           const valueUsd = tx.amount_usd || tx.amount * price;
-          
+
           if (valueUsd < minThreshold) continue;
-          
-          const fromType = tx.from?.owner_type === 'exchange' ? 'exchange' : 
-                          tx.from?.owner_type === 'unknown' ? 'unknown' : 'whale';
-          const toType = tx.to?.owner_type === 'exchange' ? 'exchange' : 
-                        tx.to?.owner_type === 'unknown' ? 'unknown' : 'whale';
-          
+
+          const fromType =
+            tx.from?.owner_type === 'exchange'
+              ? 'exchange'
+              : tx.from?.owner_type === 'unknown'
+                ? 'unknown'
+                : 'whale';
+          const toType =
+            tx.to?.owner_type === 'exchange'
+              ? 'exchange'
+              : tx.to?.owner_type === 'unknown'
+                ? 'unknown'
+                : 'whale';
+
           let signal: 'bullish' | 'bearish' | 'neutral' = 'neutral';
           if (fromType === 'exchange' && toType !== 'exchange') signal = 'bullish';
           else if (fromType !== 'exchange' && toType === 'exchange') signal = 'bearish';
-          
+
           const multiplier = valueUsd / minThreshold;
           const significance: 'low' | 'medium' | 'high' | 'critical' =
-            multiplier > 8 ? 'critical' : multiplier > 5 ? 'high' : multiplier > 2 ? 'medium' : 'low';
-          
+            multiplier > 8
+              ? 'critical'
+              : multiplier > 5
+                ? 'high'
+                : multiplier > 2
+                  ? 'medium'
+                  : 'low';
+
           transactions.push({
             id: tx.id || `${tx.hash}-${tx.timestamp}`,
             coin: coinId,
@@ -158,33 +178,39 @@ async function fetchWhaleTransactions(
       console.error('Whale Alert API error:', error);
     }
   }
-  
+
   // Fallback to Blockchair API for Bitcoin and Ethereum if no Whale Alert data
   if (transactions.length === 0) {
     for (const coin of coins) {
       const price = coinPrices.get(coin) || 1;
       const minAmount = minThreshold / price;
-      
+
       // Try Blockchair for large transactions
       try {
         const chain = coin === 'bitcoin' ? 'bitcoin' : coin === 'ethereum' ? 'ethereum' : null;
         if (!chain) continue;
-        
-        const response = await fetch(
+
+        const response = await resilientFetchResponse(
           `https://api.blockchair.com/${chain}/transactions?a=time,value&q=value(${Math.floor(minAmount * 1e8)}..)&s=time(desc)&limit=10`,
-          { next: { revalidate: 120 } }
+          { service: 'blockchair', timeoutMs: 8000, retries: 1, next: { revalidate: 120 } },
         );
-        
+
         if (response.ok) {
           const data = await response.json();
           for (const tx of data.data || []) {
             const amount = chain === 'bitcoin' ? tx.value / 1e8 : tx.value / 1e18;
             const valueUsd = amount * price;
-            
+
             const multiplier = valueUsd / minThreshold;
             const significance: 'low' | 'medium' | 'high' | 'critical' =
-              multiplier > 8 ? 'critical' : multiplier > 5 ? 'high' : multiplier > 2 ? 'medium' : 'low';
-            
+              multiplier > 8
+                ? 'critical'
+                : multiplier > 5
+                  ? 'high'
+                  : multiplier > 2
+                    ? 'medium'
+                    : 'low';
+
             transactions.push({
               id: `${coin}-${tx.time}-${transactions.length}`,
               coin,
@@ -253,14 +279,17 @@ async function fetchConcentrationData(coin: string): Promise<ConcentrationData |
   try {
     const apiKey = process.env.INTOTHEBLOCK_API_KEY;
     if (apiKey) {
-      const response = await fetch(
+      const response = await resilientFetchResponse(
         `https://api.intotheblock.com/v1/ownership/${coin}`,
         {
-          headers: { 'Authorization': `Bearer ${apiKey}` },
+          service: 'intotheblock',
+          timeoutMs: 8000,
+          retries: 1,
+          headers: { Authorization: `Bearer ${apiKey}` },
           next: { revalidate: 3600 },
-        }
+        },
       );
-      
+
       if (response.ok) {
         const data = await response.json();
         return {
@@ -275,17 +304,17 @@ async function fetchConcentrationData(coin: string): Promise<ConcentrationData |
   } catch {
     // IntoTheBlock may not respond
   }
-  
+
   // Try Nansen or Glassnode alternatives
   try {
     const apiKey = process.env.GLASSNODE_API_KEY;
     if (apiKey && (coin === 'bitcoin' || coin === 'ethereum')) {
       const symbol = coin === 'bitcoin' ? 'BTC' : 'ETH';
-      const response = await fetch(
+      const response = await resilientFetchResponse(
         `https://api.glassnode.com/v1/metrics/distribution/balance_1pct_holders?a=${symbol}&api_key=${apiKey}`,
-        { next: { revalidate: 3600 } }
+        { service: 'glassnode', timeoutMs: 8000, retries: 1, next: { revalidate: 3600 } },
       );
-      
+
       if (response.ok) {
         const data = await response.json();
         const latestData = data[data.length - 1];
@@ -303,7 +332,7 @@ async function fetchConcentrationData(coin: string): Promise<ConcentrationData |
   } catch {
     // Glassnode may not respond
   }
-  
+
   // Return null if no data available
   return null;
 }
@@ -312,14 +341,14 @@ async function fetchConcentrationData(coin: string): Promise<ConcentrationData |
  * Handler for whale alerts endpoint
  */
 async function handler(
-  request: NextRequest
+  request: NextRequest,
 ): Promise<NextResponse<WhaleAlertsResponse | { error: string; message: string }>> {
   const searchParams = request.nextUrl.searchParams;
   const coinsParam = searchParams.get('coins') || 'bitcoin,ethereum';
   const coins = coinsParam.split(',').slice(0, 10);
   const minThreshold = Math.max(
     100000,
-    parseInt(searchParams.get('minThreshold') || '1000000', 10)
+    parseInt(searchParams.get('minThreshold') || '1000000', 10),
   );
   const includeConcentration = searchParams.get('concentration') === 'true';
 
@@ -340,8 +369,8 @@ async function handler(
     const stats = coins.map((coin) => calculateWhaleStats(transactions, coin));
 
     // Fetch concentration data if requested
-    const concentration = includeConcentration 
-      ? await fetchConcentrationData(coins[0]) || undefined
+    const concentration = includeConcentration
+      ? (await fetchConcentrationData(coins[0])) || undefined
       : undefined;
 
     return NextResponse.json(
@@ -361,13 +390,16 @@ async function handler(
         headers: {
           'Cache-Control': 'private, s-maxage=60, stale-while-revalidate=120',
         },
-      }
+      },
     );
   } catch (error) {
     console.error('Error in whale alerts route:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch whale data', message: 'An internal error occurred. Please try again later.' },
-      { status: 500 }
+      {
+        error: 'Failed to fetch whale data',
+        message: 'An internal error occurred. Please try again later.',
+      },
+      { status: 500 },
     );
   }
 }

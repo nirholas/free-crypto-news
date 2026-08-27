@@ -20,6 +20,7 @@ import { registry } from '@/lib/providers/registry';
 import type { FearGreedIndex } from '@/lib/providers/adapters/fear-greed';
 import { instrumented } from '@/lib/telemetry-middleware';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 interface FearGreedData {
   value: number;
   valueClassification: 'Extreme Fear' | 'Fear' | 'Neutral' | 'Greed' | 'Extreme Greed';
@@ -116,8 +117,16 @@ export const GET = instrumented(
 
       // Fallback: direct API call (legacy path — kept for resilience)
       const [currentResponse, historicalResponse] = await Promise.all([
-        fetch('https://api.alternative.me/fng/', { next: { revalidate: 300 } }),
-        fetch(`https://api.alternative.me/fng/?limit=${Math.min(days, 365)}`, {
+        resilientFetchResponse('https://api.alternative.me/fng/', {
+          service: 'alternative-me',
+          timeoutMs: 8000,
+          retries: 1,
+          next: { revalidate: 300 },
+        }),
+        resilientFetchResponse(`https://api.alternative.me/fng/?limit=${Math.min(days, 365)}`, {
+          service: 'alternative-me',
+          timeoutMs: 8000,
+          retries: 1,
           next: { revalidate: 3600 },
         }),
       ]);
@@ -222,11 +231,16 @@ async function calculateBreakdown(): Promise<FearGreedResponse['breakdown']> {
   try {
     // Fetch real market data to estimate breakdown
     const [btcData, marketData] = await Promise.all([
-      fetch(
+      resilientFetchResponse(
         'https://api.coingecko.com/api/v3/coins/bitcoin?localization=false&tickers=false&community_data=false&developer_data=false',
-        { next: { revalidate: 300 } },
+        { service: 'coingecko', timeoutMs: 8000, retries: 1, next: { revalidate: 300 } },
       ),
-      fetch('https://api.coingecko.com/api/v3/global', { next: { revalidate: 300 } }),
+      resilientFetchResponse('https://api.coingecko.com/api/v3/global', {
+        service: 'coingecko',
+        timeoutMs: 8000,
+        retries: 1,
+        next: { revalidate: 300 },
+      }),
     ]);
 
     const btc = btcData.ok ? await btcData.json() : null;

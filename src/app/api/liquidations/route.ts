@@ -10,6 +10,7 @@
 
 import { NextResponse } from 'next/server';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 export const runtime = 'edge';
 
 interface CoinGlassData {
@@ -32,12 +33,15 @@ interface Liquidation {
 // Fetch from CoinGlass public API
 async function fetchFromCoinGlass(): Promise<CoinGlassData[]> {
   try {
-    const response = await fetch(
+    const response = await resilientFetchResponse(
       'https://open-api.coinglass.com/public/v2/liquidation_history?time_type=h24',
       {
-        headers: { 'Accept': 'application/json' },
+        service: 'coinglass',
+        timeoutMs: 8000,
+        retries: 1,
+        headers: { Accept: 'application/json' },
         next: { revalidate: 60 },
-      }
+      },
     );
 
     if (!response.ok) return [];
@@ -45,16 +49,14 @@ async function fetchFromCoinGlass(): Promise<CoinGlassData[]> {
     const data = await response.json();
     if (data.code !== '0' || !data.data) return [];
 
-    return data.data.map((item: {
-      symbol: string;
-      longLiquidationUsd: number;
-      shortLiquidationUsd: number;
-    }) => ({
-      symbol: item.symbol,
-      longLiquidationUsd: item.longLiquidationUsd || 0,
-      shortLiquidationUsd: item.shortLiquidationUsd || 0,
-      totalLiquidationUsd: (item.longLiquidationUsd || 0) + (item.shortLiquidationUsd || 0),
-    }));
+    return data.data.map(
+      (item: { symbol: string; longLiquidationUsd: number; shortLiquidationUsd: number }) => ({
+        symbol: item.symbol,
+        longLiquidationUsd: item.longLiquidationUsd || 0,
+        shortLiquidationUsd: item.shortLiquidationUsd || 0,
+        totalLiquidationUsd: (item.longLiquidationUsd || 0) + (item.shortLiquidationUsd || 0),
+      }),
+    );
   } catch (error) {
     console.error('CoinGlass fetch error:', error);
     return [];
@@ -68,9 +70,9 @@ async function fetchFromBinance(): Promise<Liquidation[]> {
 
   try {
     for (const symbol of symbols) {
-      const response = await fetch(
+      const response = await resilientFetchResponse(
         `https://fapi.binance.com/fapi/v1/allForceOrders?symbol=${symbol}&limit=50`,
-        { next: { revalidate: 30 } }
+        { service: 'binance', timeoutMs: 8000, retries: 1, next: { revalidate: 30 } },
       );
 
       if (!response.ok) continue;
@@ -78,33 +80,35 @@ async function fetchFromBinance(): Promise<Liquidation[]> {
       const orders = await response.json();
       if (!Array.isArray(orders)) continue;
 
-      orders.forEach((order: {
-        orderId: number;
-        symbol: string;
-        side: string;
-        origQty: string;
-        price: string;
-        time: number;
-      }) => {
-        const qty = parseFloat(order.origQty);
-        const price = parseFloat(order.price);
-        const usdValue = qty * price;
+      orders.forEach(
+        (order: {
+          orderId: number;
+          symbol: string;
+          side: string;
+          origQty: string;
+          price: string;
+          time: number;
+        }) => {
+          const qty = parseFloat(order.origQty);
+          const price = parseFloat(order.price);
+          const usdValue = qty * price;
 
-        if (usdValue > 1000) {
-          liquidations.push({
-            id: `binance-${order.orderId}`,
-            exchange: 'Binance',
-            symbol: order.symbol.replace('USDT', ''),
-            side: order.side === 'SELL' ? 'long' : 'short',
-            amount: usdValue,
-            price: price,
-            timestamp: order.time,
-          });
-        }
-      });
+          if (usdValue > 1000) {
+            liquidations.push({
+              id: `binance-${order.orderId}`,
+              exchange: 'Binance',
+              symbol: order.symbol.replace('USDT', ''),
+              side: order.side === 'SELL' ? 'long' : 'short',
+              amount: usdValue,
+              price: price,
+              timestamp: order.time,
+            });
+          }
+        },
+      );
 
       // Rate limit delay
-      await new Promise(r => setTimeout(r, 50));
+      await new Promise((r) => setTimeout(r, 50));
     }
   } catch (error) {
     console.error('Binance fetch error:', error);
@@ -123,12 +127,11 @@ function generateEventsFromAggregated(data: CoinGlassData[]): Liquidation[] {
     if (coin.totalLiquidationUsd < 10000) return;
 
     const eventCount = Math.min(3, Math.max(1, Math.ceil(coin.totalLiquidationUsd / 20000000)));
-    const longRatio = coin.totalLiquidationUsd > 0 
-      ? coin.longLiquidationUsd / coin.totalLiquidationUsd 
-      : 0.5;
+    const longRatio =
+      coin.totalLiquidationUsd > 0 ? coin.longLiquidationUsd / coin.totalLiquidationUsd : 0.5;
 
     for (let i = 0; i < eventCount; i++) {
-      const isLong = (i / eventCount) < longRatio;
+      const isLong = i / eventCount < longRatio;
       const baseAmount = isLong
         ? coin.longLiquidationUsd / eventCount
         : coin.shortLiquidationUsd / eventCount;
@@ -164,7 +167,7 @@ export async function GET() {
         acc.totalUsd += coin.totalLiquidationUsd;
         return acc;
       },
-      { totalLongs: 0, totalShorts: 0, totalUsd: 0 }
+      { totalLongs: 0, totalShorts: 0, totalUsd: 0 },
     );
 
     // Generate events from aggregated data if Binance didn't return much
@@ -172,8 +175,8 @@ export async function GET() {
     if (recentEvents.length < 10 && coinglassData.length > 0) {
       const aggregatedEvents = generateEventsFromAggregated(coinglassData);
       // Merge, preferring Binance real data
-      const existingIds = new Set(recentEvents.map(e => e.id));
-      aggregatedEvents.forEach(e => {
+      const existingIds = new Set(recentEvents.map((e) => e.id));
+      aggregatedEvents.forEach((e) => {
         if (!existingIds.has(e.id)) {
           recentEvents.push(e);
         }
@@ -185,14 +188,12 @@ export async function GET() {
       bySymbol: coinglassData,
       recentEvents,
       totals,
-      source: coinglassData.length > 0 ? 'CoinGlass' : binanceEvents.length > 0 ? 'Binance' : 'none',
+      source:
+        coinglassData.length > 0 ? 'CoinGlass' : binanceEvents.length > 0 ? 'Binance' : 'none',
       timestamp: Date.now(),
     });
   } catch (error) {
     console.error('Liquidations API error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch liquidation data' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch liquidation data' }, { status: 500 });
   }
 }

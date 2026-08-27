@@ -30,6 +30,7 @@ import { hybridAuthMiddleware } from '@/lib/x402';
 import { ApiError } from '@/lib/api-error';
 import { createRequestLogger } from '@/lib/logger';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 export const runtime = 'nodejs';
 export const revalidate = 60;
 
@@ -135,21 +136,24 @@ export async function GET(request: NextRequest) {
     const totalVolume = pools.reduce((s, p) => s + p.volume24h, 0);
     const totalLiquidity = pools.reduce((s, p) => s + p.liquidity, 0);
 
-    return NextResponse.json({
-      count: pools.length,
-      totalVolume24h: Math.round(totalVolume),
-      totalLiquidity: Math.round(totalLiquidity),
-      chain: chain || 'all',
-      sort,
-      pools,
-      sources,
-      timestamp: new Date().toISOString(),
-      latencyMs: Date.now() - start,
-    }, {
-      headers: {
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+    return NextResponse.json(
+      {
+        count: pools.length,
+        totalVolume24h: Math.round(totalVolume),
+        totalLiquidity: Math.round(totalLiquidity),
+        chain: chain || 'all',
+        sort,
+        pools,
+        sources,
+        timestamp: new Date().toISOString(),
+        latencyMs: Date.now() - start,
       },
-    });
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        },
+      },
+    );
   } catch (error) {
     logger.error('DEX fetch failed', { error: String(error) });
     return ApiError.internal('Failed to fetch DEX data');
@@ -161,9 +165,15 @@ export async function GET(request: NextRequest) {
 // =============================================================================
 
 async function fetchDexScreenerSearch(query: string): Promise<DexPool[]> {
-  const res = await fetch(
+  const res = await resilientFetchResponse(
     `https://api.dexscreener.com/latest/dex/search?q=${encodeURIComponent(query)}`,
-    { headers: { 'User-Agent': 'free-crypto-news/2.0' }, next: { revalidate: 60 } },
+    {
+      service: 'dexscreener',
+      timeoutMs: 8000,
+      retries: 1,
+      headers: { 'User-Agent': 'free-crypto-news/2.0' },
+      next: { revalidate: 60 },
+    },
   );
   if (!res.ok) throw new Error(`DexScreener search ${res.status}`);
   const json = await res.json();
@@ -171,9 +181,15 @@ async function fetchDexScreenerSearch(query: string): Promise<DexPool[]> {
 }
 
 async function fetchDexScreenerByChain(chain: string): Promise<DexPool[]> {
-  const res = await fetch(
+  const res = await resilientFetchResponse(
     `https://api.dexscreener.com/latest/dex/tokens/${chain}`,
-    { headers: { 'User-Agent': 'free-crypto-news/2.0' }, next: { revalidate: 60 } },
+    {
+      service: 'dexscreener',
+      timeoutMs: 8000,
+      retries: 1,
+      headers: { 'User-Agent': 'free-crypto-news/2.0' },
+      next: { revalidate: 60 },
+    },
   );
   if (!res.ok) return [];
   const json = await res.json();
@@ -182,10 +198,13 @@ async function fetchDexScreenerByChain(chain: string): Promise<DexPool[]> {
 
 async function fetchDexScreenerTrending(): Promise<DexPool[]> {
   // Get boosted tokens as trending proxy
-  const res = await fetch(
-    'https://api.dexscreener.com/token-boosts/latest/v1',
-    { headers: { 'User-Agent': 'free-crypto-news/2.0' }, next: { revalidate: 60 } },
-  );
+  const res = await resilientFetchResponse('https://api.dexscreener.com/token-boosts/latest/v1', {
+    service: 'dexscreener',
+    timeoutMs: 8000,
+    retries: 1,
+    headers: { 'User-Agent': 'free-crypto-news/2.0' },
+    next: { revalidate: 60 },
+  });
   if (!res.ok) return [];
   const json = await res.json();
   // Map boosted tokens to pool format
@@ -220,9 +239,12 @@ async function fetchGeckoTerminalByChain(chain: string): Promise<DexPool[]> {
   const network = chainMap[chain];
   if (!network) return [];
 
-  const res = await fetch(
+  const res = await resilientFetchResponse(
     `https://api.geckoterminal.com/api/v2/networks/${network}/trending_pools`,
     {
+      service: 'geckoterminal',
+      timeoutMs: 8000,
+      retries: 1,
       headers: {
         'User-Agent': 'free-crypto-news/2.0',
         Accept: 'application/json',
@@ -251,14 +273,17 @@ async function fetchGeckoTerminalByChain(chain: string): Promise<DexPool[]> {
         address: '',
       },
       priceUsd: parseFloat((attrs.base_token_price_usd as string) || '0'),
-      priceChange24h: parseFloat((attrs.price_change_percentage as Record<string, string>)?.h24 || '0'),
+      priceChange24h: parseFloat(
+        (attrs.price_change_percentage as Record<string, string>)?.h24 || '0',
+      ),
       volume24h: parseFloat((attrs.volume_usd as Record<string, string>)?.h24 || '0'),
       liquidity: parseFloat((attrs.reserve_in_usd as string) || '0'),
       txns24h: {
         buys: (attrs.transactions as Record<string, Record<string, number>>)?.h24?.buys || 0,
         sells: (attrs.transactions as Record<string, Record<string, number>>)?.h24?.sells || 0,
-        total: ((attrs.transactions as Record<string, Record<string, number>>)?.h24?.buys || 0) +
-               ((attrs.transactions as Record<string, Record<string, number>>)?.h24?.sells || 0),
+        total:
+          ((attrs.transactions as Record<string, Record<string, number>>)?.h24?.buys || 0) +
+          ((attrs.transactions as Record<string, Record<string, number>>)?.h24?.sells || 0),
       },
       fdv: parseFloat((attrs.fdv_usd as string) || '0'),
       createdAt: (attrs.pool_created_at as string) || '',
@@ -267,12 +292,12 @@ async function fetchGeckoTerminalByChain(chain: string): Promise<DexPool[]> {
   });
 }
 
- 
 function mapDexScreenerPair(p: any): DexPool {
   return {
-    name: p.baseToken?.symbol && p.quoteToken?.symbol
-      ? `${p.baseToken.symbol}/${p.quoteToken.symbol}`
-      : p.pairAddress || 'Unknown',
+    name:
+      p.baseToken?.symbol && p.quoteToken?.symbol
+        ? `${p.baseToken.symbol}/${p.quoteToken.symbol}`
+        : p.pairAddress || 'Unknown',
     chain: p.chainId || 'unknown',
     dex: p.dexId || 'unknown',
     pairAddress: p.pairAddress || '',

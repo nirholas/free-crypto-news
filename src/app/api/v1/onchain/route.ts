@@ -29,6 +29,7 @@ import { hybridAuthMiddleware } from '@/lib/x402';
 import { ApiError } from '@/lib/api-error';
 import { createRequestLogger } from '@/lib/logger';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 export const runtime = 'nodejs';
 export const revalidate = 300;
 
@@ -77,7 +78,13 @@ export async function GET(request: NextRequest) {
 
     const data: OnChainData = {
       asset: asset.toUpperCase(),
-      network: { blockHeight: 0, hashRate: '0', difficulty: '0', mempoolSize: 0, feeEstimate: { fast: 0, medium: 0, slow: 0 } },
+      network: {
+        blockHeight: 0,
+        hashRate: '0',
+        difficulty: '0',
+        mempoolSize: 0,
+        feeEstimate: { fast: 0, medium: 0, slow: 0 },
+      },
       activity: { activeAddresses24h: 0, transactionCount24h: 0, totalTransferred24h: 0 },
       exchange: { netFlow: '0', inflowVolume: 0, outflowVolume: 0, reserveChange: '0' },
       indicators: { mvrv: null, sopr: null, nupl: null, leverageRatio: null },
@@ -88,9 +95,24 @@ export async function GET(request: NextRequest) {
     if (asset === 'btc') {
       // Fetch from free sources in parallel
       const [bcStats, mempoolFees, mempoolBlocks] = await Promise.allSettled([
-        fetch('https://api.blockchain.info/stats', { next: { revalidate: 300 } }),
-        fetch('https://mempool.space/api/v1/fees/recommended', { next: { revalidate: 60 } }),
-        fetch('https://mempool.space/api/blocks/tip/height', { next: { revalidate: 60 } }),
+        resilientFetchResponse('https://api.blockchain.info/stats', {
+          service: 'blockchain-info',
+          timeoutMs: 8000,
+          retries: 1,
+          next: { revalidate: 300 },
+        }),
+        resilientFetchResponse('https://mempool.space/api/v1/fees/recommended', {
+          service: 'mempool',
+          timeoutMs: 8000,
+          retries: 1,
+          next: { revalidate: 60 },
+        }),
+        resilientFetchResponse('https://mempool.space/api/blocks/tip/height', {
+          service: 'mempool',
+          timeoutMs: 8000,
+          retries: 1,
+          next: { revalidate: 60 },
+        }),
       ]);
 
       if (bcStats.status === 'fulfilled' && bcStats.value.ok) {
@@ -118,13 +140,18 @@ export async function GET(request: NextRequest) {
         const height = await mempoolBlocks.value.text();
         data.network.blockHeight = parseInt(height, 10) || data.network.blockHeight;
       }
-
     } else if (asset === 'eth') {
       // ETH on-chain via Etherscan (free tier)
       const etherscanKey = process.env.ETHERSCAN_API_KEY || '';
       const [gasRes, supplyRes] = await Promise.allSettled([
-        fetch(`https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${etherscanKey}`, { next: { revalidate: 60 } }),
-        fetch(`https://api.etherscan.io/api?module=stats&action=ethsupply&apikey=${etherscanKey}`, { next: { revalidate: 300 } }),
+        resilientFetchResponse(
+          `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${etherscanKey}`,
+          { service: 'etherscan', timeoutMs: 8000, retries: 1, next: { revalidate: 60 } },
+        ),
+        resilientFetchResponse(
+          `https://api.etherscan.io/api?module=stats&action=ethsupply&apikey=${etherscanKey}`,
+          { service: 'etherscan', timeoutMs: 8000, retries: 1, next: { revalidate: 300 } },
+        ),
       ]);
 
       if (gasRes.status === 'fulfilled' && gasRes.value.ok) {
@@ -147,16 +174,19 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({
-      ...data,
-      sources,
-      timestamp: new Date().toISOString(),
-      latencyMs: Date.now() - start,
-    }, {
-      headers: {
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+    return NextResponse.json(
+      {
+        ...data,
+        sources,
+        timestamp: new Date().toISOString(),
+        latencyMs: Date.now() - start,
       },
-    });
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        },
+      },
+    );
   } catch (error) {
     logger.error('On-chain fetch failed', { error: String(error) });
     return ApiError.upstream('On-chain data providers');

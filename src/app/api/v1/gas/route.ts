@@ -26,6 +26,7 @@ import { createRequestLogger } from '@/lib/logger';
 import { registry } from '@/lib/providers/registry';
 import type { GasPrice } from '@/lib/providers/adapters/gas';
 
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 const ENDPOINT = '/api/v1/gas';
 
 interface GasData {
@@ -78,7 +79,9 @@ export async function GET(request: NextRequest) {
           timestamp: gp.lastUpdated || new Date().toISOString(),
         });
         ethGasFromProvider = true;
-      } catch { /* provider chain miss — fall through to direct fetch */ }
+      } catch {
+        /* provider chain miss — fall through to direct fetch */
+      }
     }
 
     // Layer 2: Direct fetch fallback for Ethereum gas
@@ -159,7 +162,7 @@ export async function GET(request: NextRequest) {
           'Cache-Control': 'public, s-maxage=15, stale-while-revalidate=60',
           'X-Cache': ethGasFromProvider ? 'PROVIDER' : 'DIRECT',
         },
-      }
+      },
     );
   } catch (error) {
     logger.error('Failed to fetch gas prices', error);
@@ -170,10 +173,16 @@ export async function GET(request: NextRequest) {
 async function fetchEthereumGas(): Promise<GasData | null> {
   try {
     // Try Blocknative API (free tier available)
-    const response = await fetch('https://api.blocknative.com/gasprices/blockprices', {
-      headers: { Accept: 'application/json' },
-      next: { revalidate: 15 },
-    });
+    const response = await resilientFetchResponse(
+      'https://api.blocknative.com/gasprices/blockprices',
+      {
+        service: 'blocknative',
+        timeoutMs: 8000,
+        retries: 1,
+        headers: { Accept: 'application/json' },
+        next: { revalidate: 15 },
+      },
+    );
 
     if (response.ok) {
       const data = await response.json();
@@ -212,7 +221,10 @@ async function fetchEthereumGas(): Promise<GasData | null> {
 
 async function fetchPolygonGas(): Promise<GasData | null> {
   try {
-    const response = await fetch('https://gasstation.polygon.technology/v2', {
+    const response = await resilientFetchResponse('https://gasstation.polygon.technology/v2', {
+      service: 'polygon-gasstation',
+      timeoutMs: 8000,
+      retries: 1,
       headers: { Accept: 'application/json' },
       next: { revalidate: 15 },
     });
