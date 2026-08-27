@@ -15,6 +15,7 @@
 
 import { NextResponse } from 'next/server';
 import { SITE_URL } from '@/lib/constants';
+import { getLatestNews } from '@/lib/crypto-news';
 
 interface Article {
   title: string;
@@ -47,15 +48,11 @@ function generateArticleSlug(title: string, date?: string): string {
 
 export async function GET() {
   try {
-    const response = await fetch(`${SITE_URL}/api/news?limit=50`, {
-      next: { revalidate: 300 },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch news');
-    }
-
-    const data = await response.json();
+    // Read the aggregator directly rather than fetching our own public API.
+    // That round-trip made the feed an anonymous caller of the site, so it
+    // inherited the free-tier cap and published a 3-item (in production, an
+    // empty) JSON feed to every subscriber.
+    const data = await getLatestNews(50);
     const articles: Article[] = data.articles || [];
 
     const items = articles.map((article) => {

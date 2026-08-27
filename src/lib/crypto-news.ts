@@ -2351,6 +2351,12 @@ export interface NewsArticle {
   translations?: Record<string, string>;
   imageUrl?: string;
   pubDate: string;
+  /**
+   * True when the feed supplied no usable date for this item, so `pubDate` is
+   * inferred (from the channel, or the fetch time). Ranking keeps these below
+   * articles with a real date so an undated feed cannot dominate the feed.
+   */
+  dateEstimated?: boolean;
   source: string;
   sourceKey: string;
   category: string;
@@ -2396,6 +2402,8 @@ export interface SourceInfo {
   name: string;
   url: string;
   category: string;
+  /** Editorial tier, when the source has one assigned. */
+  tier?: string | number;
   status: 'active' | 'unavailable' | 'unknown';
 }
 
@@ -2543,6 +2551,45 @@ function detectContentType(
 }
 
 /**
+ * Parse a date string out of a feed.
+ *
+ * `new Date(str)` handles RFC 822 and ISO 8601, which covers most feeds, but
+ * silently returns Invalid Date for formats real publishers still emit. The
+ * UK FCA feed sends `Thursday, August 27, 2026 - 10:00` (Drupal's default),
+ * which used to fall through to "now", stamping decade-old notices as breaking
+ * news. Normalising the weekday prefix and the dash separator recovers those
+ * without pulling in a date library for one format.
+ *
+ * @returns a valid Date, or null when the string cannot be understood.
+ */
+export function parseFeedDate(raw: string | null | undefined): Date | null {
+  if (!raw) return null;
+  // Some feeds (the Federal Reserve's among them) wrap the date in CDATA, which
+  // the element regex captures verbatim.
+  const value = stripCDATA(raw.trim()).trim();
+  if (!value) return null;
+
+  const direct = new Date(value);
+  if (!isNaN(direct.getTime())) return direct;
+
+  const normalized = value
+    // "Thursday, August 27, 2026" -> "August 27, 2026"
+    .replace(/^[A-Za-z]+day,\s*/i, '')
+    // "August 27, 2026 - 10:00" -> "August 27, 2026 10:00"
+    .replace(/\s+-\s+/, ' ')
+    // Collapse the whitespace some feeds wrap dates in
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (normalized !== value) {
+    const relaxed = new Date(normalized);
+    if (!isNaN(relaxed.getTime())) return relaxed;
+  }
+
+  return null;
+}
+
+/**
  * Parse RSS XML to extract articles
  */
 function parseRSSFeed(
@@ -2562,6 +2609,17 @@ function parseRSSFeed(
   const authorRegex =
     /<dc:creator><!\[CDATA\[(.*?)\]\]><\/dc:creator>|<dc:creator>(.*?)<\/dc:creator>|<author><!\[CDATA\[(.*?)\]\]><\/author>|<author>(.*?)<\/author>/i;
   const categoryRegex = /<category(?:\s[^>]*)?>(?:<!\[CDATA\[(.*?)\]\]>|(.*?))<\/category>/gi;
+
+  // Channel-level date, used when an item carries none of its own. Read from
+  // the head of the document so a <pubDate> belonging to the first <item>
+  // cannot be mistaken for the channel's.
+  const channelHead = xml.slice(0, xml.search(/<item[\s>]/i) === -1 ? 4000 : xml.search(/<item[\s>]/i));
+  const channelDateStr =
+    channelHead.match(/<lastBuildDate>(.*?)<\/lastBuildDate>/i)?.[1] ||
+    channelHead.match(/<pubDate>(.*?)<\/pubDate>/i)?.[1] ||
+    channelHead.match(/<updated>(.*?)<\/updated>/i)?.[1] ||
+    '';
+  const channelDateValid = parseFeedDate(channelDateStr);
 
   let match;
   while ((match = itemRegex.exec(xml)) !== null) {
@@ -2602,18 +2660,26 @@ function parseRSSFeed(
     const normalizedAuthor = rawAuthor ? normalizeAuthorName(rawAuthor) : undefined;
 
     if (title && link) {
-      const rawDate = pubDateStr ? new Date(pubDateStr) : new Date();
-      const pubDate = isNaN(rawDate.getTime()) ? new Date() : rawDate;
+      // A feed that publishes no dates (the UK FCA feed is one) used to have
+      // every item stamped with the fetch time, which put a decade-old notice
+      // at the top of /api/news ahead of genuinely breaking news, and moved it
+      // back to the top on every refresh. An item with no date of its own now
+      // inherits the channel's date, and if the feed has none at all the date
+      // is marked estimated so ranking can keep it below dated articles.
+      const itemDateValid = parseFeedDate(pubDateStr);
+      const dateEstimated = !itemDateValid;
+      const pubDate = itemDateValid ?? channelDateValid ?? new Date();
       articles.push({
         title,
         link,
         description: description || undefined,
         imageUrl: imageUrl || undefined,
         pubDate: pubDate.toISOString(),
+        dateEstimated: dateEstimated || undefined,
         source: sourceName,
         sourceKey,
         category,
-        timeAgo: getTimeAgo(pubDate),
+        timeAgo: dateEstimated && !channelDateValid ? 'Recently' : getTimeAgo(pubDate),
         author: normalizedAuthor,
         authorSlug: normalizedAuthor ? toAuthorSlug(normalizedAuthor) : undefined,
         contentType: detectContentType(itemCategories, link, title),
@@ -2659,6 +2725,7 @@ function getTimeAgo(date: Date): string {
 }
 
 import { newsCache, staleCache, withCache } from './cache';
+import { recordFeedOutcome } from './source-health';
 
 // ═══════════════════════════════════════════════════════════════
 // API SOURCES (more reliable than RSS)
@@ -3474,6 +3541,21 @@ async function fetchAllApiSources(): Promise<NewsArticle[]> {
 }
 
 /**
+ * Every category slug that at least one RSS source is filed under.
+ * This is the authoritative list for `/api/rss?feed=<category>`,
+ * `/api/atom?feed=<category>` and the `/api/feeds` index.
+ */
+export function getFeedCategoryIds(): string[] {
+  const ids = new Set<string>();
+  for (const key of Object.keys(RSS_SOURCES) as SourceKey[]) {
+    const source = RSS_SOURCES[key];
+    if ('disabled' in source && source.disabled) continue;
+    ids.add(source.category);
+  }
+  return [...ids].sort();
+}
+
+/**
  * Fetch RSS feed from a source with caching and domain-level throttling.
  * Uses domainSemaphore to limit concurrent requests per domain (max 3)
  * to avoid 429 rate-limit storms from medium.com, mirror.xyz, etc.
@@ -3500,6 +3582,18 @@ async function fetchFeed(sourceKey: SourceKey): Promise<NewsArticle[]> {
 
     // Acquire a domain-level slot before making the request
     await domainSemaphore.acquire(domain);
+
+    const startedAt = Date.now();
+    const record = (status: 'ok' | 'fail', error?: string, httpStatus?: number) =>
+      recordFeedOutcome({
+        url: source.url,
+        name: source.name,
+        category: source.category,
+        status,
+        latencyMs: Date.now() - startedAt,
+        error,
+        httpStatus,
+      });
 
     try {
       const controller = new AbortController();
@@ -3536,6 +3630,7 @@ async function fetchFeed(sourceKey: SourceKey): Promise<NewsArticle[]> {
         if (process.env.NODE_ENV === 'development' || process.env.DEBUG_RSS) {
           console.warn(`Redirect detected for ${source.name}: ${response.status} → ${location}`);
         }
+        record('fail', `redirect ${response.status} to ${location}`, response.status);
         return [];
       }
 
@@ -3556,17 +3651,21 @@ async function fetchFeed(sourceKey: SourceKey): Promise<NewsArticle[]> {
         } else if (process.env.NODE_ENV === 'development' && process.env.DEBUG_RSS) {
           console.warn(`Failed to fetch ${source.name}: ${response.status}`);
         }
+        record('fail', `HTTP ${response.status}`, response.status);
         return [];
       }
 
       const xml = await response.text();
-      return parseRSSFeed(xml, sourceKey, source.name, source.category);
+      const parsed = parseRSSFeed(xml, sourceKey, source.name, source.category);
+      record('ok', undefined, response.status);
+      return parsed;
     } catch (error) {
       // Only log non-abort errors in production, or all errors with DEBUG_RSS
       const isAbortError = error instanceof Error && error.name === 'AbortError';
       if (process.env.DEBUG_RSS || (!isAbortError && process.env.NODE_ENV === 'production')) {
         console.warn(`Error fetching ${source.name}:`, isAbortError ? 'timeout' : error);
       }
+      record('fail', isAbortError ? 'timeout after 3000ms' : error instanceof Error ? error.message : String(error));
       return [];
     } finally {
       domainSemaphore.release(domain);
@@ -3837,7 +3936,14 @@ async function fetchMultipleSources(
         deduped
           // Exclude future-dated articles (scheduled events, upcoming webinars, etc.)
           .filter((a) => new Date(a.pubDate).getTime() <= now)
-          .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
+          .sort((a, b) => {
+            // An inferred date is not evidence of recency, so anything with a
+            // real date ranks first regardless of timestamp.
+            if (Boolean(a.dateEstimated) !== Boolean(b.dateEstimated)) {
+              return a.dateEstimated ? 1 : -1;
+            }
+            return new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime();
+          })
       );
     },
     {
@@ -4489,6 +4595,24 @@ export async function getNewsByCategory(
     sources: [...new Set(filteredArticles.map((a) => a.source))],
     fetchedAt: new Date().toISOString(),
   };
+}
+
+/**
+ * The source catalog: which feeds we aggregate, without probing any of them.
+ *
+ * This is public information. Every /api/news response already carries the
+ * source names, and the docs publish the list. Only the live status probe in
+ * `getSources()` is expensive enough to be worth gating.
+ */
+export function getSourceCatalog(): SourceInfo[] {
+  return (Object.keys(RSS_SOURCES) as SourceKey[]).map((key) => ({
+    key,
+    name: RSS_SOURCES[key].name,
+    url: RSS_SOURCES[key].url,
+    category: RSS_SOURCES[key].category,
+    tier: getSourceTier(key) ?? undefined,
+    status: 'unknown' as const,
+  }));
 }
 
 export async function getSources(): Promise<{ sources: SourceInfo[] }> {
