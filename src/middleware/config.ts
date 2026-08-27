@@ -32,15 +32,16 @@ export const FREE_TIER_PATTERNS = [
   /^\/api\/sources/, // news sources
   /^\/api\/market/,  // market overview
   /^\/api\/coins/,   // coin list / metadata
-  /^\/api\/feed/,    // RSS/Atom feed redirects
-  /^\/api\/rss/,
-  /^\/api\/atom/,
+  /^\/api\/rss/,     // RSS feed
+  /^\/api\/atom/,    // Atom feed
   /^\/api\/archive/, // historical news archive
   /^\/api\/article/, // individual article
-  /^\/api\/categories/, // news categories
+  /^\/api\/articles/, // article listing
   /^\/api\/signals/, // market signals
-  /^\/api\/status$/, // service status
   /^\/api\/exchanges/, // exchange data — used by UI components
+  // /api/coins, /api/feed, /api/categories and /api/status used to be listed
+  // here but no such routes exist: categories live at /api/news/categories
+  // (covered by the /api/news pattern above) and the others were removed.
 ];
 
 /** Routes exempt from rate limiting and x402 payment. */
@@ -50,6 +51,12 @@ export const EXEMPT_PATTERNS = [
   /^\/api\/openapi\.json$/, // OpenAPI spec — must be freely accessible for x402scan discovery
   /^\/api\/mcp$/, // Hosted MCP endpoint — tools call the public API and inherit its own gating
   /^\/api\/version$/, // Build identity for deploy verification
+  // Discovery and documentation: an agent must be able to read the manual
+  // without paying for it.
+  /^\/api\/docs/,
+  /^\/api\/llms(-full)?\.txt$/,
+  /^\/api\/well-known\//,
+  /^\/api\/sample$/,
   /^\/api\/cron/,
   /^\/api\/sse/,
   /^\/api\/ws/,
