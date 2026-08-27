@@ -11,6 +11,11 @@
 /**
  * Events API
  * GET /api/events — returns crypto events calendar data
+ *
+ * Only upcoming events are returned by default, sorted soonest first.
+ * Pass ?includePast=true to get the full static calendar.
+ * Payloads are tagged `source: 'static'` because the calendar is curated
+ * in this file rather than fetched from an upstream provider.
  */
 
 import { type NextRequest, NextResponse } from 'next/server';
@@ -32,18 +37,31 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const category = searchParams.get('category');
   const importance = searchParams.get('importance');
-  const limit = parseInt(searchParams.get('limit') || '50', 10);
+  const includePast = searchParams.get('includePast') === 'true';
+  const limit = Math.max(1, Math.min(parseInt(searchParams.get('limit') || '50', 10) || 50, 200));
+
+  // An event is "upcoming" until the end of its last day (endDate when set, else date).
+  const startOfToday = new Date();
+  startOfToday.setUTCHours(0, 0, 0, 0);
+  const cutoff = startOfToday.getTime();
 
   let filtered = EVENTS;
-  if (category) filtered = filtered.filter(e => e.category === category);
-  if (importance) filtered = filtered.filter(e => e.importance === importance);
+  if (!includePast) {
+    filtered = filtered.filter((e) => new Date(e.endDate ?? e.date).getTime() >= cutoff);
+  }
+  if (category) filtered = filtered.filter((e) => e.category === category);
+  if (importance) filtered = filtered.filter((e) => e.importance === importance);
 
-  filtered = filtered.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).slice(0, limit);
+  filtered = [...filtered]
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .slice(0, limit);
 
   return NextResponse.json({
     events: filtered,
     total: filtered.length,
-    categories: [...new Set(EVENTS.map(e => e.category))],
+    categories: [...new Set(EVENTS.map((e) => e.category))],
+    source: 'static',
+    generatedAt: new Date().toISOString(),
   }, {
     headers: {
       'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',

@@ -188,7 +188,7 @@ export async function GET(request: NextRequest) {
       count: curatedUnlocks.length,
       unlocks: curatedUnlocks,
       timestamp: new Date().toISOString(),
-      source: 'curated',
+      source: 'static',
       note: 'Curated list of major upcoming token unlocks',
     });
   } catch (error) {
