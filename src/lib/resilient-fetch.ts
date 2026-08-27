@@ -34,7 +34,7 @@
  *   });
  */
 
-import { CircuitBreaker, CircuitOpenError } from './circuit-breaker';
+import { CircuitBreaker } from './circuit-breaker';
 import type MemoryCache from './cache';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -75,25 +75,47 @@ export interface ResilientFetchResult<T> {
 
 const RETRYABLE_STATUS = new Set([408, 429, 500, 502, 503, 504]);
 
-// ─── Implementation ─────────────────────────────────────────────────────────
+/** Options for `resilientFetchResponse` — everything except stale-cache handling */
+export type ResilientFetchResponseOptions = Omit<
+  ResilientFetchOptions,
+  'staleCache' | 'staleCacheKey'
+>;
 
-export async function resilientFetch<T = unknown>(
+/**
+ * Internal marker thrown inside the breaker when the final attempt still
+ * returned a retryable (upstream-degraded) status. It lets the circuit breaker
+ * count the failure while the caller still receives the raw Response.
+ */
+class RetryableStatusError extends Error {
+  readonly response: Response;
+  constructor(response: Response, url: string) {
+    super(`HTTP ${response.status} from ${url}`);
+    this.name = 'RetryableStatusError';
+    this.response = response;
+  }
+}
+
+interface RawFetchOutcome {
+  response: Response;
+  attempts: number;
+}
+
+// ─── Core: timeout + retry + circuit breaker, returns the raw Response ───────
+
+async function fetchWithResilience(
   url: string,
-  opts: ResilientFetchOptions = {},
-): Promise<ResilientFetchResult<T>> {
+  opts: ResilientFetchResponseOptions,
+): Promise<RawFetchOutcome> {
   const {
     service,
     timeoutMs = 8_000,
     retries = 2,
     retryBaseMs = 500,
-    staleCache,
-    staleCacheKey,
     circuitBreakerOpts,
     ...fetchInit
   } = opts;
 
   const maxAttempts = retries + 1;
-  const start = Date.now();
   let lastError: unknown;
   let attempts = 0;
 
@@ -101,7 +123,7 @@ export async function resilientFetch<T = unknown>(
     ? CircuitBreaker.for(service, circuitBreakerOpts)
     : undefined;
 
-  const doFetch = async (): Promise<ResilientFetchResult<T>> => {
+  const doFetch = async (): Promise<RawFetchOutcome> => {
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       attempts = attempt + 1;
 
@@ -112,36 +134,17 @@ export async function resilientFetch<T = unknown>(
         await sleep(delay + jitter);
       }
 
-      try {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), timeoutMs);
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
 
-        const res = await fetch(url, {
+      let res: Response;
+      try {
+        res = await fetch(url, {
           ...fetchInit,
           signal: controller.signal,
         });
-
-        clearTimeout(timer);
-
-        if (!res.ok) {
-          if (RETRYABLE_STATUS.has(res.status) && attempt < maxAttempts - 1) {
-            lastError = new Error(`HTTP ${res.status} from ${url}`);
-            continue; // retry
-          }
-          // Non-retryable error or final attempt — throw
-          throw new Error(`HTTP ${res.status}: ${res.statusText} from ${url}`);
-        }
-
-        const data = (await res.json()) as T;
-
-        // Persist good data into the stale cache so it's available later
-        if (staleCache && staleCacheKey) {
-          // Store with a very long TTL — this is the "last known good" value
-          staleCache.set(staleCacheKey, data, 3600); // 1 hour stale window
-        }
-
-        return { data, stale: false, status: res.status, elapsedMs: Date.now() - start, attempts };
       } catch (err) {
+        clearTimeout(timer);
         lastError = err;
         // AbortError = timeout — retryable
         if ((err as Error).name === 'AbortError' && attempt < maxAttempts - 1) {
@@ -151,7 +154,21 @@ export async function resilientFetch<T = unknown>(
         if (isNetworkError(err) && attempt < maxAttempts - 1) {
           continue;
         }
+        throw err;
       }
+      clearTimeout(timer);
+
+      if (!res.ok && RETRYABLE_STATUS.has(res.status)) {
+        lastError = new RetryableStatusError(res, url);
+        if (attempt < maxAttempts - 1) {
+          continue; // retry
+        }
+        // Final attempt still degraded — count it against the breaker
+        throw lastError;
+      }
+
+      // Success, or a non-retryable client error the caller must inspect
+      return { response: res, attempts };
     }
 
     // All attempts exhausted
@@ -164,10 +181,67 @@ export async function resilientFetch<T = unknown>(
     }
     return await doFetch();
   } catch (err) {
+    if (err instanceof RetryableStatusError) {
+      return { response: err.response, attempts };
+    }
+    throw err;
+  }
+}
+
+// ─── Public: raw Response variant ───────────────────────────────────────────
+
+/**
+ * Like `resilientFetch`, but returns the raw `Response` so callers can read
+ * `.text()`, headers, or non-JSON bodies. Shares the same timeout, retry and
+ * circuit-breaker logic.
+ *
+ * Semantics match bare `fetch` as closely as possible so it is a drop-in
+ * replacement: a non-OK response is RETURNED (after retries for 408/429/5xx),
+ * never thrown, so existing `if (!res.ok)` handling keeps working. Timeouts
+ * and network failures throw after the retries are exhausted, and an OPEN
+ * circuit throws `CircuitOpenError` immediately.
+ */
+export async function resilientFetchResponse(
+  url: string,
+  opts: ResilientFetchResponseOptions = {},
+): Promise<Response> {
+  const { response } = await fetchWithResilience(url, opts);
+  return response;
+}
+
+// ─── Public: JSON + stale-cache variant ─────────────────────────────────────
+
+export async function resilientFetch<T = unknown>(
+  url: string,
+  opts: ResilientFetchOptions = {},
+): Promise<ResilientFetchResult<T>> {
+  const { staleCache, staleCacheKey, ...rest } = opts;
+  const start = Date.now();
+  let attempts = 0;
+
+  try {
+    const outcome = await fetchWithResilience(url, rest);
+    attempts = outcome.attempts;
+    const res = outcome.response;
+
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: ${res.statusText} from ${url}`);
+    }
+
+    const data = (await res.json()) as T;
+
+    // Persist good data into the stale cache so it's available later
+    if (staleCache && staleCacheKey) {
+      // Store with a very long TTL — this is the "last known good" value
+      staleCache.set(staleCacheKey, data, 3600); // 1 hour stale window
+    }
+
+    return { data, stale: false, status: res.status, elapsedMs: Date.now() - start, attempts };
+  } catch (err) {
     // ── Stale-on-error fallback ─────────────────────────────────────────
     if (staleCache && staleCacheKey) {
       const stale = staleCache.get<T>(staleCacheKey);
-      if (stale !== null) {
+      if (stale !== null && stale !== undefined) {
         return {
           data: stale,
           stale: true,
@@ -178,12 +252,8 @@ export async function resilientFetch<T = unknown>(
       }
     }
 
-    // If the circuit was open, wrap the error for easier handling upstream
-    if (err instanceof CircuitOpenError) {
-      throw err;
-    }
-
-    throw lastError ?? err;
+    // CircuitOpenError propagates untouched so callers can detect it
+    throw err;
   }
 }
 
