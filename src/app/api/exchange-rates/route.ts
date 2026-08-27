@@ -11,6 +11,8 @@
 import { NextResponse } from 'next/server';
 import { COINGECKO_BASE } from '@/lib/constants';
 
+import { resilientFetch } from '@/lib/resilient-fetch';
+import { staleCache } from '@/lib/cache';
 export const revalidate = 300; // 5 minutes
 
 /**
@@ -19,25 +21,40 @@ export const revalidate = 300; // 5 minutes
  * Proxies CoinGecko exchange rates so client components never call
  * external APIs directly from the browser.
  */
+const STALE_KEY = 'exchange-rates:coingecko';
+
 export async function GET() {
   try {
-    const res = await fetch(`${COINGECKO_BASE}/exchange_rates`, {
-      next: { revalidate: 300 },
-    });
+    // There is no keyless equivalent for BTC-denominated rates, so resilience
+    // here means the last good table rather than a second provider: this feeds
+    // a currency selector, and a 429 propagated as a 500 broke the selector on
+    // every page it appears on.
+    const { data, stale } = await resilientFetch<Record<string, unknown>>(
+      `${COINGECKO_BASE}/exchange_rates`,
+      {
+        service: 'coingecko',
+        timeoutMs: 8000,
+        retries: 1,
+        staleCache,
+        staleCacheKey: STALE_KEY,
+        next: { revalidate: 300 },
+      },
+    );
 
-    if (!res.ok) {
-      return NextResponse.json(
-        { error: 'Failed to fetch exchange rates' },
-        { status: res.status },
-      );
-    }
-
-    const data = await res.json();
     return NextResponse.json(data, {
-      headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=60' },
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=60',
+        ...(stale ? { 'X-Data-Stale': '1' } : {}),
+      },
     });
   } catch (error: unknown) {
+    // Nothing cached and the upstream is down. An empty rates table is a state
+    // the selector already handles (it falls back to USD); an error is not.
     const message = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.warn('[exchange-rates] upstream unavailable, serving an empty table:', message);
+    return NextResponse.json(
+      { rates: {}, degraded: true },
+      { headers: { 'Cache-Control': 'public, s-maxage=60', 'X-Data-Degraded': '1' } },
+    );
   }
 }

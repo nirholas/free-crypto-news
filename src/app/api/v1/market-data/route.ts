@@ -23,6 +23,8 @@ import { ApiError } from '@/lib/api-error';
 import { createRequestLogger } from '@/lib/logger';
 import { COINGECKO_BASE } from '@/lib/constants';
 
+import { getGlobalMarketData } from '@/lib/market-data';
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 const ENDPOINT = '/api/v1/market-data';
 
 export async function GET(request: NextRequest) {
@@ -36,26 +38,39 @@ export async function GET(request: NextRequest) {
   try {
     logger.info('Fetching global market data');
 
-    // Fetch global data and trending in parallel
-    const [globalResponse, trendingResponse] = await Promise.all([
-      fetch(`${COINGECKO_BASE}/global`, {
-        headers: {
-          Accept: 'application/json',
-          'User-Agent': 'CryptoDataAggregator/1.0',
-        },
+    // Two independent upstreams, so settle rather than all: one being throttled
+    // must not take the other's data down with it.
+    const headers = { Accept: 'application/json', 'User-Agent': 'CryptoDataAggregator/1.0' };
+    const [globalResult, trendingResult] = await Promise.allSettled([
+      resilientFetchResponse(`${COINGECKO_BASE}/global`, {
+        service: 'coingecko',
+        timeoutMs: 8000,
+        retries: 1,
+        headers,
         next: { revalidate: 120 },
       }),
-      fetch(`${COINGECKO_BASE}/search/trending`, {
-        headers: {
-          Accept: 'application/json',
-          'User-Agent': 'CryptoDataAggregator/1.0',
-        },
+      resilientFetchResponse(`${COINGECKO_BASE}/search/trending`, {
+        service: 'coingecko',
+        timeoutMs: 8000,
+        retries: 1,
+        headers,
         next: { revalidate: 300 },
       }),
     ]);
 
-    const globalData = globalResponse.ok ? await globalResponse.json() : null;
-    const trendingData = trendingResponse.ok ? await trendingResponse.json() : null;
+    const okBody = async (result: PromiseSettledResult<Response>) =>
+      result.status === 'fulfilled' && result.value.ok ? await result.value.json() : null;
+
+    let globalData = await okBody(globalResult);
+    const trendingData = await okBody(trendingResult);
+
+    // CoinGecko throttled the global call: the data layer's CoinPaprika chain
+    // answers the same question, so the response degrades a field at a time
+    // instead of returning null for the whole market picture.
+    if (!globalData?.data) {
+      const fallbackGlobal = await getGlobalMarketData().catch(() => null);
+      if (fallbackGlobal) globalData = { data: fallbackGlobal };
+    }
 
     // Transform global data
     const global = globalData?.data
@@ -93,7 +108,7 @@ export async function GET(request: NextRequest) {
           market_cap_rank: c.item.market_cap_rank,
           thumb: c.item.thumb,
           score: c.item.score,
-        })
+        }),
       ) || [];
 
     // Calculate additional metrics
@@ -133,7 +148,7 @@ export async function GET(request: NextRequest) {
           'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
           'X-Data-Source': 'CoinGecko',
         },
-      }
+      },
     );
   } catch (error) {
     logger.error('Failed to fetch market data', error);

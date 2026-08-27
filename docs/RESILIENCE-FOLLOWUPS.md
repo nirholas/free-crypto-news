@@ -30,26 +30,28 @@ here is defense-in-depth on top of that key.
 - Fixed wrong CoinGecko header `x-cg-demo-key` -> `x-cg-demo-api-key` in the
   OHLCV adapter.
 
-## Follow-ups (lower traffic; auth-gated or chart surfaces)
+## Fixed (2026-08-27)
 
-Each is the same pattern: swap the raw CoinGecko fetch for the existing
-fallback-backed lib function, or degrade a 5xx to a 200 empty.
+Every route handler that still reached an upstream through a bare `fetch()` now
+goes through `resilientFetchResponse` (8s deadline, one retry on a transient
+408/429/5xx, shared per-service circuit breaker): 74 call sites across 32 routes.
+The follow-ups listed below were closed at the same time.
 
-- `/api/charts` (route.ts) — `market_chart` and `ohlc` fetch CoinGecko directly
-  (502/500 on failure). Route through `getHistoricalPrices()` /
-  `getOHLC()` which already invoke `getHistoricalPricesFallback` (CoinCap) and
-  `getOHLCBinanceFallback` (Binance klines).
-- `/api/v1/trending` — raw `/search/trending` -> 502. Use `getTrending()`
-  (has `getTrendingFallback`, CoinCap top-10). Map `TrendingCoin[]` to the
-  route's output shape.
-- `/api/v1/market-data` — CoinGecko `/global` + `/search/trending`, 502 on
-  either. Use `getGlobalMarketData()` + `getTrending()`, and don't fail the
-  whole route when only one upstream is down.
-- `/api/compare` — raw `/coins/markets` -> 500. Use `fetchCoinGecko()` (gets the
-  CoinCap `/coins/markets` fallback for free) or degrade to partial results.
-- `/api/exchange-rates` — raw `/exchange_rates`, propagates 429/5xx. No clean
-  keyless equivalent for BTC-denominated rates; at minimum serve a stale/empty
-  200 so the currency selector degrades instead of erroring.
+- `/api/charts` — `market_chart` and `ohlc` now carry a deadline and a retry.
+- `/api/v1/trending` — falls back to `getTrending()` (CoinCap) and answers with
+  `degraded: true` plus `X-Data-Degraded` rather than 502ing on a throttle.
+- `/api/v1/market-data` — the two upstreams settle independently, so one being
+  throttled no longer nulls the other, and the global half falls back to
+  `getGlobalMarketData()` (CoinPaprika).
+- `/api/compare` — routed through `fetchCoinGecko()`, which brings the shared
+  cache and API-key header, so a throttle serves the last good comparison.
+- `/api/exchange-rates` — serves the last good table (`X-Data-Stale`) and, with
+  nothing cached, an empty table the currency selector already handles, instead
+  of propagating a 429 as a 500.
+
+New alongside them: `/api/sources/health` reports which RSS sources are actually
+answering (success rate, latency, last error), which is how a rotting source
+becomes visible at all now that `fetchFeed()` swallows failures by design.
 
 ## Verified already-safe (no change needed)
 

@@ -18,8 +18,10 @@ Free Crypto News is a project by [nirholas](https://github.com/nirholas) deploye
 - [Market data](https://cryptocurrency.cv/api/market): `GET /api/market` — prices and market context
 - [Fear & Greed](https://cryptocurrency.cv/api/fear-greed): `GET /api/fear-greed` — crypto fear & greed index
 - [Archive](https://cryptocurrency.cv/api/archive): `GET /api/archive?date=2024-01|ticker=BTC|q=...` — historical archive
-- [RSS feed](https://cryptocurrency.cv/api/rss): `GET /api/rss` — RSS 2.0 feed of latest news
-- [Atom feed](https://cryptocurrency.cv/api/atom): `GET /api/atom` — Atom feed of latest news
+- [Source health](https://cryptocurrency.cv/api/sources/health): `GET /api/sources/health` — per-source success rate, latency and last error (`?status=failing`, `?category=`, `?summary=1`)
+- [Feed index](https://cryptocurrency.cv/api/feeds): `GET /api/feeds` — every RSS/Atom/JSON feed, one per topic
+- [RSS feed](https://cryptocurrency.cv/api/rss): `GET /api/rss?feed=<topic>` — RSS 2.0; `feed` accepts any slug from /api/feeds (default `all`)
+- [Atom feed](https://cryptocurrency.cv/api/atom): `GET /api/atom?feed=<topic>` — Atom; same `feed` slugs as the RSS endpoint
 
 ## AI & LLM Features
 
@@ -114,7 +116,7 @@ Network: Arbitrum (eip155:42161) | Asset: USDC | Default price: $0.001
 - [OpenAPI spec](https://cryptocurrency.cv/openapi.json): machine-readable, 350+ endpoints with x-payment-info
 - [x402 discovery](https://cryptocurrency.cv/.well-known/x402): x402scan resource listing
 - [Agent capabilities](https://cryptocurrency.cv/.well-known/agents.json): skills, workflows, payment info
-- [API docs](https://cryptocurrency.cv/docs/api): human-readable API documentation
+- [API docs](https://cryptocurrency.cv/api-reference): human-readable API documentation
 - [Quickstart](https://cryptocurrency.cv/docs/quickstart): 5-minute integration guide
 - [README](https://raw.githubusercontent.com/nirholas/cryptocurrency.cv/main/README.md): full project README with quickstart
 

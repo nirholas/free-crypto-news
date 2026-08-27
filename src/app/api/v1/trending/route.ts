@@ -23,6 +23,8 @@ import { ApiError } from '@/lib/api-error';
 import { createRequestLogger } from '@/lib/logger';
 import { COINGECKO_BASE } from '@/lib/constants';
 
+import { getTrending } from '@/lib/market-data';
+import { resilientFetchResponse } from '@/lib/resilient-fetch';
 const ENDPOINT = '/api/v1/trending';
 
 export async function GET(request: NextRequest) {
@@ -36,7 +38,10 @@ export async function GET(request: NextRequest) {
   try {
     logger.info('Fetching trending coins');
 
-    const response = await fetch(`${COINGECKO_BASE}/search/trending`, {
+    const response = await resilientFetchResponse(`${COINGECKO_BASE}/search/trending`, {
+      service: 'coingecko',
+      timeoutMs: 8000,
+      retries: 1,
       headers: {
         Accept: 'application/json',
         'User-Agent': 'CryptoDataAggregator/1.0',
@@ -69,7 +74,7 @@ export async function GET(request: NextRequest) {
               score: number;
             };
           },
-          index: number
+          index: number,
         ) => ({
           rank: index + 1,
           id: c.item.id,
@@ -83,7 +88,7 @@ export async function GET(request: NextRequest) {
             small: c.item.small,
             large: c.item.large,
           },
-        })
+        }),
       ) || [];
 
     // Transform trending NFTs if available
@@ -105,7 +110,7 @@ export async function GET(request: NextRequest) {
             thumb: n.thumb,
             floor_price: n.floor_price_in_native_currency,
             floor_price_change_24h: n.floor_price_24h_percentage_change,
-          })
+          }),
         ) || [];
 
     logger.request(request.method, request.nextUrl.pathname, 200, Date.now() - startTime);
@@ -129,10 +134,53 @@ export async function GET(request: NextRequest) {
           'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
           'X-Data-Source': 'CoinGecko',
         },
-      }
+      },
     );
   } catch (error) {
-    logger.error('Failed to fetch trending data', error);
+    // CoinGecko's keyless tier throttles hard, and this endpoint used to answer
+    // 502 the moment it did. getTrending() carries the CoinCap fallback the
+    // data layer already implements, so a throttle costs the NFT and category
+    // sections (CoinGecko-only data) rather than the whole response.
+    logger.error('Trending upstream failed, falling back to the data layer', error);
+    try {
+      const fallbackCoins = await getTrending();
+      if (fallbackCoins.length) {
+        return NextResponse.json(
+          {
+            success: true,
+            data: {
+              coins: fallbackCoins.map((c, index) => ({
+                rank: index + 1,
+                id: c.id,
+                symbol: c.symbol?.toUpperCase(),
+                name: c.name,
+                market_cap_rank: c.market_cap_rank,
+                price_btc: c.price_btc,
+                score: c.score,
+                images: { thumb: c.thumb, small: c.small, large: c.large },
+              })),
+              nfts: [],
+              categories: [],
+            },
+            meta: {
+              endpoint: ENDPOINT,
+              coinCount: fallbackCoins.length,
+              degraded: true,
+              timestamp: new Date().toISOString(),
+            },
+          },
+          {
+            headers: {
+              'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+              'X-Data-Source': 'fallback',
+              'X-Data-Degraded': '1',
+            },
+          },
+        );
+      }
+    } catch (fallbackError) {
+      logger.error('Trending fallback failed too', fallbackError);
+    }
     return ApiError.upstream('CoinGecko', error);
   }
 }

@@ -16,8 +16,10 @@ Free Crypto News is a source-available project by [nirholas](https://github.com/
 - [Sentiment](https://cryptocurrency.cv/api/sentiment): `GET /api/sentiment` — AI-powered sentiment analysis
 - [Market data](https://cryptocurrency.cv/api/market): `GET /api/market` — prices and market context
 - [Fear & Greed](https://cryptocurrency.cv/api/fear-greed): `GET /api/fear-greed` — crypto fear & greed index
-- [RSS feed](https://cryptocurrency.cv/api/rss): `GET /api/rss` — RSS 2.0 feed of latest news
-- [Atom feed](https://cryptocurrency.cv/api/atom): `GET /api/atom` — Atom feed of latest news
+- [Source health](https://cryptocurrency.cv/api/sources/health): `GET /api/sources/health` — per-source success rate, latency and last error (`?status=failing`, `?category=`, `?summary=1`)
+- [Feed index](https://cryptocurrency.cv/api/feeds): `GET /api/feeds` — every RSS/Atom/JSON feed, one per topic
+- [RSS feed](https://cryptocurrency.cv/api/rss): `GET /api/rss?feed=<topic>` — RSS 2.0; `feed` accepts any slug from /api/feeds (default `all`)
+- [Atom feed](https://cryptocurrency.cv/api/atom): `GET /api/atom?feed=<topic>` — Atom; same `feed` slugs as the RSS endpoint
 
 ## AI & LLM Features
 
@@ -35,7 +37,7 @@ Free Crypto News is a source-available project by [nirholas](https://github.com/
 
 - [Full LLM docs](https://cryptocurrency.cv/llms-full.txt): complete inline API reference for LLMs
 - [OpenAPI spec](https://cryptocurrency.cv/api/openapi.json): machine-readable OpenAPI 3.1 specification
-- [API docs](https://cryptocurrency.cv/docs/api): human-readable API documentation
+- [API docs](https://cryptocurrency.cv/api-reference): human-readable API documentation
 - [README](https://raw.githubusercontent.com/nirholas/cryptocurrency.cv/main/README.md): full project README with quickstart
 - [Quickstart](https://cryptocurrency.cv/docs/quickstart): 5-minute integration guide
 

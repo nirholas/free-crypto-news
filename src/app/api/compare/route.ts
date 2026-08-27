@@ -12,6 +12,28 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { COINGECKO_BASE } from '@/lib/constants';
 import { ApiError } from '@/lib/api-error';
 
+import { fetchCoinGecko } from '@/lib/coingecko';
+
+/** The /coins/markets row shape this route reads. */
+interface CoinGeckoMarket {
+  id: string;
+  symbol: string;
+  name: string;
+  image: string;
+  current_price: number;
+  market_cap: number;
+  market_cap_rank: number;
+  total_volume: number;
+  high_24h: number;
+  low_24h: number;
+  price_change_percentage_1h_in_currency: number;
+  price_change_percentage_24h_in_currency: number;
+  price_change_percentage_7d_in_currency: number;
+  circulating_supply: number;
+  total_supply: number;
+  ath: number;
+  ath_change_percentage: number;
+}
 export const runtime = 'edge';
 export const revalidate = 60;
 
@@ -19,7 +41,7 @@ const COIN_ID_PATTERN = /^[a-z0-9][a-z0-9-]{0,63}$/;
 
 /**
  * GET /api/compare
- * 
+ *
  * Compare multiple cryptocurrencies side-by-side
  */
 export async function GET(request: NextRequest) {
@@ -30,44 +52,30 @@ export async function GET(request: NextRequest) {
     return ApiError.badRequest('Missing coins parameter. Use ?coins=bitcoin,ethereum,solana');
   }
 
-  const coins = coinsParam.split(',').map(c => c.trim().toLowerCase()).filter(c => COIN_ID_PATTERN.test(c)).slice(0, 10);
+  const coins = coinsParam
+    .split(',')
+    .map((c) => c.trim().toLowerCase())
+    .filter((c) => COIN_ID_PATTERN.test(c))
+    .slice(0, 10);
 
   if (coins.length === 0) {
     return ApiError.badRequest('No valid coin IDs provided');
   }
 
   try {
-    // Fetch from CoinGecko
-    const response = await fetch(
+    // fetchCoinGecko rather than a bare fetch: it carries the shared in-process
+    // cache (so a throttle is served from the last good copy instead of 500ing
+    // the comparison) and the API-key header when one is configured.
+    const data = await fetchCoinGecko<CoinGeckoMarket[]>(
       `${COINGECKO_BASE}/coins/markets?vs_currency=usd&ids=${coins.join(',')}&order=market_cap_desc&sparkline=false&price_change_percentage=1h,24h,7d`,
-      { next: { revalidate: 60 } }
+      { revalidate: 60 },
     );
 
-    if (!response.ok) {
+    if (!Array.isArray(data)) {
       throw new Error('Failed to fetch from CoinGecko');
     }
 
-    const data = await response.json();
-
-    const comparison = data.map((coin: {
-      id: string;
-      symbol: string;
-      name: string;
-      image: string;
-      current_price: number;
-      market_cap: number;
-      market_cap_rank: number;
-      total_volume: number;
-      high_24h: number;
-      low_24h: number;
-      price_change_percentage_1h_in_currency: number;
-      price_change_percentage_24h_in_currency: number;
-      price_change_percentage_7d_in_currency: number;
-      circulating_supply: number;
-      total_supply: number;
-      ath: number;
-      ath_change_percentage: number;
-    }) => ({
+    const comparison = data.map((coin: CoinGeckoMarket) => ({
       id: coin.id,
       symbol: coin.symbol.toUpperCase(),
       name: coin.name,
@@ -94,14 +102,22 @@ export async function GET(request: NextRequest) {
     }));
 
     // Calculate summary metrics
-    const avgChange24h = comparison.reduce((sum: number, c: { changes: { '24h': string } }) => 
-      sum + (parseFloat(c.changes['24h']) || 0), 0) / comparison.length;
-    
-    const totalMarketCap = comparison.reduce((sum: number, c: { marketCap: number }) => 
-      sum + c.marketCap, 0);
-    
-    const totalVolume = comparison.reduce((sum: number, c: { volume24h: number }) => 
-      sum + c.volume24h, 0);
+    const avgChange24h =
+      comparison.reduce(
+        (sum: number, c: { changes: { '24h': string } }) =>
+          sum + (parseFloat(c.changes['24h']) || 0),
+        0,
+      ) / comparison.length;
+
+    const totalMarketCap = comparison.reduce(
+      (sum: number, c: { marketCap: number }) => sum + c.marketCap,
+      0,
+    );
+
+    const totalVolume = comparison.reduce(
+      (sum: number, c: { volume24h: number }) => sum + c.volume24h,
+      0,
+    );
 
     return NextResponse.json({
       coins: comparison,
@@ -110,11 +126,14 @@ export async function GET(request: NextRequest) {
         avgChange24h: avgChange24h.toFixed(2),
         totalMarketCap,
         totalVolume24h: totalVolume,
-        leader24h: comparison.reduce((best: { symbol: string; changes: { '24h': string } }, c: { symbol: string; changes: { '24h': string } }) => 
-          (parseFloat(c.changes['24h']) || 0) > (parseFloat(best.changes['24h']) || 0) ? c : best
+        // Annotations dropped: `comparison` is now properly typed (the upstream
+        // rows used to arrive as `any`), so inference gives the real element type
+        // and a narrower hand-written one no longer type-checks.
+        leader24h: comparison.reduce((best, c) =>
+          (parseFloat(c.changes['24h']) || 0) > (parseFloat(best.changes['24h']) || 0) ? c : best,
         ).symbol,
-        laggard24h: comparison.reduce((worst: { symbol: string; changes: { '24h': string } }, c: { symbol: string; changes: { '24h': string } }) => 
-          (parseFloat(c.changes['24h']) || 0) < (parseFloat(worst.changes['24h']) || 0) ? c : worst
+        laggard24h: comparison.reduce((worst, c) =>
+          (parseFloat(c.changes['24h']) || 0) < (parseFloat(worst.changes['24h']) || 0) ? c : worst,
         ).symbol,
       },
       timestamp: new Date().toISOString(),
