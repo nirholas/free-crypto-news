@@ -97,25 +97,14 @@ gcloud-*.json
 # Large / generated assets (not needed in repo)
 # ═══════════════════════════════════════════════════════════════
 .data/
-.do/
-.storybook/
 /archive/
 # /content/ — tracked (blog posts need to be deployed)
-/contracts/
 /data/
-/infra/
-/mobile/
-/postman/
 /profile-readme/
 /prompts/
-/raycast/
-/skills/
-/telegram/
-/terminal/
 
-# i18n — only English messages are committed; others are generated
-messages/*
-!messages/en.json
+# i18n: every locale under messages/ is committed because src/i18n/request.ts imports
+# them at build time; refresh them with `pnpm i18n:translate` (Gemini key required)
 
 # Misc generated / personal files
 vercel-logs.json
