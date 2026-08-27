@@ -12,7 +12,6 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { getLatestNews } from '@/lib/crypto-news';
 import { promptGroqJson, isGroqConfigured } from '@/lib/groq';
 import { groqNotConfiguredResponse } from '@/app/api/_utils';
-import { ApiError } from '@/lib/api-error';
 import { createRequestLogger } from '@/lib/logger';
 
 export const runtime = 'edge';
@@ -153,6 +152,27 @@ ${JSON.stringify(articlesForAnalysis, null, 2)}`;
   } catch (error) {
     const logger = createRequestLogger(request);
     logger.error('Signal generation error', { error });
-    return ApiError.internal('Failed to generate signals', error);
+
+    // Signals are a derived, best-effort product. A model outage is not a
+    // reason to hand a public endpoint a bare 500 with an empty details
+    // object; say what happened and return a well-formed empty result.
+    return NextResponse.json(
+      {
+        signals: [],
+        summary: { total: 0, distribution: {}, averageConfidence: 0 },
+        disclaimer:
+          'NOT FINANCIAL ADVICE. For educational purposes only. Always do your own research before trading.',
+        unavailable: true,
+        reason: 'Signal generation is temporarily unavailable (AI provider error).',
+        generatedAt: new Date().toISOString(),
+      },
+      {
+        status: 200,
+        headers: {
+          'Cache-Control': 'public, s-maxage=60',
+          'Access-Control-Allow-Origin': '*',
+        },
+      },
+    );
   }
 }

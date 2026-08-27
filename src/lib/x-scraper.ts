@@ -8,6 +8,8 @@
  * For licensing inquiries: nirholas@users.noreply.github.com
  */
 
+import { GROQ_FAST_MODEL } from './ai-models';
+
 /**
  * X/Twitter Scraper - Automated sentiment analysis without paid API
  * 
@@ -325,7 +327,7 @@ export async function analyzeTweetSentiment(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.1-8b-instant',
+        model: GROQ_FAST_MODEL,
         messages: [
           {
             role: 'system',

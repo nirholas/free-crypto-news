@@ -17,6 +17,7 @@
 
 import { type InternationalArticle, type InternationalNewsResponse } from './international-sources';
 import { newsCache } from './cache';
+import { GROQ_FAST_MODEL } from './ai-models';
 
 // ═══════════════════════════════════════════════════════════════
 // CONFIGURATION
@@ -160,7 +161,7 @@ ${JSON.stringify(
           Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
+          model: GROQ_FAST_MODEL,
           messages: [
             {
               role: 'system',

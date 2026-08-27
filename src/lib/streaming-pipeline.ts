@@ -50,6 +50,7 @@
  */
 
 import { metrics } from './telemetry';
+import { GROQ_MODEL, OPENAI_MODEL, OPENROUTER_MODEL } from './ai-models';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -122,7 +123,7 @@ const PROVIDERS: Record<StreamProvider, ProviderConfig> = {
         return json.choices?.[0]?.delta?.content || null;
       } catch { return null; }
     },
-    getDefaultModel: () => process.env.OPENAI_MODEL || 'gpt-4o',
+    getDefaultModel: () => OPENAI_MODEL,
     getApiKey: () => process.env.OPENAI_API_KEY,
     outputCostPer1M: 15,
   },
@@ -168,7 +169,7 @@ const PROVIDERS: Record<StreamProvider, ProviderConfig> = {
         return json.choices?.[0]?.delta?.content || null;
       } catch { return null; }
     },
-    getDefaultModel: () => process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
+    getDefaultModel: () => GROQ_MODEL,
     getApiKey: () => process.env.GROQ_API_KEY,
     outputCostPer1M: 0.79,
   },
@@ -216,7 +217,7 @@ const PROVIDERS: Record<StreamProvider, ProviderConfig> = {
         return json.choices?.[0]?.delta?.content || null;
       } catch { return null; }
     },
-    getDefaultModel: () => process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.3-70b-instruct',
+    getDefaultModel: () => OPENROUTER_MODEL,
     getApiKey: () => process.env.OPENROUTER_API_KEY,
     outputCostPer1M: 1.0,
   },

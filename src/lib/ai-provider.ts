@@ -20,7 +20,7 @@ import { aiCache, generateCacheKey, withCache } from './cache';
 // constant alone: a constant is resolved once at import, so a process that sets
 // (or a test that overrides) MODEL after this module loads would otherwise be
 // silently ignored. The constant stays the single place a default lives.
-import { ANTHROPIC_MODEL, GROQ_MODEL, OPENAI_MODEL, OPENROUTER_MODEL } from './ai-models';
+import { ANTHROPIC_MODEL, GEMINI_MODEL, GROQ_MODEL, OPENAI_MODEL, OPENROUTER_MODEL } from './ai-models';
 
 export type AIProvider = 'openai' | 'anthropic' | 'groq' | 'openrouter' | 'gemini';
 
@@ -95,7 +95,7 @@ const providerFactories: Record<AIProvider, () => AIConfig | null> = {
       : null,
   gemini: () =>
     process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY
-      ? { provider: 'gemini', model: process.env.GEMINI_MODEL || 'gemini-2.5-pro', apiKey: (process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY)! }
+      ? { provider: 'gemini', model: GEMINI_MODEL, apiKey: (process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY)! }
       : null,
 };
 
@@ -359,8 +359,23 @@ async function aiCompleteWithConfig(
       },
       systemInstruction: systemPrompt,
     });
-    const result = await model.generateContent(userPrompt);
-    return result.response.text();
+    try {
+      const result = await model.generateContent(userPrompt);
+      return result.response.text();
+    } catch (err) {
+      // The Google SDK throws its own error type. Left unclassified it escapes
+      // the provider loop in aiComplete and takes the whole chain down with it,
+      // which is how a billing hold on the Google project ("Lightning dunning
+      // decision is deny") turned every brief into a 500 while Groq sat idle.
+      const message = err instanceof Error ? err.message : String(err);
+      if (/\[40[13] |permission|denied|dunning|API key|unauthenticated/i.test(message)) {
+        throw new AIAuthError('gemini', 403, `Gemini unavailable: ${message}`);
+      }
+      if (/\[429 |quota|rate limit|resource_exhausted/i.test(message)) {
+        throw new AIRateLimitError('gemini', 429, `Gemini rate-limited: ${message}`);
+      }
+      throw err;
+    }
   }
 
   // OpenAI-compatible API (OpenAI, Groq, OpenRouter)

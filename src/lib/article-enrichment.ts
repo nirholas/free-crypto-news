@@ -8,6 +8,8 @@
  * For licensing inquiries: nirholas@users.noreply.github.com
  */
 
+import { GROQ_FAST_MODEL } from './ai-models';
+
 /**
  * Article Enrichment — AI-powered per-article metadata
  *
@@ -168,7 +170,7 @@ export async function enrichArticlesBatch(
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
+        model: GROQ_FAST_MODEL,
         messages: [
           { role: 'system', content: ENRICH_SYSTEM_PROMPT },
           { role: 'user', content: userPrompt },

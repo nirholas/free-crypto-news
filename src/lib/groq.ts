@@ -19,10 +19,60 @@
  */
 
 import { aiCache, generateCacheKey, withCache } from './cache';
+import { GROQ_MODEL } from './ai-models';
 import { withSpan, metrics } from '@/lib/telemetry';
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const DEFAULT_MODEL = 'llama-3.3-70b-versatile';
+
+/**
+ * Model chain.
+ *
+ * Groq retires models without notice: `llama-3.3-70b-versatile` was hardcoded
+ * here and silently stopped existing for our account, which turned every
+ * AI-backed endpoint on the site into a 500 (`/api/signals` among them). The
+ * model is now configurable, and a `model_not_found` / `model_decommissioned`
+ * response falls through to the next entry instead of failing the request.
+ *
+ * Set GROQ_MODEL to pin a specific model; it is tried first.
+ */
+const MODEL_CHAIN: readonly string[] = [
+  GROQ_MODEL,
+  'qwen/qwen3.8-27b',
+  'openai/gpt-oss-120b',
+  'openai/gpt-oss-20b',
+  'groq/compound-mini',
+];
+
+const DEFAULT_MODEL = MODEL_CHAIN[0];
+
+/** Upper bound on a single Groq request. Without it a slow model hangs the route. */
+const GROQ_TIMEOUT_MS = Number(process.env.GROQ_TIMEOUT_MS) || 30_000;
+
+/** Models this process has already seen rejected, so we skip them next time. */
+const retiredModels = new Set<string>();
+
+/** True when Groq is telling us the model itself is gone, not that the request was bad. */
+function isModelGoneError(status: number, body: string): boolean {
+  if (status !== 404 && status !== 400) return false;
+  return /model_not_found|model_decommissioned|does not exist|has been decommissioned/i.test(body);
+}
+
+/**
+ * The models to try for a request, most preferred first: the caller's choice,
+ * then the rest of the chain, minus anything already known to be retired.
+ */
+function modelsToTry(requested?: string): string[] {
+  const ordered = requested ? [requested, ...MODEL_CHAIN] : [...MODEL_CHAIN];
+  const seen = new Set<string>();
+  const usable = ordered.filter((m) => {
+    if (!m || seen.has(m)) return false;
+    seen.add(m);
+    return !retiredModels.has(m);
+  });
+  // Everything is marked retired (a bad key looks like this): try the chain
+  // anyway rather than failing without contacting the API.
+  return usable.length > 0 ? usable : [...new Set(ordered)];
+}
 
 // Cache TTLs (in seconds) — short TTLs since we have unlimited AI credits
 const CACHE_TTL = {
@@ -88,47 +138,70 @@ export async function callGroq(
     throw new Error('GROQ_API_KEY not configured. Get a free key at https://console.groq.com/keys');
   }
 
-  const { model = DEFAULT_MODEL, temperature = 0.3, maxTokens = 2048, jsonMode = false } = options;
-
-  const body: Record<string, unknown> = {
-    model,
-    messages,
-    temperature,
-    max_tokens: maxTokens,
-  };
-
-  if (jsonMode) {
-    body.response_format = { type: 'json_object' };
-  }
+  const { model: requestedModel, temperature = 0.3, maxTokens = 2048, jsonMode = false } = options;
+  const candidates = modelsToTry(requestedModel);
 
   return withSpan(
     'ai.inference.groq',
     {
-      'ai.model': model,
+      'ai.model': candidates[0],
       'ai.provider': 'groq',
       'ai.temperature': temperature,
     },
     async (span) => {
       const start = Date.now();
 
-      const response = await fetch(GROQ_API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify(body),
-      });
+      let response: Response | undefined;
+      let model = candidates[0];
 
-      if (!response.ok) {
-        const error = await response.text();
+      for (const candidate of candidates) {
+        model = candidate;
+        const body: Record<string, unknown> = {
+          model,
+          messages,
+          temperature,
+          max_tokens: maxTokens,
+        };
+        if (jsonMode) {
+          body.response_format = { type: 'json_object' };
+        }
+
+        const attempt = await fetch(GROQ_API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify(body),
+          signal: AbortSignal.timeout(GROQ_TIMEOUT_MS),
+        });
+
+        if (attempt.ok) {
+          response = attempt;
+          break;
+        }
+
+        const error = await attempt.text();
         metrics.aiErrors.add(1, { model, provider: 'groq' });
-        if (response.status === 401) {
+
+        if (attempt.status === 401) {
           throw new GroqAuthError(`Groq API authentication failed: ${error}`);
         }
-        throw new Error(`Groq API error: ${response.status} - ${error}`);
+
+        if (isModelGoneError(attempt.status, error) && candidate !== candidates.at(-1)) {
+          retiredModels.add(candidate);
+          console.warn(`[groq] model ${candidate} is unavailable, falling back to the next model`);
+          continue;
+        }
+
+        throw new Error(`Groq API error: ${attempt.status} - ${error}`);
       }
 
+      if (!response) {
+        throw new Error(`Groq API error: no model in the chain answered (tried ${candidates.join(', ')})`);
+      }
+
+      span.setAttribute('ai.model', model);
       const data = await response.json();
       const content = data.choices?.[0]?.message?.content || '';
       const usage = data.usage || {};

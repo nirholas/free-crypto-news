@@ -8,6 +8,8 @@
  * For licensing inquiries: nirholas@users.noreply.github.com
  */
 
+import { GROQ_MODEL, OPENAI_MODEL } from './ai-models';
+
 /**
  * Multi-Model AI Router
  *
@@ -236,7 +238,7 @@ export const MODEL_REGISTRY: ModelSpec[] = [
   // ── Groq (Llama 3.3 — ultra fast) ─────────────────────────────────
   {
     provider: 'groq',
-    model: 'llama-3.3-70b-versatile',
+    model: GROQ_MODEL,
     displayName: 'Llama 3.3 70B (Groq)',
     contextWindow: 128_000,
     maxOutput: 8_192,
@@ -254,7 +256,7 @@ export const MODEL_REGISTRY: ModelSpec[] = [
   // ── OpenAI ─────────────────────────────────────────────────────────
   {
     provider: 'openai',
-    model: 'gpt-4o',
+    model: OPENAI_MODEL,
     displayName: 'GPT-4o',
     contextWindow: 128_000,
     maxOutput: 16_384,

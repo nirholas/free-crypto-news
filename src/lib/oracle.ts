@@ -25,10 +25,11 @@
  */
 
 import { callGroq, isGroqConfigured, type GroqMessage } from './groq';
-import { getLatestNews, type NewsArticle, type NewsResponse } from './crypto-news';
-import { getTopCoins, getGlobalMarketData, type TokenPrice, type GlobalMarketData } from './market-data';
+import { getLatestNews, type NewsArticle } from './crypto-news';
+import { getTopCoins, getGlobalMarketData } from './market-data';
 import { db } from './database';
 import { aiCache, generateCacheKey } from './cache';
+import { GROQ_MODEL } from './ai-models';
 
 // =============================================================================
 // TYPES
@@ -528,7 +529,7 @@ export async function queryOracle(input: OracleQuery): Promise<OracleResponse> {
       processingTimeMs: Date.now() - startTime,
       tokensUsed: aiResponse.usage.totalTokens,
       cached: false,
-      modelUsed: 'llama-3.3-70b-versatile',
+      modelUsed: GROQ_MODEL,
       disclaimer: 'This is AI-generated analysis for informational purposes only. Not financial advice. Always do your own research before making investment decisions.',
     },
   };
