@@ -1,7 +1,10 @@
 # Cloud Build pipeline for the cryptocurrency.cv Cloud Run service.
 # Usage (repo root):
 #   gcloud builds submit --config cloudbuild.yaml \
-#     --region us-central1 --project aerial-vehicle-466722-p5
+#     --region us-central1 --project aerial-vehicle-466722-p5 \
+#     --substitutions=_GIT_SHA=$(git rev-parse HEAD)
+# _GIT_SHA is baked into the image and reported by /api/version; a trigger
+# build can pass $COMMIT_SHA instead.
 
 steps:
     - id: pull-cache
@@ -21,12 +24,18 @@ steps:
               '$_IMAGE',
               '--build-arg',
               'BUILDKIT_INLINE_CACHE=1',
+              '--build-arg',
+              'GIT_SHA=$_GIT_SHA',
+              '--build-arg',
+              'BUILD_TIME=$_BUILD_TIME',
+              '-t',
+              '$_IMAGE_REPO:$_GIT_SHA',
               '.',
           ]
 
     - id: push
       name: gcr.io/cloud-builders/docker
-      args: ['push', '$_IMAGE']
+      args: ['push', '--all-tags', '$_IMAGE_REPO']
 
     - id: deploy
       name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
@@ -62,7 +71,10 @@ steps:
           ]
 
 substitutions:
+    _IMAGE_REPO: us-central1-docker.pkg.dev/aerial-vehicle-466722-p5/cloud-run-source-deploy/cryptocurrency-cv
     _IMAGE: us-central1-docker.pkg.dev/aerial-vehicle-466722-p5/cloud-run-source-deploy/cryptocurrency-cv:latest
+    _GIT_SHA: manual
+    _BUILD_TIME: unknown
 
 options:
     machineType: E2_HIGHCPU_32
@@ -72,4 +84,4 @@ serviceAccount: projects/aerial-vehicle-466722-p5/serviceAccounts/three-ws-build
 
 timeout: 2400s
 
-images: ['$_IMAGE']
+images: ['$_IMAGE', '$_IMAGE_REPO:$_GIT_SHA']

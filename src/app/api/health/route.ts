@@ -23,6 +23,8 @@ import { join } from 'path';
 import { isRedisAvailable, redisGet, redisSet } from '@/lib/redis';
 import { COINGECKO_BASE } from '@/lib/constants';
 import { instrumented } from '@/lib/telemetry-middleware';
+import { getFeedFreshness } from '@/lib/crypto-news';
+import { BUILD_INFO } from '@/lib/build-info';
 
 export const runtime = 'nodejs';
 export const revalidate = 0; // Always fresh
@@ -46,8 +48,36 @@ interface HealthResponse {
   status: 'healthy' | 'degraded' | 'unhealthy';
   timestamp: string;
   version: string;
+  build: typeof BUILD_INFO;
   uptime: number;
   checks: Record<string, HealthCheck>;
+}
+
+/**
+ * Freshness of the news aggregate already in memory. A cold instance has no
+ * aggregate yet (the first /api/news call fills it), which is reported as
+ * degraded rather than unhealthy so a fresh deploy passes its health probe.
+ */
+function checkFeeds(): HealthCheck & {
+  articleCount: number;
+  newestPublishedAt: string | null;
+  newestAgeMinutes: number | null;
+} {
+  const start = Date.now();
+  const f = getFeedFreshness();
+  const base = {
+    articleCount: f.articleCount,
+    newestPublishedAt: f.newestPublishedAt,
+    newestAgeMinutes: f.newestAgeMinutes,
+    responseTime: Date.now() - start,
+  };
+  if (!f.cached) {
+    return { status: 'degraded', message: 'No news aggregate cached yet on this instance', ...base };
+  }
+  if (f.newestAgeMinutes !== null && f.newestAgeMinutes > 180) {
+    return { status: 'degraded', message: 'Newest cached article is older than 3 hours', ...base };
+  }
+  return { status: 'healthy', ...base };
 }
 
 /**
@@ -95,10 +125,11 @@ async function checkCache(): Promise<HealthCheck> {
     }
   }
 
-  // No cache configured — use in-memory (degraded but functional)
+  // No external cache configured: the in-memory cache is the designed mode on
+  // a single Cloud Run instance, so it is healthy, not degraded.
   return {
-    status: 'degraded',
-    message: 'No Redis or Vercel KV configured, using in-memory cache',
+    status: 'healthy',
+    message: 'In-memory cache (no Redis or Vercel KV configured)',
     responseTime: Date.now() - start,
   };
 }
@@ -152,6 +183,7 @@ export const GET = instrumented(
       },
       cache,
       externalAPIs: external,
+      feeds: checkFeeds(),
     };
 
     // Check x402 only if configured
@@ -195,6 +227,7 @@ export const GET = instrumented(
       status: overallStatus,
       timestamp: new Date().toISOString(),
       version: APP_VERSION,
+      build: BUILD_INFO,
       uptime: Math.floor(process.uptime()),
       checks,
     };

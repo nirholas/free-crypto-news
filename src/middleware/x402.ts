@@ -528,8 +528,31 @@ async function augment402Response(res: NextResponse, req: NextRequest): Promise<
  * Ensures all 402 responses include a proper WWW-Authenticate header with
  * a Payment challenge for x402scan compatibility.
  */
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+let warnedNoReceiveAddress = false;
+
+/**
+ * True when the deployment has a real wallet to receive x402 payments.
+ * Without one, a 402 challenge would direct USDC to the zero address (an
+ * unrecoverable burn) for an endpoint nobody can ever unlock, so the gate
+ * fails open and the ordinary anonymous rate limits apply instead.
+ */
+export function isX402Configured(): boolean {
+  return RECEIVE_ADDRESS.toLowerCase() !== ZERO_ADDRESS;
+}
+
 export const x402Gate: MiddlewareHandler = async (ctx) => {
   if (!ctx.isApiRoute) return ctx;
+
+  if (!isX402Configured()) {
+    if (!warnedNoReceiveAddress) {
+      warnedNoReceiveAddress = true;
+      console.warn(
+        '[x402] X402_PAYMENT_ADDRESS is not set: paid endpoints are served without a payment challenge (anonymous rate limits still apply). Set X402_PAYMENT_ADDRESS to enable micropayments.',
+      );
+    }
+    return ctx;
+  }
 
   // Skip x402 for authenticated API key users — they pay via subscription
   if (ctx.apiKeyTier) return ctx;

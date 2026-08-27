@@ -50,11 +50,31 @@ function createContextWithUA(
 // =============================================================================
 
 describe('isBlockedBot', () => {
-  it('should block known scraper user agents', () => {
-    expect(isBlockedBot('SomeBot/1.0')).toBe(true);
-    expect(isBlockedBot('my-crawler/2.0')).toBe(true);
-    expect(isBlockedBot('wget/1.1')).toBe(true);
-    expect(isBlockedBot('curl/7.68.0')).toBe(true);
+  it('should block attack tooling and named scrapers', () => {
+    expect(isBlockedBot('sqlmap/1.7')).toBe(true);
+    expect(isBlockedBot('Mozilla/5.0 (compatible; Nikto/2.1.6)')).toBe(true);
+    expect(isBlockedBot('my-scraper/1.0')).toBe(true);
+    expect(isBlockedBot('Scrapy/2.11 (+https://scrapy.org)')).toBe(true);
+    expect(isBlockedBot('Mozilla/5.0 (compatible; AhrefsBot/7.0)')).toBe(true);
+  });
+
+  it('should allow cURL and wget (the advertised way to use the API)', () => {
+    expect(isBlockedBot('curl/7.68.0')).toBe(false);
+    expect(isBlockedBot('curl/8.5.0')).toBe(false);
+    expect(isBlockedBot('Wget/1.21.4')).toBe(false);
+  });
+
+  it('should allow AI agents invited by ai.txt and robots.txt', () => {
+    expect(isBlockedBot('Mozilla/5.0 AppleWebKit/537.36 (compatible; GPTBot/1.2)')).toBe(false);
+    expect(isBlockedBot('Mozilla/5.0 (compatible; ClaudeBot/1.0)')).toBe(false);
+    expect(isBlockedBot('Claude-User/1.0')).toBe(false);
+    expect(isBlockedBot('Mozilla/5.0 (compatible; PerplexityBot/1.0)')).toBe(false);
+    expect(isBlockedBot('SomeBot/1.0')).toBe(false);
+    expect(isBlockedBot('my-crawler/2.0')).toBe(false);
+  });
+
+  it('should never let the allowlist be shadowed by the blocklist', () => {
+    expect(isBlockedBot('Mozilla/5.0 (compatible; Googlebot/2.1; scraper-test)')).toBe(false);
   });
 
   it('should allow legitimate HTTP clients handled by rate limiting', () => {
@@ -102,6 +122,14 @@ describe('isApiClient', () => {
       headers: new Headers({ accept: 'application/json' }),
     });
     expect(isApiClient(request)).toBe(true);
+  });
+
+  it('should treat cURL and wget as API clients', () => {
+    for (const ua of ['curl/8.5.0', 'Wget/1.21.4']) {
+      const url = new URL('http://localhost:3000/api/test');
+      const request = new NextRequest(url, { headers: new Headers({ 'user-agent': ua }) });
+      expect(isApiClient(request)).toBe(true);
+    }
   });
 
   it('should not flag browser visitors', () => {

@@ -2658,7 +2658,7 @@ function getTimeAgo(date: Date): string {
   return date.toLocaleDateString();
 }
 
-import { newsCache, withCache } from './cache';
+import { newsCache, staleCache, withCache } from './cache';
 
 // ═══════════════════════════════════════════════════════════════
 // API SOURCES (more reliable than RSS)
@@ -3742,21 +3742,31 @@ const GLOBAL_FETCH_CONCURRENCY = 15;
 async function fetchAllInParallel(
   sourceKeys: SourceKey[],
   fn: (key: SourceKey) => Promise<NewsArticle[]>,
+  sink: NewsArticle[] = [],
 ): Promise<NewsArticle[]> {
-  const articles: NewsArticle[] = [];
-  // Process in batches to avoid exhausting connections and triggering
-  // upstream 429s. Each batch runs up to GLOBAL_FETCH_CONCURRENCY feeds.
-  for (let i = 0; i < sourceKeys.length; i += GLOBAL_FETCH_CONCURRENCY) {
-    const batch = sourceKeys.slice(i, i + GLOBAL_FETCH_CONCURRENCY);
-    const results = await Promise.allSettled(batch.map(fn));
-    for (const result of results) {
-      if (result.status === 'fulfilled') {
-        articles.push(...result.value);
+  // Sliding-window pool: at most GLOBAL_FETCH_CONCURRENCY feeds are in flight at
+  // once, and a slot is handed to the next feed the moment one settles. The
+  // previous fixed-batch loop waited for the slowest feed in every batch, so
+  // 300+ sources at a 4 s per-feed timeout could take well over a minute.
+  // Results land in `sink` as they arrive so a caller that gives up early
+  // (see fetchMultipleSources) still gets everything fetched so far.
+  let next = 0;
+  const worker = async (): Promise<void> => {
+    while (next < sourceKeys.length) {
+      const key = sourceKeys[next++];
+      try {
+        sink.push(...(await fn(key)));
+      } catch {
+        // Already logged in fetchFeed
       }
-      // Silently ignore rejected promises — already logged in fetchFeed
     }
-  }
-  return articles;
+  };
+  const workers = Array.from(
+    { length: Math.min(GLOBAL_FETCH_CONCURRENCY, sourceKeys.length) },
+    () => worker(),
+  );
+  await Promise.all(workers);
+  return sink;
 }
 
 /**
@@ -3776,54 +3786,97 @@ async function fetchMultipleSources(
   const isAllSources = sourceKeys.length === Object.keys(RSS_SOURCES).length;
   const aggregateKey = `aggregate:${isAllSources ? 'all' : sourceKeys.slice().sort().join(',')}:api=${includeApiSources}`;
 
-  return withCache(newsCache, aggregateKey, 90, async () => {
-    // Overall timeout guard: return whatever results are available within 20s
-    // to stay under Vercel's function timeout (25s default, 60s Pro)
-    const AGGREGATION_TIMEOUT_MS = 20_000;
+  return withCache(
+    newsCache,
+    aggregateKey,
+    90,
+    async () => {
+      // Overall timeout guard: return whatever results are available within
+      // AGGREGATION_TIMEOUT_MS and let the remaining feeds keep filling the
+      // partial sink in the background for the next cache fill.
+      const AGGREGATION_TIMEOUT_MS = 20_000;
 
-    const aggregationPromise = (async () => {
-      // Fetch RSS feeds in batches (max GLOBAL_FETCH_CONCURRENCY at a time) + API sources
-      const [rssArticles, apiArticles] = await Promise.all([
-        fetchAllInParallel(sourceKeys, fetchFeed),
-        // Only fetch API sources if not filtering by specific RSS source
-        includeApiSources ? fetchAllApiSources() : Promise.resolve([]),
-      ]);
-      return [...rssArticles, ...apiArticles];
-    })();
+      const partial: NewsArticle[] = [];
+      const aggregationPromise = (async () => {
+        const [rssArticles, apiArticles] = await Promise.all([
+          fetchAllInParallel(sourceKeys, fetchFeed, partial),
+          // Only fetch API sources if not filtering by specific RSS source
+          includeApiSources ? fetchAllApiSources() : Promise.resolve([]),
+        ]);
+        return [...rssArticles, ...apiArticles];
+      })();
 
-    // Race against a timeout — on timeout, return empty and let cache fill next time
-    const timeoutPromise = new Promise<NewsArticle[]>((resolve) =>
-      setTimeout(() => {
-        console.warn(
-          `[fetchMultipleSources] Aggregation exceeded ${AGGREGATION_TIMEOUT_MS}ms — returning partial results`,
-        );
-        resolve([]);
-      }, AGGREGATION_TIMEOUT_MS),
-    );
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      const timeoutPromise = new Promise<NewsArticle[]>((resolve) => {
+        timer = setTimeout(() => {
+          console.warn(
+            `[fetchMultipleSources] Aggregation exceeded ${AGGREGATION_TIMEOUT_MS}ms — returning ${partial.length} partial results`,
+          );
+          resolve([...partial]);
+        }, AGGREGATION_TIMEOUT_MS);
+      });
 
-    const allArticles = await Promise.race([aggregationPromise, timeoutPromise]);
+      const allArticles = await Promise.race([aggregationPromise, timeoutPromise]);
+      if (timer) clearTimeout(timer);
 
-    // Deduplicate by title similarity
-    const seen = new Set<string>();
-    const deduped = allArticles.filter((article) => {
-      // Normalize title for dedup
-      const normalized = article.title
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, '')
-        .slice(0, 50);
-      if (seen.has(normalized)) return false;
-      seen.add(normalized);
-      return true;
-    });
+      // Deduplicate by title similarity
+      const seen = new Set<string>();
+      const deduped = allArticles.filter((article) => {
+        // Normalize title for dedup
+        const normalized = article.title
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, '')
+          .slice(0, 50);
+        if (seen.has(normalized)) return false;
+        seen.add(normalized);
+        return true;
+      });
 
-    const now = Date.now();
-    return (
-      deduped
-        // Exclude future-dated articles (scheduled events, upcoming webinars, etc.)
-        .filter((a) => new Date(a.pubDate).getTime() <= now)
-        .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
-    );
-  });
+      const now = Date.now();
+      return (
+        deduped
+          // Exclude future-dated articles (scheduled events, upcoming webinars, etc.)
+          .filter((a) => new Date(a.pubDate).getTime() <= now)
+          .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
+      );
+    },
+    {
+      // An empty aggregate means every upstream failed or the timeout fired
+      // before anything arrived. Caching it would serve zero articles for the
+      // next 90 s; prefer the last known-good set and retry on the next call.
+      shouldCache: (articles) => articles.length > 0,
+    },
+  );
+}
+
+/**
+ * Snapshot of the all-sources aggregate currently held in the in-memory
+ * cache. Never triggers a fetch, so /api/health can report feed freshness
+ * without paying for a 300-feed aggregation.
+ */
+export function getFeedFreshness(): {
+  cached: boolean;
+  articleCount: number;
+  newestPublishedAt: string | null;
+  newestAgeMinutes: number | null;
+} {
+  const key = `aggregate:all:api=true`;
+  const cached =
+    newsCache.get<NewsArticle[]>(key) ?? staleCache.get<NewsArticle[]>(key) ?? null;
+  if (!cached || cached.length === 0) {
+    return { cached: false, articleCount: 0, newestPublishedAt: null, newestAgeMinutes: null };
+  }
+  let newest = 0;
+  for (const article of cached) {
+    const t = new Date(article.pubDate).getTime();
+    if (t > newest) newest = t;
+  }
+  return {
+    cached: true,
+    articleCount: cached.length,
+    newestPublishedAt: newest ? new Date(newest).toISOString() : null,
+    newestAgeMinutes: newest ? Math.round((Date.now() - newest) / 60_000) : null,
+  };
 }
 
 // ═══════════════════════════════════════════════════════════════

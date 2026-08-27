@@ -180,9 +180,10 @@ export async function withCache<T>(
   key: string,
   ttlSeconds: number,
   fetchFn: () => Promise<T>,
-  options?: { serveStaleOnError?: boolean },
+  options?: { serveStaleOnError?: boolean; shouldCache?: (data: T) => boolean },
 ): Promise<T> {
   const serveStale = options?.serveStaleOnError ?? true;
+  const shouldCache = options?.shouldCache ?? (() => true);
 
   // Check cache first
   const cached = cache.get<T>(key);
@@ -199,6 +200,18 @@ export async function withCache<T>(
   // Start fetch and register as in-flight
   const fetchPromise = fetchFn()
     .then((data) => {
+      if (!shouldCache(data)) {
+        // Result is not worth remembering (e.g. an empty aggregate): serve the
+        // last known-good value if we have one and leave the cache untouched so
+        // the next caller retries the fetch.
+        if (serveStale) {
+          const stale = staleCache.get<T>(key);
+          if (stale !== null) {
+            return stale;
+          }
+        }
+        return data;
+      }
       cache.set(key, data, ttlSeconds);
       // Also persist into stale cache with a much longer TTL (1 hour)
       staleCache.set(key, data, 3600);

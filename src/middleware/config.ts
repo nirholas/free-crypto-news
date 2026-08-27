@@ -48,6 +48,8 @@ export const EXEMPT_PATTERNS = [
   /^\/api\/health/,
   /^\/api\/\.well-known/,
   /^\/api\/openapi\.json$/, // OpenAPI spec — must be freely accessible for x402scan discovery
+  /^\/api\/mcp$/, // Hosted MCP endpoint — tools call the public API and inherit its own gating
+  /^\/api\/version$/, // Build identity for deploy verification
   /^\/api\/cron/,
   /^\/api\/sse/,
   /^\/api\/ws/,

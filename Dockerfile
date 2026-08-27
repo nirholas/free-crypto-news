@@ -14,8 +14,14 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
+# Build identity, surfaced by /api/version and /api/health
+ARG GIT_SHA=unknown
+ARG BUILD_TIME=unknown
+
 # DOCKER_BUILD=1 switches next.config.js to standalone output
-ENV DOCKER_BUILD=1 \
+ENV GIT_SHA=$GIT_SHA \
+    BUILD_TIME=$BUILD_TIME \
+    DOCKER_BUILD=1 \
     CI=true \
     NEXT_TELEMETRY_DISABLED=1 \
     NODE_OPTIONS=--max-old-space-size=8192
@@ -25,7 +31,12 @@ FROM node:24-alpine AS runner
 
 WORKDIR /app
 
+ARG GIT_SHA=unknown
+ARG BUILD_TIME=unknown
+
 ENV NODE_ENV=production \
+    GIT_SHA=$GIT_SHA \
+    BUILD_TIME=$BUILD_TIME \
     PORT=3000 \
     HOSTNAME=0.0.0.0 \
     NEXT_TELEMETRY_DISABLED=1
