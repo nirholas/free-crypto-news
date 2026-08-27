@@ -14,7 +14,6 @@ import { translateArticles, isLanguageSupported, SUPPORTED_LANGUAGES } from '@/l
 import { jsonResponse, errorResponse, withTiming } from '@/lib/api-utils';
 import { validateQuery } from '@/lib/validation-middleware';
 import { newsQuerySchema } from '@/lib/schemas';
-import { ApiError } from '@/lib/api-error';
 import { createRequestLogger } from '@/lib/logger';
 import { getBulkEnrichment } from '@/lib/article-enrichment';
 import { staleCache, generateCacheKey } from '@/lib/cache';
@@ -26,6 +25,9 @@ export const runtime = 'edge';
 export const revalidate = 60; // 1 minute for fresher content
 
 /** Race a promise against a timeout; returns fallback on expiry. */
+/** Articles an anonymous free-tier caller receives per request. */
+const FREE_TIER_ARTICLE_LIMIT = 3;
+
 function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> {
   return Promise.race([
     promise,
@@ -110,8 +112,9 @@ export const GET = instrumented(
 
       // Free-tier: cap at 3 articles, strip full content, add upgrade notice
       let articles = data.articles;
+      const uncappedCount = articles.length;
       if (isFreeTier) {
-        articles = articles.slice(0, 3).map((a) => ({
+        articles = articles.slice(0, FREE_TIER_ARTICLE_LIMIT).map((a) => ({
           ...a,
           content: undefined,
           summary: (a as { summary?: string }).summary?.slice(0, 120)
@@ -165,14 +168,47 @@ export const GET = instrumented(
         }
       }
 
+      // A cold instance can finish its first aggregation with nothing yet
+      // fetched. Serving an empty flagship feed reads as "the API is broken",
+      // so fall back to the snapshot the same way an upstream failure does.
+      if (articles.length === 0 && data.totalCount === 0) {
+        logger.info('Aggregate returned no articles — serving snapshot fallback');
+        const fallback = getNewsFallback();
+        return jsonResponse(
+          withTiming({ ...fallback.data, _fallbackLevel: fallback.level }, startTime),
+          { cacheControl: 'realtime', etag: true, request, stale: true },
+        );
+      }
+
+      // Pagination must describe what the caller actually received. A capped
+      // free-tier response used to report perPage: 50 over a totalCount in the
+      // thousands, which broke every paginating client.
+      const pagination = isFreeTier
+        ? {
+            page: 1,
+            perPage: articles.length,
+            totalPages: 1,
+            hasMore: uncappedCount > articles.length,
+          }
+        : data.pagination;
+
       const responseData = withTiming(
         {
           ...data,
           articles,
+          ...(pagination ? { pagination } : {}),
           lang: translatedLang,
           availableLanguages: Object.keys(SUPPORTED_LANGUAGES),
           availableCategories: VALID_CATEGORIES,
-          ...(isFreeTier ? { free_tier: true, total: articles.length, upgrade: PREMIUM_URL } : {}),
+          ...(isFreeTier
+            ? {
+                free_tier: true,
+                total: articles.length,
+                limited: uncappedCount > articles.length,
+                maxResults: FREE_TIER_ARTICLE_LIMIT,
+                upgrade: PREMIUM_URL,
+              }
+            : {}),
         },
         startTime,
       );

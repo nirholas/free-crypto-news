@@ -10,9 +10,9 @@
 
 import { type NextRequest, NextResponse } from 'next/server';
 import { getLatestNews, type NewsArticle } from '@/lib/crypto-news';
-import { promptGroqJson, isGroqConfigured, GroqAuthError, parseGroqJson } from '@/lib/groq';
 import { groqNotConfiguredResponse } from '@/app/api/_utils';
 import { aiComplete, getAIConfigOrNull, AIAuthError } from '@/lib/ai-provider';
+import { generateDigest, isDigestAIConfigured, DigestNoArticlesError } from '@/lib/digest-summary';
 
 export const runtime = 'edge';
 export const revalidate = 300; // 5 minute cache
@@ -20,32 +20,6 @@ export const revalidate = 300; // 5 minute cache
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
-
-interface DigestSection {
-  title: string;
-  summary: string;
-  articles: string[];
-}
-
-interface DigestResponse {
-  headline: string;
-  tldr: string;
-  marketSentiment: {
-    overall: 'bullish' | 'bearish' | 'neutral' | 'mixed';
-    reasoning: string;
-  };
-  sections: DigestSection[];
-  mustRead: {
-    title: string;
-    source: string;
-    why: string;
-  }[];
-  tickers: {
-    symbol: string;
-    mentions: number;
-    sentiment: 'bullish' | 'bearish' | 'neutral';
-  }[];
-}
 
 export interface AiDigestSection {
   tag: string;
@@ -238,18 +212,6 @@ function renderDigestHtml(digest: AiDigestResponse): string {
 // Original Groq-based full/brief/newsletter prompt
 // ---------------------------------------------------------------------------
 
-const SYSTEM_PROMPT = `You are a crypto news editor creating a daily digest. Analyze the provided articles and create a structured summary.
-
-Create a digest with:
-1. headline: A catchy headline summarizing the day's biggest story
-2. tldr: 2-3 sentence summary of what happened today
-3. marketSentiment: Overall market mood with reasoning
-4. sections: Group related news into 3-5 themed sections (e.g., "Bitcoin & ETFs", "DeFi Updates", "Regulatory News")
-5. mustRead: Top 2-3 must-read articles with reasons why they matter
-6. tickers: Most mentioned cryptocurrencies with sentiment
-
-Respond with valid JSON matching this structure.`;
-
 // ---------------------------------------------------------------------------
 // Route handler
 // ---------------------------------------------------------------------------
@@ -309,93 +271,21 @@ export async function GET(request: NextRequest) {
   }
 
   // --- Original Groq-based formats ---
-  // Check if any AI provider is available (Groq or fallback)
-  const hasAnyAI = getAIConfigOrNull(true) !== null;
-  if (!isGroqConfigured() && !hasAnyAI) return groqNotConfiguredResponse();
+  if (!isDigestAIConfigured()) return groqNotConfiguredResponse();
 
   try {
-    // Fetch articles based on period
-    const hoursMap: Record<string, number> = { '6h': 6, '12h': 12, '24h': 24 };
-    const hours = hoursMap[period] || 24;
-    const limit = Math.min(hours * 5, 100); // ~5 articles per hour
-    
-    const data = await getLatestNews(limit);
-    
-    if (data.articles.length === 0) {
-      return NextResponse.json({
-        error: 'No articles available for digest',
-      }, { status: 404 });
-    }
+    const result = await generateDigest(period, format);
 
-    // Filter to articles within the time period
-    const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
-    const recentArticles = data.articles.filter(a => {
-      const pubDate = new Date(a.pubDate);
-      return pubDate >= cutoff;
-    });
-
-    const articlesForDigest = recentArticles.length > 0 ? recentArticles : data.articles.slice(0, 20);
-
-    const articlesText = articlesForDigest
-      .map(a => `- [${a.source}] ${a.title}: ${a.description || 'No description'}`)
-      .join('\n');
-
-    const formatInstructions = {
-      full: 'Create a comprehensive digest with all sections.',
-      brief: 'Create a brief digest with just headline, tldr, and top 3 tickers.',
-      newsletter: 'Format for email newsletter - make it engaging and readable.',
-    }[format] || 'Create a comprehensive digest with all sections.';
-
-    const userPrompt = `${formatInstructions}
-
-Period: Last ${hours} hours
-Total articles: ${articlesForDigest.length}
-
-Articles:
-${articlesText}`;
-
-    let digest: DigestResponse;
-    try {
-      // Try Groq first if configured
-      if (isGroqConfigured()) {
-        digest = await promptGroqJson<DigestResponse>(
-          SYSTEM_PROMPT,
-          userPrompt,
-          { maxTokens: 3000, temperature: 0.5 }
-        );
-      } else {
-        throw new GroqAuthError('Groq not configured, falling back to other providers');
-      }
-    } catch (groqError) {
-      // On Groq auth failure, fall back to aiComplete (tries all providers)
-      if (groqError instanceof GroqAuthError || (groqError as Error).name === 'GroqAuthError') {
-        console.warn('Groq auth failed for digest, falling back to aiComplete:', (groqError as Error).message);
-        const systemWithJson = SYSTEM_PROMPT + '\n\nAlways respond with valid JSON only, no markdown.';
-        const raw = await aiComplete(systemWithJson, userPrompt, { maxTokens: 3000, temperature: 0.5, jsonMode: true }, false);
-        digest = parseGroqJson<DigestResponse>(raw);
-      } else {
-        throw groqError;
-      }
-    }
-
-    return NextResponse.json(
-      {
-        digest,
-        meta: {
-          period,
-          format,
-          articlesAnalyzed: articlesForDigest.length,
-          generatedAt: new Date().toISOString(),
-        },
+    return NextResponse.json(result, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        'Access-Control-Allow-Origin': '*',
       },
-      {
-        headers: {
-          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
-          'Access-Control-Allow-Origin': '*',
-        },
-      }
-    );
+    });
   } catch (error) {
+    if (error instanceof DigestNoArticlesError) {
+      return NextResponse.json({ error: error.message }, { status: 404 });
+    }
     console.error('Digest error:', error);
 
     // If all AI providers failed with auth errors, return 503

@@ -117,6 +117,21 @@ export const locales = [
 
 export type Locale = (typeof locales)[number];
 
+/**
+ * Locales with a real `messages/<locale>.json` translation on disk. Generated at build
+ * time from the filesystem (scripts/lib/translated-locales.js). Routing accepts every
+ * entry in `locales`; SEO surfaces (hreflang, sitemap) only advertise these.
+ */
+export { TRANSLATED_LOCALES, type TranslatedLocale } from './translated-locales.generated';
+import {
+  TRANSLATED_LOCALES as _translatedLocales,
+  type TranslatedLocale,
+} from './translated-locales.generated';
+
+export function isTranslatedLocale(locale: string): locale is TranslatedLocale {
+  return (_translatedLocales as readonly string[]).includes(locale);
+}
+
 export const defaultLocale: Locale = 'en';
 
 export const localeNames: Record<Locale, string> = {
