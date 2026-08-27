@@ -1,15 +1,15 @@
 /**
  * @copyright 2024-2026 nirholas. All rights reserved.
  * @license SPDX-License-Identifier: SEE LICENSE IN LICENSE
- * @see https://github.com/nirholas/free-crypto-news
+ * @see https://github.com/nirholas/cryptocurrency.cv
  */
 
 /**
  * AUTO-GENERATED — Do not edit manually.
  * Run: node scripts/generate-endpoint-metadata.js
  *
- * Generated: 2026-08-27T05:54:56.145Z
- * Total endpoints: 353
+ * Generated: 2026-08-27T06:05:08.525Z
+ * Total endpoints: 391
  *
  * Comprehensive endpoint metadata for OpenAPI spec generation,
  * x402 Bazaar agent discovery, and API documentation.
@@ -23,7 +23,7 @@ export interface EndpointMetaExtended extends EndpointMeta {
 }
 
 /**
- * Complete endpoint metadata for all 353 discoverable API routes.
+ * Complete endpoint metadata for all 391 discoverable API routes.
  * Used by the OpenAPI generator, documentation tools, and agent discovery.
  */
 export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
@@ -246,6 +246,16 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     parameters: {
       user_id: { type: "string", description: "Filter by user id" },
       session_id: { type: "string", description: "Filter by session id" },
+    },
+  },
+
+  "/api/alerts/{id}": {
+    description: "Individual Alert Management API Handles GET, PUT, DELETE operations for individual alert rules.",
+    methods: ["GET", "PUT", "DELETE", "POST", "PATCH"],
+    parameters: {
+      action: { type: "string", description: "API action to perform" },
+      alertId: { type: "string", description: "Filter by alertId" },
+      limit: { type: "number", description: "Maximum number of results to return", default: "50" },
     },
   },
 
@@ -524,6 +534,15 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     },
   },
 
+  "/api/authors/{slug}": {
+    description: "Authors - {Slug} - Other",
+    parameters: {
+      limit: { type: "number", description: "Maximum number of results to return" },
+      offset: { type: "number", description: "Number of results to skip" },
+      source: { type: "string", description: "Filter by news source" },
+    },
+  },
+
   "/api/backtest": {
     description: "Strategy backtesting with historical market data",
     methods: ["GET", "POST"],
@@ -550,6 +569,13 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     },
   },
 
+  "/api/bitcoin/address/{address}": {
+    description: "Returns Bitcoin address info, optionally with transactions",
+    parameters: {
+      include_txs: { type: "string", description: "Filter by include txs" },
+    },
+  },
+
   "/api/bitcoin/block-height": {
     description: "Current Bitcoin block height",
   },
@@ -559,6 +585,10 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     parameters: {
       start_height: { type: "string", description: "Starting block height" },
     },
+  },
+
+  "/api/bitcoin/blocks/{hash}": {
+    description: "Returns a specific Bitcoin block by its hash",
   },
 
   "/api/bitcoin/difficulty": {
@@ -575,6 +605,10 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
 
   "/api/bitcoin/mempool/info": {
     description: "Bitcoin mempool size and transaction count",
+  },
+
+  "/api/bitcoin/tx/{txid}": {
+    description: "Returns a Bitcoin transaction by its ID",
   },
 
   "/api/blog/posts": {
@@ -655,6 +689,14 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     },
   },
 
+  "/api/coincap/assets/{id}": {
+    description: "Returns asset details from CoinCap including price, supply, and market cap.",
+    parameters: {
+      include_markets: { type: "string", description: "Filter by include markets" },
+      markets_limit: { type: "number", description: "Filter by markets limit", default: "10" },
+    },
+  },
+
   "/api/coinmarketcap": {
     description: "CoinMarketCap market data aggregation",
     parameters: {
@@ -696,6 +738,23 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     description: "CoinPaprika ticker data with prices and volume",
     parameters: {
       quotes: { type: "string", description: "Filter by quotes", default: "USD" },
+    },
+  },
+
+  "/api/coinpaprika/tickers/{coinId}": {
+    description: "Returns ticker data for a specific coin.",
+    parameters: {
+      quotes: { type: "string", description: "Filter by quotes", default: "USD" },
+    },
+  },
+
+  "/api/coinpaprika/tickers/{coinId}/ohlcv": {
+    description: "Coinpaprika - Tickers - {CoinId} - Ohlcv - Market Data",
+    parameters: {
+      quote: { type: "string", description: "Filter by quote", default: "usd" },
+      start: { type: "string", description: "Start position for pagination" },
+      end: { type: "string", description: "Filter by end" },
+      limit: { type: "number", description: "Maximum number of results to return", default: "365" },
     },
   },
 
@@ -861,6 +920,10 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     },
   },
 
+  "/api/defi/yields/{poolId}/chart": {
+    description: "Returns historical chart data for a specific yield pool.",
+  },
+
   "/api/derivatives": {
     description: "Crypto derivatives market overview",
   },
@@ -876,6 +939,21 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     description: "Aggregated open interest across exchanges",
     parameters: {
       symbol: { type: "string", description: "Trading symbol (e.g., BTC, ETH)" },
+    },
+  },
+
+  "/api/derivatives/bybit/funding/{symbol}": {
+    description: "Returns Bybit funding rate history for a symbol",
+    parameters: {
+      limit: { type: "number", description: "Maximum number of results to return", default: "200" },
+    },
+  },
+
+  "/api/derivatives/bybit/open-interest/{symbol}": {
+    description: "Returns Bybit open interest data for a symbol",
+    parameters: {
+      interval: { type: "string", description: "Data interval (e.g., hourly, daily)", default: "1h" },
+      limit: { type: "number", description: "Maximum number of results to return", default: "50" },
     },
   },
 
@@ -960,6 +1038,7 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     parameters: {
       category: { type: "string", description: "Filter by category" },
       importance: { type: "string", description: "Filter by importance" },
+      includePast: { type: "string", description: "Filter by includePast" },
       limit: { type: "number", description: "Maximum number of results to return", default: "50" },
     },
   },
@@ -1007,12 +1086,24 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     },
   },
 
+  "/api/export/jobs/{jobId}": {
+    description: "Export Job Status API Get status of a specific export job",
+    methods: ["GET", "DELETE"],
+  },
+
   "/api/exports": {
     description: "Manage and list data exports",
     methods: ["GET", "POST"],
     parameters: {
       schema: { type: "string", description: "Filter by schema" },
       archives: { type: "string", description: "Filter by archives" },
+    },
+  },
+
+  "/api/exports/{id}": {
+    description: "Exports - {Id} - Data Export",
+    parameters: {
+      download: { type: "string", description: "Set to true for file download response" },
     },
   },
 
@@ -1072,6 +1163,14 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
 
   "/api/funding-rates": {
     description: "Perpetual futures funding rates across exchanges",
+  },
+
+  "/api/funding/history/{symbol}": {
+    description: "Returns historical funding rate data for a symbol on a given exchange",
+    parameters: {
+      exchange: { type: "string", description: "Filter by exchange", default: "binance" },
+      limit: { type: "number", description: "Maximum number of results to return", default: "100" },
+    },
   },
 
   "/api/gaming": {
@@ -1209,6 +1308,10 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     },
   },
 
+  "/api/l2/projects/{projectId}": {
+    description: "Returns detailed risk assessment for a specific L2 project.",
+  },
+
   "/api/l2/risk": {
     description: "Layer 2 risk assessment and security scores",
     parameters: {
@@ -1256,8 +1359,24 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     description: "Crypto market categories and sector performance",
   },
 
+  "/api/market/categories/{id}": {
+    description: "Market - Categories - {Id} - News & Content",
+    parameters: {
+      per_page: { type: "number", description: "Results per page", default: "100" },
+      page: { type: "number", description: "Page number for pagination", default: "1" },
+    },
+  },
+
   "/api/market/coins": {
     description: "Coin market data with advanced filtering",
+  },
+
+  "/api/market/coins/{coinId}/community": {
+    description: "Returns community stats for a coin (Twitter, Reddit, Telegram, etc.)",
+  },
+
+  "/api/market/coins/{coinId}/developer": {
+    description: "Returns developer/GitHub stats for a coin",
   },
 
   "/api/market/compare": {
@@ -1284,6 +1403,10 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     },
   },
 
+  "/api/market/exchanges/{id}": {
+    description: "Market - Exchanges - {Id} - Market Data",
+  },
+
   "/api/market/gainers": {
     description: "Top gaining cryptocurrencies by timeframe",
     parameters: {
@@ -1303,6 +1426,14 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     },
   },
 
+  "/api/market/history/{coinId}": {
+    description: "Market - History - {CoinId} - Market Data",
+    parameters: {
+      days: { type: "number", description: "Number of days of historical data", default: "30" },
+      interval: { type: "string", description: "Data interval (e.g., hourly, daily)" },
+    },
+  },
+
   "/api/market/losers": {
     description: "Top losing cryptocurrencies by timeframe",
     parameters: {
@@ -1316,6 +1447,13 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     parameters: {
       limit: { type: "number", description: "Maximum number of results to return", default: "5" },
       timeframe: { type: "string", description: "Time period (e.g., 1h, 24h, 7d, 30d)", default: "24h" },
+    },
+  },
+
+  "/api/market/ohlc/{coinId}": {
+    description: "Market - Ohlc - {CoinId} - Market Data",
+    parameters: {
+      days: { type: "number", description: "Number of days of historical data", default: "30" },
     },
   },
 
@@ -1342,9 +1480,35 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     },
   },
 
+  "/api/market/snapshot/{coinId}": {
+    description: "Market - Snapshot - {CoinId} - Market Data",
+    parameters: {
+      date: { type: "string", description: "Date in YYYY-MM-DD format" },
+    },
+  },
+
+  "/api/market/social/{coinId}": {
+    description: "Market - Social - {CoinId} - Social Intelligence",
+    parameters: {
+      type: { type: "string", description: "Data or content type", default: "all" },
+    },
+  },
+
   "/api/market/stream": {
     description: "Real-time market data via Server-Sent Events",
     streaming: true,
+  },
+
+  "/api/market/tickers/{coinId}": {
+    description: "Market - Tickers - {CoinId} - Market Data",
+    parameters: {
+      page: { type: "number", description: "Page number for pagination", default: "1" },
+    },
+  },
+
+  "/api/mcp": {
+    description: "Mcp - Other",
+    methods: ["POST", "GET", "DELETE"],
   },
 
   "/api/nansen": {
@@ -1427,6 +1591,10 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
       category: { type: "string", description: "Filter by category" },
       sort_by: { type: "string", description: "Field to sort results by" },
     },
+  },
+
+  "/api/nft/collections/{slug}": {
+    description: "Returns details for a specific NFT collection.",
   },
 
   "/api/nft/market": {
@@ -1518,6 +1686,10 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     parameters: {
       protocol: { type: "string", description: "Filter by protocol", default: "uniswap" },
     },
+  },
+
+  "/api/onchain/protocol/{protocol}": {
+    description: "Returns aggregated data for a specific DeFi protocol",
   },
 
   "/api/onchain/uniswap/pools": {
@@ -1809,6 +1981,11 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     methods: ["POST", "GET"],
   },
 
+  "/api/press-release/{id}": {
+    description: "Press Release - {Id} - News & Content",
+    methods: ["PATCH"],
+  },
+
   "/api/prices": {
     description: "Real-time cryptocurrency prices",
     parameters: {
@@ -1874,10 +2051,24 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     methods: ["POST"],
   },
 
+  "/api/rag/similar/{id}": {
+    description: "RAG Similar Articles API GET /api/rag/similar/[id] Find articles similar to a given article.",
+    parameters: {
+      topK: { type: "number", description: "Filter by topK", default: "5" },
+    },
+  },
+
   "/api/rag/stream": {
     description: "Streaming RAG responses via Server-Sent Events",
     methods: ["POST"],
     streaming: true,
+  },
+
+  "/api/rag/summary/{crypto}": {
+    description: "Rag - Summary - {Crypto} - AI Analysis",
+    parameters: {
+      days: { type: "number", description: "Number of days of historical data", default: "7" },
+    },
   },
 
   "/api/rag/timeline": {
@@ -1990,6 +2181,17 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     description: "Social metrics for individual cryptocurrencies",
     parameters: {
       symbols: { type: "string", description: "Comma-separated trading symbols" },
+      limit: { type: "number", description: "Maximum number of results to return", default: "50" },
+    },
+  },
+
+  "/api/social/coins/{symbol}": {
+    description: "Returns social metrics for a specific cryptocurrency symbol.",
+  },
+
+  "/api/social/coins/{symbol}/feed": {
+    description: "Returns the social media feed for a specific cryptocurrency symbol.",
+    parameters: {
       limit: { type: "number", description: "Maximum number of results to return", default: "50" },
     },
   },
@@ -2204,6 +2406,10 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     },
   },
 
+  "/api/stablecoins/{symbol}": {
+    description: "Stablecoins - {Symbol} - Stablecoins",
+  },
+
   "/api/sui": {
     description: "Sui blockchain overview and statistics",
     parameters: {
@@ -2264,11 +2470,16 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     },
   },
 
+  "/api/tags/{slug}": {
+    description: "Individual Tag API Route GET /api/tags/[slug] - Get tag details with articles",
+  },
+
   "/api/token-unlocks": {
     description: "Upcoming token unlock schedules and amounts",
     parameters: {
       impact: { type: "string", description: "Filter by impact" },
       symbol: { type: "string", description: "Trading symbol (e.g., BTC, ETH)" },
+      includePast: { type: "string", description: "Filter by includePast" },
       limit: { type: "number", description: "Maximum number of results to return", default: "50" },
     },
   },
@@ -2405,6 +2616,13 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     },
   },
 
+  "/api/v1/assets/{assetId}/history": {
+    description: "V1 - Assets - {AssetId} - History - API v1",
+    parameters: {
+      interval: { type: "string", description: "Data interval (e.g., hourly, daily)", default: "h1" },
+    },
+  },
+
   "/api/v1/bitcoin": {
     description: "Bitcoin network data and statistics",
     parameters: {
@@ -2423,6 +2641,10 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
       limit: { type: "number", description: "Maximum number of results to return", default: "10" },
       source: { type: "string", description: "Filter by news source" },
     },
+  },
+
+  "/api/v1/coin/{coinId}": {
+    description: "V1 - Coin - {CoinId} - Market Data",
   },
 
   "/api/v1/coins": {
@@ -2499,6 +2721,14 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
 
   "/api/v1/global": {
     description: "Global crypto market statistics",
+  },
+
+  "/api/v1/historical/{coinId}": {
+    description: "V1 - Historical - {CoinId} - Data Export",
+    parameters: {
+      days: { type: "number", description: "Number of days of historical data", default: "30" },
+      interval: { type: "string", description: "Data interval (e.g., hourly, daily)" },
+    },
   },
 
   "/api/v1/knowledge-graph": {
@@ -2682,6 +2912,10 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
     },
   },
 
+  "/api/version": {
+    description: "Version - Other",
+  },
+
   "/api/videos": {
     description: "Crypto video content aggregation",
   },
@@ -2745,4 +2979,4 @@ export const ENDPOINT_METADATA_FULL: Record<string, EndpointMetaExtended> = {
 };
 
 /** Total documented endpoints. */
-export const ENDPOINT_COUNT = 353;
+export const ENDPOINT_COUNT = 391;

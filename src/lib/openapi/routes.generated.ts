@@ -2,8 +2,8 @@
  * AUTO-GENERATED — Do not edit manually.
  * Run: node scripts/generate-route-manifest.js
  *
- * Generated: 2026-08-27T05:54:54.948Z
- * Total routes: 353
+ * Generated: 2026-08-27T06:05:07.908Z
+ * Total routes: 391
  */
 
 /** All discoverable API routes with their category. */
@@ -118,6 +118,10 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
   },
   {
     "path": "/api/alerts/stream",
+    "category": "Portfolio & Alerts"
+  },
+  {
+    "path": "/api/alerts/{id}",
     "category": "Portfolio & Alerts"
   },
   {
@@ -237,6 +241,10 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
     "category": "Other"
   },
   {
+    "path": "/api/authors/{slug}",
+    "category": "Other"
+  },
+  {
     "path": "/api/backtest",
     "category": "Trading & Derivatives"
   },
@@ -249,11 +257,19 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
     "category": "Bitcoin"
   },
   {
+    "path": "/api/bitcoin/address/{address}",
+    "category": "Bitcoin"
+  },
+  {
     "path": "/api/bitcoin/block-height",
     "category": "Bitcoin"
   },
   {
     "path": "/api/bitcoin/blocks",
+    "category": "Bitcoin"
+  },
+  {
+    "path": "/api/bitcoin/blocks/{hash}",
     "category": "Bitcoin"
   },
   {
@@ -270,6 +286,10 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
   },
   {
     "path": "/api/bitcoin/mempool/info",
+    "category": "Bitcoin"
+  },
+  {
+    "path": "/api/bitcoin/tx/{txid}",
     "category": "Bitcoin"
   },
   {
@@ -313,6 +333,10 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
     "category": "Market Data"
   },
   {
+    "path": "/api/coincap/assets/{id}",
+    "category": "Market Data"
+  },
+  {
     "path": "/api/coinmarketcap",
     "category": "Market Data"
   },
@@ -334,6 +358,14 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
   },
   {
     "path": "/api/coinpaprika/tickers",
+    "category": "Market Data"
+  },
+  {
+    "path": "/api/coinpaprika/tickers/{coinId}",
+    "category": "Market Data"
+  },
+  {
+    "path": "/api/coinpaprika/tickers/{coinId}/ohlcv",
     "category": "Market Data"
   },
   {
@@ -421,6 +453,10 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
     "category": "DeFi"
   },
   {
+    "path": "/api/defi/yields/{poolId}/chart",
+    "category": "DeFi"
+  },
+  {
     "path": "/api/derivatives",
     "category": "Trading & Derivatives"
   },
@@ -430,6 +466,14 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
   },
   {
     "path": "/api/derivatives/aggregated/open-interest",
+    "category": "Trading & Derivatives"
+  },
+  {
+    "path": "/api/derivatives/bybit/funding/{symbol}",
+    "category": "Trading & Derivatives"
+  },
+  {
+    "path": "/api/derivatives/bybit/open-interest/{symbol}",
     "category": "Trading & Derivatives"
   },
   {
@@ -501,7 +545,15 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
     "category": "Data Export"
   },
   {
+    "path": "/api/export/jobs/{jobId}",
+    "category": "Data Export"
+  },
+  {
     "path": "/api/exports",
+    "category": "Data Export"
+  },
+  {
+    "path": "/api/exports/{id}",
     "category": "Data Export"
   },
   {
@@ -530,6 +582,10 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
   },
   {
     "path": "/api/funding-rates",
+    "category": "Trading & Derivatives"
+  },
+  {
+    "path": "/api/funding/history/{symbol}",
     "category": "Trading & Derivatives"
   },
   {
@@ -601,6 +657,10 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
     "category": "Layer 2"
   },
   {
+    "path": "/api/l2/projects/{projectId}",
+    "category": "Layer 2"
+  },
+  {
     "path": "/api/l2/risk",
     "category": "Layer 2"
   },
@@ -637,7 +697,19 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
     "category": "News & Content"
   },
   {
+    "path": "/api/market/categories/{id}",
+    "category": "News & Content"
+  },
+  {
     "path": "/api/market/coins",
+    "category": "Market Data"
+  },
+  {
+    "path": "/api/market/coins/{coinId}/community",
+    "category": "Market Data"
+  },
+  {
+    "path": "/api/market/coins/{coinId}/developer",
     "category": "Market Data"
   },
   {
@@ -661,6 +733,10 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
     "category": "Market Data"
   },
   {
+    "path": "/api/market/exchanges/{id}",
+    "category": "Market Data"
+  },
+  {
     "path": "/api/market/gainers",
     "category": "Market Data"
   },
@@ -673,11 +749,19 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
     "category": "Market Data"
   },
   {
+    "path": "/api/market/history/{coinId}",
+    "category": "Market Data"
+  },
+  {
     "path": "/api/market/losers",
     "category": "Market Data"
   },
   {
     "path": "/api/market/movers",
+    "category": "Market Data"
+  },
+  {
+    "path": "/api/market/ohlc/{coinId}",
     "category": "Market Data"
   },
   {
@@ -693,8 +777,24 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
     "category": "Market Data"
   },
   {
+    "path": "/api/market/snapshot/{coinId}",
+    "category": "Market Data"
+  },
+  {
+    "path": "/api/market/social/{coinId}",
+    "category": "Social Intelligence"
+  },
+  {
     "path": "/api/market/stream",
     "category": "Market Data"
+  },
+  {
+    "path": "/api/market/tickers/{coinId}",
+    "category": "Market Data"
+  },
+  {
+    "path": "/api/mcp",
+    "category": "Other"
   },
   {
     "path": "/api/nansen",
@@ -734,6 +834,10 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
   },
   {
     "path": "/api/nft/collections/trending",
+    "category": "NFTs"
+  },
+  {
+    "path": "/api/nft/collections/{slug}",
     "category": "NFTs"
   },
   {
@@ -790,6 +894,10 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
   },
   {
     "path": "/api/onchain/multichain",
+    "category": "On-Chain & Whales"
+  },
+  {
+    "path": "/api/onchain/protocol/{protocol}",
     "category": "On-Chain & Whales"
   },
   {
@@ -953,6 +1061,10 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
     "category": "News & Content"
   },
   {
+    "path": "/api/press-release/{id}",
+    "category": "News & Content"
+  },
+  {
     "path": "/api/prices",
     "category": "Market Data"
   },
@@ -989,7 +1101,15 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
     "category": "AI Analysis"
   },
   {
+    "path": "/api/rag/similar/{id}",
+    "category": "AI Analysis"
+  },
+  {
     "path": "/api/rag/stream",
+    "category": "AI Analysis"
+  },
+  {
+    "path": "/api/rag/summary/{crypto}",
     "category": "AI Analysis"
   },
   {
@@ -1046,6 +1166,14 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
   },
   {
     "path": "/api/social/coins",
+    "category": "Social Intelligence"
+  },
+  {
+    "path": "/api/social/coins/{symbol}",
+    "category": "Social Intelligence"
+  },
+  {
+    "path": "/api/social/coins/{symbol}/feed",
     "category": "Social Intelligence"
   },
   {
@@ -1157,6 +1285,10 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
     "category": "On-Chain & Whales"
   },
   {
+    "path": "/api/stablecoins/{symbol}",
+    "category": "Stablecoins"
+  },
+  {
     "path": "/api/sui",
     "category": "Sui"
   },
@@ -1178,6 +1310,10 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
   },
   {
     "path": "/api/tags",
+    "category": "News & Content"
+  },
+  {
+    "path": "/api/tags/{slug}",
     "category": "News & Content"
   },
   {
@@ -1241,6 +1377,10 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
     "category": "API v1"
   },
   {
+    "path": "/api/v1/assets/{assetId}/history",
+    "category": "API v1"
+  },
+  {
     "path": "/api/v1/bitcoin",
     "category": "Bitcoin"
   },
@@ -1251,6 +1391,10 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
   {
     "path": "/api/v1/classify",
     "category": "AI Analysis"
+  },
+  {
+    "path": "/api/v1/coin/{coinId}",
+    "category": "Market Data"
   },
   {
     "path": "/api/v1/coins",
@@ -1299,6 +1443,10 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
   {
     "path": "/api/v1/global",
     "category": "Market Data"
+  },
+  {
+    "path": "/api/v1/historical/{coinId}",
+    "category": "Data Export"
   },
   {
     "path": "/api/v1/knowledge-graph",
@@ -1393,6 +1541,10 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
     "category": "Other"
   },
   {
+    "path": "/api/version",
+    "category": "Other"
+  },
+  {
     "path": "/api/videos",
     "category": "News & Content"
   },
@@ -1423,7 +1575,7 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
 ];
 
 /** Total discoverable routes. */
-export const ROUTE_COUNT = 353;
+export const ROUTE_COUNT = 391;
 
 /** All categories. */
 export const ROUTE_CATEGORIES = [

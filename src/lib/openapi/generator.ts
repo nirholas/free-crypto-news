@@ -60,6 +60,17 @@ function pathToOperationId(path: string, method: string): string {
   return `${prefix}${camelCase.charAt(0).toUpperCase()}${camelCase.slice(1)}`;
 }
 
+/** Path parameters for `{param}` segments, e.g. /api/coin/{id}. */
+function pathParams(path: string) {
+  return [...path.matchAll(/\{([^}]+)\}/g)].map((m) => ({
+    name: m[1],
+    in: 'path' as const,
+    required: true,
+    description: `The ${m[1]} path segment`,
+    schema: { type: 'string' },
+  }));
+}
+
 /** Convert ENDPOINT_METADATA parameters to OpenAPI parameters */
 function toOpenAPIParams(
   params: Record<string, { type: string; description: string; required?: boolean; default?: string }> | undefined,
@@ -161,9 +172,13 @@ export function generateOpenAPISpec() {
         security: [{ X402Payment: [] }],
       };
 
-      // Add parameters for GET requests — fall back to default pagination params
+      // Path parameters apply to every method: DELETE /api/alerts/{id} needs
+      // {id} declared just as much as the GET does.
+      const inPath = pathParams(path);
       if (methodLower === 'get') {
-        operation.parameters = toOpenAPIParams(params ?? DEFAULT_GET_PARAMS);
+        operation.parameters = [...inPath, ...(toOpenAPIParams(params ?? DEFAULT_GET_PARAMS) ?? [])];
+      } else if (inPath.length > 0) {
+        operation.parameters = inPath;
       }
 
       // Add request body for POST requests — fall back to default JSON body

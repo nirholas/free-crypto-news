@@ -60,8 +60,12 @@ const EXCLUDE_PATTERNS = [
   /\/funding\/dashboard/,
 ];
 
-// Dynamic segment routes to EXCLUDE (contain [param])
-const HAS_DYNAMIC = /\[/;
+// Dynamic segments are kept and expressed in OpenAPI form: [slug] -> {slug},
+// [...slug] -> {slug}. They used to be dropped, which left every
+// /api/.../{id} endpoint out of the spec, the docs, and llms-full.txt.
+function toOpenApiPath(route) {
+  return route.replace(/\[\.\.\.([^\]]+)\]/g, '{$1}').replace(/\[([^\]]+)\]/g, '{$1}');
+}
 
 function findRoutes(dir, prefix = '') {
   const routes = [];
@@ -81,7 +85,7 @@ function findRoutes(dir, prefix = '') {
 // Scan filesystem
 const allRoutes = findRoutes(API_DIR, '/api')
   .filter(r => !EXCLUDE_PATTERNS.some(p => p.test(r)))
-  .filter(r => !HAS_DYNAMIC.test(r))
+  .map(toOpenApiPath)
   .sort();
 
 // Categorize routes

@@ -45,8 +45,19 @@ while ((m = entryRegex.exec(manifestContent)) !== null) {
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function apiPathToFilePath(apiPath) {
-  const segments = apiPath.replace(/^\//, "").split("/");
-  return path.join(API_DIR, "..", ...segments, "route.ts");
+  // {param} in the manifest maps back to the [param] or [...param] directory.
+  const segments = apiPath.split("/").filter(Boolean);
+  let dir = path.join(API_DIR, "..");
+  for (const seg of segments) {
+    const m = seg.match(/^\{(.+)\}$/);
+    if (!m) {
+      dir = path.join(dir, seg);
+      continue;
+    }
+    const plain = path.join(dir, `[${m[1]}]`);
+    dir = fs.existsSync(plain) ? plain : path.join(dir, `[...${m[1]}]`);
+  }
+  return path.join(dir, "route.ts");
 }
 
 function extractMethods(content) {
