@@ -30,6 +30,6 @@ Available commands:
 
 ## Next steps
 
-- [Examples](./examples.md) shows runnable snippets.
+- [Examples](./EXAMPLES.md) shows runnable snippets for every endpoint group.
 - The [README](https://github.com/nirholas/cryptocurrency.cv#readme) is the complete reference.
 - Found a problem? [Open an issue](https://github.com/nirholas/cryptocurrency.cv/issues).

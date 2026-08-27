@@ -1,16 +1,16 @@
-🌐 **ভাষা:** [English](README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [বাংলা](README.bn.md)
+🌐 **ভাষা:** [English](../README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [বাংলা](README.bn.md)
 
 ---
 
 # 🆓 বিনামূল্যে ক্রিপ্টো নিউজ API
 
 <p align="center">
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers"><img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=for-the-badge&logo=github&color=yellow" alt="GitHub Stars"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/free-crypto-news?style=for-the-badge&color=blue" alt="লাইসেন্স"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers"><img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=for-the-badge&logo=github&color=yellow" alt="GitHub Stars"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/cryptocurrency.cv?style=for-the-badge&color=blue" alt="লাইসেন্স"></a>
 </p>
 
 <p align="center">
-  <img src=".github/demo.svg" alt="Free Crypto News API ডেমো" width="700">
+  <img src="../.github/demo.svg" alt="Free Crypto News API ডেমো" width="700">
 </p>
 
 > ⭐ **এটি আপনার কাজে লাগলে, অনুগ্রহ করে রেপোতে স্টার দিন!** এটি অন্যদের এই প্রজেক্ট আবিষ্কার করতে সাহায্য করে।
@@ -126,13 +126,13 @@ Free Crypto News একটি **সম্পূর্ণ ইনস্টলয�
 
 ### Vercel দিয়ে (প্রস্তাবিত)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nirholas/free-crypto-news)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nirholas/cryptocurrency.cv)
 
 ### স্থানীয়ভাবে
 
 ```bash
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv
 npm install
 npm run dev
 ```
@@ -141,7 +141,7 @@ npm run dev
 
 ## 🤝 অবদান
 
-অবদান স্বাগত! দেখুন [CONTRIBUTING.md](CONTRIBUTING.md)।
+অবদান স্বাগত! দেখুন [CONTRIBUTING.md](../CONTRIBUTING.md)।
 
 ---
 

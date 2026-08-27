@@ -1,7 +1,7 @@
 name: free-crypto-news
 description: Real-time crypto news, market data, and AI sentiment analysis from 200+ sources. Free, no API key required.
 author: nirholas
-repository: https://github.com/nirholas/free-crypto-news
+repository: https://github.com/nirholas/cryptocurrency.cv
 install: npx @nirholas/free-crypto-news-mcp
 category: finance
 tags:

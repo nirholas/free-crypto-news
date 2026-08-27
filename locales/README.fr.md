@@ -1,16 +1,16 @@
-🌐 **Langues:** [English](README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Tiếng Việt](README.vi.md) | [ไทย](README.th.md) | [Bahasa Indonesia](README.id.md)
+🌐 **Langues:** [English](../README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Tiếng Việt](README.vi.md) | [ไทย](README.th.md) | [Bahasa Indonesia](README.id.md)
 
 ---
 
 # 🆓 API Free Crypto News
 
 <p align="center">
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers"><img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=for-the-badge&logo=github&color=yellow" alt="Étoiles GitHub"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/free-crypto-news?style=for-the-badge&color=blue" alt="Licence"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers"><img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=for-the-badge&logo=github&color=yellow" alt="Étoiles GitHub"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/cryptocurrency.cv?style=for-the-badge&color=blue" alt="Licence"></a>
 </p>
 
 <p align="center">
-  <img src=".github/demo.svg" alt="Démo de l'API Free Crypto News" width="700">
+  <img src="../.github/demo.svg" alt="Démo de l'API Free Crypto News" width="700">
 </p>
 
 > ⭐ **Si vous trouvez cela utile, mettez une étoile au repo !** Cela aide les autres à découvrir ce projet et motive le développement continu.
@@ -151,12 +151,12 @@ Nous agrégeons de **7 médias de confiance** :
 
 | Package | Description |
 |---------|-------------|
-| [React](sdk/react/) | Composants `<CryptoNews />` prêts à l'emploi |
-| [TypeScript](sdk/typescript/) | SDK TypeScript complet |
-| [Python](sdk/python/) | Client Python sans dépendances |
-| [JavaScript](sdk/javascript/) | SDK navigateur & Node.js |
-| [Go](sdk/go/) | Bibliothèque cliente Go |
-| [PHP](sdk/php/) | SDK PHP |
+| [React](../sdk/react/) | Composants `<CryptoNews />` prêts à l'emploi |
+| [TypeScript](../sdk/typescript/) | SDK TypeScript complet |
+| [Python](../sdk/python/) | Client Python sans dépendances |
+| [JavaScript](../sdk/javascript/) | SDK navigateur & Node.js |
+| [Go](../sdk/go/) | Bibliothèque cliente Go |
+| [PHP](../sdk/php/) | SDK PHP |
 
 **URL de Base:** `https://cryptocurrency.cv`
 
@@ -194,7 +194,7 @@ Choisissez votre plateforme. Copiez le code. Déployez.
 **Zéro dépendance.** Copiez simplement le fichier.
 
 ```bash
-curl -O https://raw.githubusercontent.com/nirholas/free-crypto-news/main/sdk/python/crypto_news.py
+curl -O https://raw.githubusercontent.com/nirholas/cryptocurrency.cv/main/sdk/python/crypto_news.py
 ```
 
 ```python
@@ -237,13 +237,13 @@ const health = await client.getHealth();
 
 ## Déploiement en Un Clic
 
-[![Déployer avec Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnirholas%2Ffree-crypto-news)
+[![Déployer avec Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnirholas%2Fcryptocurrency.cv)
 
 ## Manuel
 
 ```bash
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv
 pnpm install
 pnpm dev
 ```
@@ -286,14 +286,14 @@ Les PRs sont les bienvenues ! Idées :
 
 | Document | Description |
 |----------|-------------|
-| [Guide Utilisateur](docs/USER-GUIDE.md) | Fonctionnalités utilisateur, raccourcis clavier, PWA |
-| [Guide Développeur](docs/DEVELOPER-GUIDE.md) | Architecture, composants, extension de l'app |
-| [Contribuer](CONTRIBUTING.md) | Comment contribuer |
-| [Changelog](CHANGELOG.md) | Historique des versions |
-| [Sécurité](SECURITY.md) | Politique de sécurité |
+| [Guide Utilisateur](../docs/USER-GUIDE.md) | Fonctionnalités utilisateur, raccourcis clavier, PWA |
+| [Guide Développeur](../docs/DEVELOPER-GUIDE.md) | Architecture, composants, extension de l'app |
+| [Contribuer](../CONTRIBUTING.md) | Comment contribuer |
+| [Changelog](../CHANGELOG.md) | Historique des versions |
+| [Sécurité](../SECURITY.md) | Politique de sécurité |
 
 ---
 
 # Licence
 
-All rights reserved. See [LICENSE](LICENSE).
+All rights reserved. See [LICENSE](../LICENSE).

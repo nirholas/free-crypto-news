@@ -18,7 +18,7 @@ Before deploying, ensure you have:
 
 One-click deploy — no configuration required.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nirholas/free-crypto-news)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nirholas/cryptocurrency.cv)
 
 ### Cron jobs
 
@@ -247,7 +247,7 @@ Before going to production, verify:
 ## Related docs
 
 - [Architecture](ARCHITECTURE.md) — system design and data flow
-- [Scalability](SCALABILITY.md) — caching, edge runtime, load handling
+- [Scaling](SCALING.md) — caching, edge runtime, load handling
 - [Security](SECURITY.md) — security policy, headers, and rate limiting
 - [Real-Time](REALTIME.md) — SSE, WebSocket, and push notifications
 - [Database](DATABASE.md) — storage backends and Drizzle ORM

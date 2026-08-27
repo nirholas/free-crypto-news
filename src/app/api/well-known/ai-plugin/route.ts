@@ -75,7 +75,7 @@ export async function GET() {
     // MCP server info for Claude
     mcp: {
       available: true,
-      package: '@anthropic-ai/mcp-server-crypto-news',
+      package: '@nirholas/free-crypto-news-mcp',
       docs: `${SITE_URL}/docs/integrations/mcp`,
     },
     

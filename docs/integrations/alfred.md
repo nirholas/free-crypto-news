@@ -20,15 +20,15 @@ The Free Crypto News Alfred Workflow brings instant crypto news search to your M
 
 ### From GitHub Releases
 
-1. Download `Crypto-News.alfredworkflow` from [Releases](https://github.com/nirholas/free-crypto-news/releases)
+1. Download `Crypto-News.alfredworkflow` from [Releases](https://github.com/nirholas/cryptocurrency.cv/releases)
 2. Double-click to install
 3. Click **Import** in Alfred
 
 ### From Source
 
 ```bash
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news/alfred
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv/alfred
 open crypto-news.alfredworkflow
 ```
 
@@ -134,4 +134,4 @@ Enable automatic updates in workflow settings.
 
 ## Source Code
 
-View the Alfred workflow source: [alfred/](https://github.com/nirholas/free-crypto-news/tree/main/alfred)
+View the Alfred workflow source: [alfred/](https://github.com/nirholas/cryptocurrency.cv/tree/main/alfred)

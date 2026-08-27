@@ -63,8 +63,8 @@ We love pull requests! Here are some ideas:
 # 1. Fork the repository on GitHub
 
 # 2. Clone your fork
-git clone https://github.com/YOUR_USERNAME/free-crypto-news.git
-cd free-crypto-news
+git clone https://github.com/YOUR_USERNAME/cryptocurrency.cv.git
+cd cryptocurrency.cv
 
 # 3. Install dependencies
 npm install
@@ -229,3 +229,6 @@ Contributors will be:
 
 Please read and follow our [Code of Conduct](CODE_OF_CONDUCT.md).
 
+## License
+
+This repository is source-available (all rights reserved; see [LICENSE](LICENSE)). The hosted API at https://cryptocurrency.cv is free to use. By opening a pull request you agree that your contribution is accepted under the repository license.

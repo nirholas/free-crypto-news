@@ -293,4 +293,4 @@ export default async function NewsPage() {
 
 ## Source Code
 
-View the full React SDK: [sdk/react](https://github.com/nirholas/free-crypto-news/tree/main/sdk/react)
+View the full React SDK: [sdk/react](https://github.com/nirholas/cryptocurrency.cv/tree/main/sdk/react)

@@ -34,14 +34,14 @@ Access DeFi TVL, on-chain metrics, social sentiment, NFT data, and more from Def
 
 | SDK | Install | Features |
 |-----|---------|----------|
-| [Python](https://github.com/nirholas/free-crypto-news/tree/main/sdk/python) | Copy `crypto_news.py` | Zero dependencies |
-| [JavaScript](https://github.com/nirholas/free-crypto-news/tree/main/sdk/javascript) | Copy `crypto-news.js` | Browser & Node.js |
-| [TypeScript](https://github.com/nirholas/free-crypto-news/tree/main/sdk/typescript) | `npm install @nirholas/crypto-news` | Full type safety |
-| [Go](https://github.com/nirholas/free-crypto-news/tree/main/sdk/go) | `go get github.com/nirholas/...` | Standard library |
-| [Rust](https://github.com/nirholas/free-crypto-news/tree/main/sdk/rust) | `cargo add fcn-sdk` | Async/WebSocket |
-| [Ruby](https://github.com/nirholas/free-crypto-news/tree/main/sdk/ruby) | `gem install fcn-sdk` | Thread-safe |
-| [PHP](https://github.com/nirholas/free-crypto-news/tree/main/sdk/php) | Copy `CryptoNews.php` | Zero dependencies |
-| [React](https://github.com/nirholas/free-crypto-news/tree/main/sdk/react) | `npm install @nirholas/react-crypto-news` | Hooks & components |
+| [Python](https://github.com/nirholas/cryptocurrency.cv/tree/main/sdk/python) | Copy `crypto_news.py` | Zero dependencies |
+| [JavaScript](https://github.com/nirholas/cryptocurrency.cv/tree/main/sdk/javascript) | Copy `crypto-news.js` | Browser & Node.js |
+| [TypeScript](https://github.com/nirholas/cryptocurrency.cv/tree/main/sdk/typescript) | `npm install @nirholas/crypto-news` | Full type safety |
+| [Go](https://github.com/nirholas/cryptocurrency.cv/tree/main/sdk/go) | `go get github.com/nirholas/...` | Standard library |
+| [Rust](https://github.com/nirholas/cryptocurrency.cv/tree/main/sdk/rust) | `cargo add fcn-sdk` | Async/WebSocket |
+| [Ruby](https://github.com/nirholas/cryptocurrency.cv/tree/main/sdk/ruby) | `gem install fcn-sdk` | Thread-safe |
+| [PHP](https://github.com/nirholas/cryptocurrency.cv/tree/main/sdk/php) | Copy `CryptoNews.php` | Zero dependencies |
+| [React](https://github.com/nirholas/cryptocurrency.cv/tree/main/sdk/react) | `npm install @nirholas/react-crypto-news` | Hooks & components |
 
 ## Browser & Desktop
 
@@ -74,10 +74,10 @@ Access DeFi TVL, on-chain metrics, social sentiment, NFT data, and more from Def
 
 | Platform | Description | Code |
 |----------|-------------|------|
-| [Discord](https://github.com/nirholas/free-crypto-news/tree/main/examples/discord-bot.js) | News embeds & commands | JavaScript |
-| [Slack](https://github.com/nirholas/free-crypto-news/tree/main/examples/slack-bot.js) | Webhook integration | JavaScript |
-| [Telegram](https://github.com/nirholas/free-crypto-news/tree/main/examples/telegram-bot.py) | Bot commands | Python |
-| [LangChain](https://github.com/nirholas/free-crypto-news/tree/main/examples/langchain-tool.py) | AI agent tools | Python |
+| [Discord](https://github.com/nirholas/cryptocurrency.cv/tree/main/examples/discord-bot.js) | News embeds & commands | JavaScript |
+| [Slack](https://github.com/nirholas/cryptocurrency.cv/tree/main/examples/slack-bot.js) | Webhook integration | JavaScript |
+| [Telegram](https://github.com/nirholas/cryptocurrency.cv/tree/main/examples/telegram-bot.py) | Bot commands | Python |
+| [LangChain](https://github.com/nirholas/cryptocurrency.cv/tree/main/examples/langchain-tool.py) | AI agent tools | Python |
 
 ## Quick Links
 

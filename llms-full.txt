@@ -906,7 +906,7 @@ total:      integer       — Total number of sources
 
 ## Project Information
 
-- **GitHub:** https://github.com/nirholas/free-crypto-news
+- **GitHub:** https://github.com/nirholas/cryptocurrency.cv
 - **Live site:** https://cryptocurrency.cv
 - **Author:** nirholas (https://github.com/nirholas)
 - **Language:** TypeScript (Next.js)

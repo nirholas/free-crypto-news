@@ -8,7 +8,7 @@
  * AUTO-GENERATED — Do not edit manually.
  * Run: node scripts/generate-endpoint-metadata.js
  *
- * Generated: 2026-03-27T06:32:33.476Z
+ * Generated: 2026-08-27T05:54:56.145Z
  * Total endpoints: 353
  *
  * Comprehensive endpoint metadata for OpenAPI spec generation,

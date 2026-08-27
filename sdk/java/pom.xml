@@ -12,7 +12,7 @@
 
   <name>Free Crypto News Java SDK</name>
   <description>Java SDK for the Free Crypto News API (https://cryptocurrency.cv)</description>
-  <url>https://github.com/nirholas/free-crypto-news</url>
+  <url>https://github.com/nirholas/cryptocurrency.cv</url>
 
   <properties>
     <maven.compiler.source>11</maven.compiler.source>

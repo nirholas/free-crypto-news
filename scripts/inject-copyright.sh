@@ -7,7 +7,7 @@ set -euo pipefail
 
 OWNER="nirholas"
 YEARS="2024-2026"
-REPO="https://github.com/nirholas/free-crypto-news"
+REPO="https://github.com/nirholas/cryptocurrency.cv"
 LICENSE_LINE="SPDX-License-Identifier: SEE LICENSE IN LICENSE"
 
 # ── JS/TS/TSX/MJS/JSX comment block ──────────────────────────────────────────

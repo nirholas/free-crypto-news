@@ -443,7 +443,7 @@ The standalone output (`next.config.js: output: 'standalone'`) produces a minima
 
 ## Related docs
 
-- [Scalability](SCALABILITY.md) — caching tiers, edge runtime, load handling
+- [Scaling](SCALING.md) — caching tiers, edge runtime, load handling
 - [Database](DATABASE.md) — storage backends, Drizzle ORM, migrations
 - [Developer Guide](DEVELOPER-GUIDE.md) — component reference, extending the app
 - [API Reference](API.md) — endpoint catalogue (150+ endpoints)

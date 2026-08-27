@@ -1,16 +1,16 @@
-🌐 **Taal:** [English](README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Tiếng Việt](README.vi.md) | [ไทย](README.th.md) | [Bahasa Indonesia](README.id.md)
+🌐 **Taal:** [English](../README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Tiếng Việt](README.vi.md) | [ไทย](README.th.md) | [Bahasa Indonesia](README.id.md)
 
 ---
 
 # 🆓 Gratis Crypto Nieuws API
 
 <p align="center">
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers"><img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=for-the-badge&logo=github&color=yellow" alt="GitHub Sterren"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/free-crypto-news?style=for-the-badge&color=blue" alt="Licentie"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers"><img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=for-the-badge&logo=github&color=yellow" alt="GitHub Sterren"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/cryptocurrency.cv?style=for-the-badge&color=blue" alt="Licentie"></a>
 </p>
 
 <p align="center">
-  <img src=".github/demo.svg" alt="Free Crypto News API Demo" width="700">
+  <img src="../.github/demo.svg" alt="Free Crypto News API Demo" width="700">
 </p>
 
 > ⭐ **Als je dit nuttig vindt, geef de repository een ster!** Dit helpt anderen het project te ontdekken en motiveert verdere ontwikkeling.
@@ -146,12 +146,12 @@ We aggregeren van **7 betrouwbare media**:
 
 | Pakket | Beschrijving |
 |---------|-------------|
-| [React](sdk/react/) | `<CryptoNews />` plug-and-play component |
-| [TypeScript](sdk/typescript/) | Volledige TypeScript SDK |
-| [Python](sdk/python/) | Zero-dependency Python client |
-| [JavaScript](sdk/javascript/) | Browser en Node.js SDK |
-| [Go](sdk/go/) | Go client library |
-| [PHP](sdk/php/) | PHP SDK |
+| [React](../sdk/react/) | `<CryptoNews />` plug-and-play component |
+| [TypeScript](../sdk/typescript/) | Volledige TypeScript SDK |
+| [Python](../sdk/python/) | Zero-dependency Python client |
+| [JavaScript](../sdk/javascript/) | Browser en Node.js SDK |
+| [Go](../sdk/go/) | Go client library |
+| [PHP](../sdk/php/) | PHP SDK |
 
 **Base URL:** `https://cryptocurrency.cv`
 
@@ -161,13 +161,13 @@ We aggregeren van **7 betrouwbare media**:
 
 ## Eén-Klik Deploy
 
-[![Deploy met Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnirholas%2Ffree-crypto-news)
+[![Deploy met Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnirholas%2Fcryptocurrency.cv)
 
 ## Handmatig
 
 ```bash
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv
 pnpm install
 pnpm dev
 ```
@@ -190,8 +190,8 @@ MIT © 2025 [nich](https://github.com/nirholas)
 <p align="center">
   <br>
   ⭐ <b>Nuttig gevonden? Geef een ster!</b> ⭐<br>
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers">
-    <img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=social" alt="Ster op GitHub">
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers">
+    <img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=social" alt="Ster op GitHub">
   </a>
 </p>
 

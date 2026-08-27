@@ -1,18 +1,18 @@
-🌐 **언어:** [English](README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Tiếng Việt](README.vi.md) | [ไทย](README.th.md) | [Bahasa Indonesia](README.id.md)
+🌐 **언어:** [English](../README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Tiếng Việt](README.vi.md) | [ไทย](README.th.md) | [Bahasa Indonesia](README.id.md)
 
 ---
 
 # 🆓 무료 암호화폐 뉴스 API
 
 <p align="center">
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers"><img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=for-the-badge&logo=github&color=yellow" alt="GitHub 스타"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/free-crypto-news?style=for-the-badge&color=blue" alt="라이선스"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/issues"><img src="https://img.shields.io/github/issues/nirholas/free-crypto-news?style=for-the-badge&color=orange" alt="Issues"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/pulls"><img src="https://img.shields.io/github/issues-pr/nirholas/free-crypto-news?style=for-the-badge&color=purple" alt="Pull Requests"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers"><img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=for-the-badge&logo=github&color=yellow" alt="GitHub 스타"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/cryptocurrency.cv?style=for-the-badge&color=blue" alt="라이선스"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/issues"><img src="https://img.shields.io/github/issues/nirholas/cryptocurrency.cv?style=for-the-badge&color=orange" alt="Issues"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/pulls"><img src="https://img.shields.io/github/issues-pr/nirholas/cryptocurrency.cv?style=for-the-badge&color=purple" alt="Pull Requests"></a>
 </p>
 
 <p align="center">
-  <img src=".github/demo.svg" alt="Free Crypto News API 데모" width="700">
+  <img src="../.github/demo.svg" alt="Free Crypto News API 데모" width="700">
 </p>
 
 > ⭐ **유용하다면 스타를 눌러주세요!** 다른 사람들이 이 프로젝트를 발견하고 지속적인 개발에 동기를 부여합니다.
@@ -92,7 +92,7 @@ curl "https://cryptocurrency.cv/api/news/international?region=asia&limit=20"
 - ✅ 소스 불가 시 **우아한 폴백**
 - ✅ 소스 간 **중복 제거**
 
-전체 세부 정보는 [API 문서](docs/API.md#get-apinewsinternational)를 참조하세요.
+전체 세부 정보는 [API 문서](../docs/API.md#get-apinewsinternational)를 참조하세요.
 
 ---
 
@@ -156,7 +156,7 @@ PWA는 스마트 캐싱 전략을 사용합니다:
 | `?` | 모든 단축키 표시 |
 | `Escape` | 모달 닫기 |
 
-📖 **전체 사용자 가이드:** [docs/USER-GUIDE.md](docs/USER-GUIDE.md)
+📖 **전체 사용자 가이드:** [docs/USER-GUIDE.md](../docs/USER-GUIDE.md)
 
 ---
 
@@ -274,15 +274,15 @@ for article in data['articles'][:5]:
 
 ### 원클릭 배포
 
-[![Vercel로 배포](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nirholas/free-crypto-news)
-[![Railway로 배포](https://railway.app/button.svg)](https://railway.app/new/template?template=https://github.com/nirholas/free-crypto-news)
+[![Vercel로 배포](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nirholas/cryptocurrency.cv)
+[![Railway로 배포](https://railway.app/button.svg)](https://railway.app/new/template?template=https://github.com/nirholas/cryptocurrency.cv)
 
 ### 로컬 설치
 
 ```bash
 # 저장소 클론
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv
 
 # 의존성 설치
 npm install
@@ -309,19 +309,19 @@ NEXT_PUBLIC_ANALYTICS_ID=your_id
 
 | 문서 | 설명 |
 |---|---|
-| [📚 API 참조](docs/API.md) | 전체 엔드포인트 문서 |
-| [🏗️ 아키텍처](docs/ARCHITECTURE.md) | 시스템 설계 |
-| [🚀 배포](docs/DEPLOYMENT.md) | 프로덕션 가이드 |
-| [🧪 테스트](docs/TESTING.md) | 테스트 가이드 |
-| [🔐 보안](docs/SECURITY.md) | 보안 정책 |
-| [📖 사용자 가이드](docs/USER-GUIDE.md) | PWA 및 기능 가이드 |
-| [💻 개발자 가이드](docs/DEVELOPER-GUIDE.md) | 기여자 문서 |
+| [📚 API 참조](../docs/API.md) | 전체 엔드포인트 문서 |
+| [🏗️ 아키텍처](../docs/ARCHITECTURE.md) | 시스템 설계 |
+| [🚀 배포](../docs/DEPLOYMENT.md) | 프로덕션 가이드 |
+| [🧪 테스트](../docs/TESTING.md) | 테스트 가이드 |
+| [🔐 보안](../docs/SECURITY.md) | 보안 정책 |
+| [📖 사용자 가이드](../docs/USER-GUIDE.md) | PWA 및 기능 가이드 |
+| [💻 개발자 가이드](../docs/DEVELOPER-GUIDE.md) | 기여자 문서 |
 
 ---
 
 ## 기여
 
-기여를 환영합니다! 가이드라인은 [CONTRIBUTING.md](CONTRIBUTING.md)를 참조하세요.
+기여를 환영합니다! 가이드라인은 [CONTRIBUTING.md](../CONTRIBUTING.md)를 참조하세요.
 
 ```bash
 # 저장소 포크
@@ -339,14 +339,14 @@ git push origin feature/amazing-feature
 
 ## 라이선스
 
-MIT License - [LICENSE](LICENSE) 파일을 참조하세요.
+MIT License - [LICENSE](../LICENSE) 파일을 참조하세요.
 
 ---
 
 ## 연락처
 
-- 🐛 **버그**: [GitHub Issues](https://github.com/nirholas/free-crypto-news/issues)
-- 💬 **토론**: [GitHub Discussions](https://github.com/nirholas/free-crypto-news/discussions)
+- 🐛 **버그**: [GitHub Issues](https://github.com/nirholas/cryptocurrency.cv/issues)
+- 💬 **토론**: [GitHub Discussions](https://github.com/nirholas/cryptocurrency.cv/discussions)
 - 🐦 **Twitter**: [@nirholas](https://twitter.com/nirholas)
 
 ---

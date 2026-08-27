@@ -7,7 +7,8 @@ Free Crypto News offers cutting-edge features that set it apart from other crypt
 A beautiful terminal-based dashboard with real-time updates.
 
 ```bash
-npx crypto-news-cli
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv/cli && npm install && node index.js
 ```
 
 **Features:**
@@ -19,9 +20,9 @@ npx crypto-news-cli
 - Real-time SSE updates
 
 **Commands:**
-- `npx crypto-news-cli` - Full dashboard
-- `npx crypto-news-cli --watch` - Auto-refresh mode
-- `npx crypto-news-cli --minimal` - Headlines only
+- `node index.js` - Full dashboard
+- `node index.js --watch` - Auto-refresh mode
+- `node index.js --minimal` - Headlines only
 - Press `q` to quit, `r` to refresh
 
 ## 📊 Trading Signal Backtester

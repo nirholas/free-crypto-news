@@ -19,8 +19,8 @@ Complete guide for integrating Free Crypto News with Claude (Desktop & API).
 
 ```bash
 # Clone the repository
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news/mcp
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv/mcp
 
 # Install dependencies
 npm install
@@ -462,7 +462,7 @@ The API has generous rate limits, but if you hit them:
 
 ## Links
 
-- **MCP Server:** https://github.com/nirholas/free-crypto-news/tree/main/mcp
+- **MCP Server:** https://github.com/nirholas/cryptocurrency.cv/tree/main/mcp
 - **Claude Desktop:** https://claude.ai/download
 - **Claude API:** https://docs.anthropic.com
 - **MCP Documentation:** https://modelcontextprotocol.io

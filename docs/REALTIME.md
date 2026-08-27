@@ -968,5 +968,5 @@ docker run -p 8080:8080 -e NEWS_API_URL=https://cryptocurrency.cv crypto-news-ws
 ## Need Help?
 
 - 📖 [API Documentation](./API.md)
-- 💬 [GitHub Discussions](https://github.com/nirholas/free-crypto-news/discussions)
-- 🐛 [Report Issues](https://github.com/nirholas/free-crypto-news/issues)
+- 💬 [GitHub Discussions](https://github.com/nirholas/cryptocurrency.cv/discussions)
+- 🐛 [Report Issues](https://github.com/nirholas/cryptocurrency.cv/issues)

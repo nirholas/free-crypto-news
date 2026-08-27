@@ -17,11 +17,10 @@ A beautiful terminal-based dashboard built with blessed/blessed-contrib.
 ## Installation
 
 ```bash
-# Global install
-npm install -g crypto-news-cli
-
-# Or run directly
-npx crypto-news-cli
+# The dashboard lives in cli/ of the repository (not yet on npm)
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv/cli && npm install
+node index.js
 ```
 
 ## Usage

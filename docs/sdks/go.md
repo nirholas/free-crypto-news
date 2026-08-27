@@ -5,7 +5,7 @@ The Go SDK provides a performant, idiomatic Go client for the Free Crypto News A
 ## Installation
 
 ```bash
-go get github.com/nirholas/free-crypto-news/sdk/go
+go get github.com/nirholas/cryptocurrency.cv/sdk/go
 ```
 
 ## Quick Start
@@ -17,7 +17,7 @@ import (
     "fmt"
     "log"
 
-    fcn "github.com/nirholas/free-crypto-news/sdk/go"
+    fcn "github.com/nirholas/cryptocurrency.cv/sdk/go"
 )
 
 func main() {
@@ -234,7 +234,7 @@ import (
     "encoding/json"
     "net/http"
 
-    fcn "github.com/nirholas/free-crypto-news/sdk/go"
+    fcn "github.com/nirholas/cryptocurrency.cv/sdk/go"
 )
 
 func main() {
@@ -257,4 +257,4 @@ func main() {
 
 ## Source Code
 
-View the full Go SDK: [sdk/go](https://github.com/nirholas/free-crypto-news/tree/main/sdk/go)
+View the full Go SDK: [sdk/go](https://github.com/nirholas/cryptocurrency.cv/tree/main/sdk/go)

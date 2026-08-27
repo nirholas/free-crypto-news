@@ -1,15 +1,9 @@
 /**
- * @copyright 2024-2026 nirholas. All rights reserved.
- * @license SPDX-License-Identifier: SEE LICENSE IN LICENSE
- * @see https://github.com/nirholas/free-crypto-news
- */
-
-/**
  * AUTO-GENERATED — Do not edit manually.
  * Run: node scripts/generate-route-manifest.js
  *
- * Generated: 2026-03-27T04:30:23.110Z
- * Total routes: 356
+ * Generated: 2026-08-27T05:54:54.948Z
+ * Total routes: 353
  */
 
 /** All discoverable API routes with their category. */
@@ -1429,7 +1423,7 @@ export const ROUTE_MANIFEST: { path: string; category: string }[] = [
 ];
 
 /** Total discoverable routes. */
-export const ROUTE_COUNT = 356;
+export const ROUTE_COUNT = 353;
 
 /** All categories. */
 export const ROUTE_CATEGORIES = [

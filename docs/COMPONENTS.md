@@ -230,7 +230,7 @@ import Footer from '@/components/Footer';
 - Gradient mesh background
 - Four-column layout (brand, categories, resources, API)
 - Social links with hover effects
-- MIT license badge
+- License badge
 - Responsive grid
 
 **Props:** None (static component)

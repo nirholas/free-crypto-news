@@ -93,8 +93,8 @@ paths:
 
 1. Install the MCP server:
 ```bash
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news/mcp
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv/mcp
 npm install
 ```
 

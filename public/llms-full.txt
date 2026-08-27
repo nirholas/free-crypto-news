@@ -2,7 +2,7 @@
 
 > Free, real-time cryptocurrency news API aggregating 130+ sources. No API key required.
 > REST JSON, RSS/Atom, WebSocket, AI analysis, historical archive, MCP server, ChatGPT plugin.
-> Open source (MIT). https://cryptocurrency.cv
+> Source-available, all rights reserved; the hosted API is free to use. See LICENSE. https://cryptocurrency.cv
 
 This document is the complete inline reference intended for AI assistants and LLMs.
 It contains full API documentation, usage examples, response schemas, and integration guides.
@@ -906,7 +906,7 @@ total:      integer       — Total number of sources
 
 ## Project Information
 
-- **GitHub:** https://github.com/nirholas/free-crypto-news
+- **GitHub:** https://github.com/nirholas/cryptocurrency.cv
 - **Live site:** https://cryptocurrency.cv
 - **Author:** nirholas (https://github.com/nirholas)
 - **Language:** TypeScript (Next.js)

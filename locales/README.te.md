@@ -1,16 +1,16 @@
-🌐 **భాషలు:** [English](README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [한국어](README.ko.md) | [हिन्दी](README.hi.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md)
+🌐 **భాషలు:** [English](../README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [한국어](README.ko.md) | [हिन्दी](README.hi.md) | [தமிழ்](README.ta.md) | [తెలుగు](README.te.md)
 
 ---
 
 # 🆓 ఉచిత క్రిప్టో న్యూస్ API
 
 <p align="center">
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers"><img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=for-the-badge&logo=github&color=yellow" alt="GitHub స్టార్లు"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/free-crypto-news?style=for-the-badge&color=blue" alt="లైసెన్స్"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers"><img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=for-the-badge&logo=github&color=yellow" alt="GitHub స్టార్లు"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/cryptocurrency.cv?style=for-the-badge&color=blue" alt="లైసెన్స్"></a>
 </p>
 
 <p align="center">
-  <img src=".github/demo.svg" alt="Free Crypto News API Demo" width="700">
+  <img src="../.github/demo.svg" alt="Free Crypto News API Demo" width="700">
 </p>
 
 > ⭐ **ఇది ఉపయోగకరంగా ఉంటే, దయచేసి repo కి స్టార్ ఇవ్వండి!** ఇది ఇతరులు ఈ ప్రాజెక్ట్‌ని కనుగొనడానికి సహాయపడుతుంది.
@@ -126,13 +126,13 @@ Free Crypto News అనేది **పూర్తిగా ఇన్‌స్�
 
 ### Vercel తో (సిఫార్సు చేయబడింది)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nirholas/free-crypto-news)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nirholas/cryptocurrency.cv)
 
 ### స్థానికంగా
 
 ```bash
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv
 npm install
 npm run dev
 ```
@@ -141,7 +141,7 @@ npm run dev
 
 ## 🤝 సహకారం
 
-సహకారాలు స్వాగతం! [CONTRIBUTING.md](CONTRIBUTING.md) చూడండి.
+సహకారాలు స్వాగతం! [CONTRIBUTING.md](../CONTRIBUTING.md) చూడండి.
 
 ---
 

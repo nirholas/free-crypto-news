@@ -1,6 +1,6 @@
 # Copyright 2024-2026 nirholas. All rights reserved.
 # SPDX-License-Identifier: SEE LICENSE IN LICENSE
-# https://github.com/nirholas/free-crypto-news
+# https://github.com/nirholas/cryptocurrency.cv
 
 """
 Free Crypto News Python SDK — errors module.

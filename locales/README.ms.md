@@ -1,16 +1,16 @@
-🌐 **Bahasa:** [English](README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [한국어](README.ko.md) | [Bahasa Indonesia](README.id.md) | [Bahasa Melayu](README.ms.md) | [ไทย](README.th.md) | [Tiếng Việt](README.vi.md)
+🌐 **Bahasa:** [English](../README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [한국어](README.ko.md) | [Bahasa Indonesia](README.id.md) | [Bahasa Melayu](README.ms.md) | [ไทย](README.th.md) | [Tiếng Việt](README.vi.md)
 
 ---
 
 # 🆓 API Berita Crypto Percuma
 
 <p align="center">
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers"><img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=for-the-badge&logo=github&color=yellow" alt="GitHub Stars"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/free-crypto-news?style=for-the-badge&color=blue" alt="Lesen"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers"><img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=for-the-badge&logo=github&color=yellow" alt="GitHub Stars"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/cryptocurrency.cv?style=for-the-badge&color=blue" alt="Lesen"></a>
 </p>
 
 <p align="center">
-  <img src=".github/demo.svg" alt="Demo Free Crypto News API" width="700">
+  <img src="../.github/demo.svg" alt="Demo Free Crypto News API" width="700">
 </p>
 
 > ⭐ **Jika ini berguna, sila beri bintang pada repo!** Ia membantu orang lain menemui projek ini.
@@ -126,13 +126,13 @@ Semua ciri AI adalah **PERCUMA** melalui Groq:
 
 ### Dengan Vercel (Disyorkan)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nirholas/free-crypto-news)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nirholas/cryptocurrency.cv)
 
 ### Secara Tempatan
 
 ```bash
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv
 npm install
 npm run dev
 ```
@@ -141,7 +141,7 @@ npm run dev
 
 ## 🤝 Sumbangan
 
-Sumbangan dialu-alukan! Lihat [CONTRIBUTING.md](CONTRIBUTING.md).
+Sumbangan dialu-alukan! Lihat [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ---
 

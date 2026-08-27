@@ -4,7 +4,7 @@ The Model Context Protocol (MCP) server allows AI assistants like Claude and Cha
 
 ## Overview
 
-**40 Tools** for comprehensive crypto news access. All tools are marked as **read-only** for ChatGPT compatibility (no confirmation prompts).
+Every tool is **read-only** (no confirmation prompts in ChatGPT). The server's `tools/list` response is the authoritative inventory.
 
 MCP enables AI models to:
 
@@ -17,20 +17,31 @@ MCP enables AI models to:
 - Find original news sources
 - Get portfolio news with CoinGecko price data
 
-## Installation
+## Hosted server (no install)
+
+A Streamable-HTTP transport is served at `https://cryptocurrency.cv/api/mcp`. No API key.
+
+```bash
+# Claude Code
+claude mcp add --transport http crypto-news https://cryptocurrency.cv/api/mcp
+```
+
+ChatGPT Developer Mode and any other Streamable-HTTP client: add `https://cryptocurrency.cv/api/mcp` as the server URL.
+
+## Installation (local stdio server)
 
 ### Using npx (Recommended)
 
 ```bash
-npx @anthropic-ai/mcp-server-crypto-news
+npx @nirholas/free-crypto-news-mcp
 ```
 
-### Local Installation
+### From the repository
 
 ```bash
-cd mcp
-npm install
-npm start
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv/mcp && npm install
+node index.js
 ```
 
 ## Configuration
@@ -44,7 +55,7 @@ Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/
   "mcpServers": {
     "crypto-news": {
       "command": "npx",
-      "args": ["@anthropic-ai/mcp-server-crypto-news"]
+      "args": ["@nirholas/free-crypto-news-mcp"]
     }
   }
 }
@@ -66,7 +77,7 @@ Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/
 }
 ```
 
-## Available Tools (40 Total)
+## Available Tools
 
 All tools are marked as **read-only** for ChatGPT Developer Mode compatibility (no confirmation prompts).
 
@@ -300,7 +311,7 @@ Ensure the SSE endpoint is reachable and returns proper MCP responses.
 
 - **100% Free** - No API keys required
 - **Dual Transport** - Works with both Claude (stdio) and ChatGPT (HTTP/SSE)
-- **40 Tools** - Comprehensive crypto news coverage
+- **Read-only tools** - Comprehensive crypto news coverage
 - **Read-Only** - All tools marked as safe for ChatGPT (no confirmation prompts)
 - **Real-Time** - Breaking news from last 2 hours
 - **Sentiment Analysis** - Bullish/bearish/neutral classification
@@ -310,6 +321,6 @@ Ensure the SSE endpoint is reachable and returns proper MCP responses.
 
 ## Source Code
 
-- [mcp/index.js](https://github.com/nirholas/free-crypto-news/blob/main/mcp/index.js) - MCP server (stdio)
-- [mcp/http-server.js](https://github.com/nirholas/free-crypto-news/blob/main/mcp/http-server.js) - HTTP/SSE server
-- [mcp/README.md](https://github.com/nirholas/free-crypto-news/blob/main/mcp/README.md) - Quick start guide
+- [mcp/index.js](https://github.com/nirholas/cryptocurrency.cv/blob/main/mcp/index.js) - MCP server (stdio)
+- [mcp/http-server.js](https://github.com/nirholas/cryptocurrency.cv/blob/main/mcp/http-server.js) - HTTP/SSE server
+- [mcp/README.md](https://github.com/nirholas/cryptocurrency.cv/blob/main/mcp/README.md) - Quick start guide

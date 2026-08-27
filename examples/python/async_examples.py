@@ -2,7 +2,7 @@
 
 # Copyright 2024-2026 nirholas. All rights reserved.
 # SPDX-License-Identifier: SEE LICENSE IN LICENSE
-# https://github.com/nirholas/free-crypto-news
+# https://github.com/nirholas/cryptocurrency.cv
 #
 # This file is part of free-crypto-news.
 # Unauthorized copying, modification, or distribution is strictly prohibited.
@@ -10,7 +10,7 @@
 
 """
 Async API Examples - Python (aiohttp)
-Free Crypto News API - https://github.com/nirholas/free-crypto-news
+Free Crypto News API - https://github.com/nirholas/cryptocurrency.cv
 
 Async/await examples using aiohttp for high-performance concurrent requests.
 Install: pip install aiohttp

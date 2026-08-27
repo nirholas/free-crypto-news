@@ -30,7 +30,7 @@ Monitoring: Vercel Analytics
 
 /* AI INTEGRATIONS */
 
-MCP Server: npx @anthropic-ai/mcp-server-crypto-news
+MCP Server: npx @nirholas/free-crypto-news-mcp
 ChatGPT Plugin: https://cryptocurrency.cv/.well-known/ai-plugin.json
 OpenAPI Spec: https://cryptocurrency.cv/api/openapi.json
 LLM Docs: https://cryptocurrency.cv/llms.txt

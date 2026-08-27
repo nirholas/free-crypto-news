@@ -1,16 +1,16 @@
-🌐 **Језици:** [English](README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [한국어](README.ko.md) | [Hrvatski](README.hr.md) | [Slovenščina](README.sl.md) | [Српски](README.sr.md)
+🌐 **Језици:** [English](../README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [한국어](README.ko.md) | [Hrvatski](README.hr.md) | [Slovenščina](README.sl.md) | [Српски](README.sr.md)
 
 ---
 
 # 🆓 Бесплатни Crypto News API
 
 <p align="center">
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers"><img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=for-the-badge&logo=github&color=yellow" alt="GitHub Звездице"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/free-crypto-news?style=for-the-badge&color=blue" alt="Лиценца"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers"><img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=for-the-badge&logo=github&color=yellow" alt="GitHub Звездице"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/cryptocurrency.cv?style=for-the-badge&color=blue" alt="Лиценца"></a>
 </p>
 
 <p align="center">
-  <img src=".github/demo.svg" alt="Free Crypto News API Demo" width="700">
+  <img src="../.github/demo.svg" alt="Free Crypto News API Demo" width="700">
 </p>
 
 > ⭐ **Ако вам је ово корисно, молимо дајте репозиторијуму звездицу!** То помаже другима да открију овај пројекат.
@@ -126,13 +126,13 @@ Free Crypto News је **потпуно инсталабилна PWA** која �
 
 ### Са Vercel (Препоручено)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nirholas/free-crypto-news)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nirholas/cryptocurrency.cv)
 
 ### Локално
 
 ```bash
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv
 npm install
 npm run dev
 ```
@@ -141,7 +141,7 @@ npm run dev
 
 ## 🤝 Доприноси
 
-Доприноси су добродошли! Погледајте [CONTRIBUTING.md](CONTRIBUTING.md).
+Доприноси су добродошли! Погледајте [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ---
 

@@ -1,12 +1,12 @@
-🌐 **भाषाएं:** [English](README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [हिंदी](README.hi.md)
+🌐 **भाषाएं:** [English](../README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [हिंदी](README.hi.md)
 
 ---
 
 # 🆓 फ्री क्रिप्टो न्यूज़ API
 
 <p align="center">
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers"><img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=for-the-badge&logo=github&color=yellow" alt="GitHub Stars"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/free-crypto-news?style=for-the-badge&color=blue" alt="License"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers"><img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=for-the-badge&logo=github&color=yellow" alt="GitHub Stars"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/cryptocurrency.cv?style=for-the-badge&color=blue" alt="License"></a>
 </p>
 
 > ⭐ **अगर आपको यह उपयोगी लगे, तो कृपया रेपो को स्टार करें!** इससे दूसरों को इस प्रोजेक्ट को खोजने में मदद मिलती है।
@@ -139,7 +139,7 @@ curl "https://cryptocurrency.cv/api/news/international?language=hi&translate=tru
 
 ## 📱 मोबाइल ऐप
 
-React Native मोबाइल ऐप [mobile/](mobile/) फोल्डर में उपलब्ध है:
+React Native मोबाइल ऐप [mobile/](../mobile/) फोल्डर में उपलब्ध है:
 
 ```bash
 cd mobile
@@ -153,13 +153,13 @@ npm start
 
 - **API**: https://cryptocurrency.cv
 - **डॉक्युमेंटेशन**: https://cryptocurrency.cv/docs
-- **GitHub**: https://github.com/AItoolsbyai/free-crypto-news
+- **GitHub**: https://github.com/nirholas/cryptocurrency.cv
 
 ---
 
 ## 📄 लाइसेंस
 
-MIT License - विवरण के लिए [LICENSE](LICENSE) देखें।
+MIT License - विवरण के लिए [LICENSE](../LICENSE) देखें।
 
 ---
 

@@ -65,5 +65,5 @@ When using this API:
 
 ## Contact
 
-For security concerns: Open a [GitHub Security Advisory](https://github.com/nirholas/free-crypto-news/security/advisories/new)
+For security concerns: Open a [GitHub Security Advisory](https://github.com/nirholas/cryptocurrency.cv/security/advisories/new)
 

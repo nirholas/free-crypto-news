@@ -2,14 +2,14 @@
 
 # Copyright 2024-2026 nirholas. All rights reserved.
 # SPDX-License-Identifier: SEE LICENSE IN LICENSE
-# https://github.com/nirholas/free-crypto-news
+# https://github.com/nirholas/cryptocurrency.cv
 #
 # This file is part of free-crypto-news.
 # Unauthorized copying, modification, or distribution is strictly prohibited.
 
 # =============================================================================
 # Free Crypto News API - cURL Examples
-# https://github.com/nirholas/free-crypto-news
+# https://github.com/nirholas/cryptocurrency.cv
 # 
 # Complete cURL examples for all API endpoints
 # =============================================================================

@@ -1,18 +1,18 @@
-🌐 **Ngôn ngữ:** [English](README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Tiếng Việt](README.vi.md) | [ไทย](README.th.md) | [Bahasa Indonesia](README.id.md)
+🌐 **Ngôn ngữ:** [English](../README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Tiếng Việt](README.vi.md) | [ไทย](README.th.md) | [Bahasa Indonesia](README.id.md)
 
 ---
 
 # 🆓 API Tin Tức Crypto Miễn Phí
 
 <p align="center">
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers"><img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=for-the-badge&logo=github&color=yellow" alt="GitHub Stars"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/free-crypto-news?style=for-the-badge&color=blue" alt="Giấy phép"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/issues"><img src="https://img.shields.io/github/issues/nirholas/free-crypto-news?style=for-the-badge&color=orange" alt="Issues"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/pulls"><img src="https://img.shields.io/github/issues-pr/nirholas/free-crypto-news?style=for-the-badge&color=purple" alt="Pull Requests"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers"><img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=for-the-badge&logo=github&color=yellow" alt="GitHub Stars"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/cryptocurrency.cv?style=for-the-badge&color=blue" alt="Giấy phép"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/issues"><img src="https://img.shields.io/github/issues/nirholas/cryptocurrency.cv?style=for-the-badge&color=orange" alt="Issues"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/pulls"><img src="https://img.shields.io/github/issues-pr/nirholas/cryptocurrency.cv?style=for-the-badge&color=purple" alt="Pull Requests"></a>
 </p>
 
 <p align="center">
-  <img src=".github/demo.svg" alt="Demo API Free Crypto News" width="700">
+  <img src="../.github/demo.svg" alt="Demo API Free Crypto News" width="700">
 </p>
 
 > ⭐ **Nếu thấy hữu ích, hãy gắn sao cho repo!** Giúp người khác khám phá dự án này và động viên phát triển liên tục.
@@ -92,7 +92,7 @@ curl "https://cryptocurrency.cv/api/news/international?region=asia&limit=20"
 - ✅ **Xử lý fallback** cho nguồn không khả dụng
 - ✅ **Loại bỏ trùng lặp** giữa các nguồn
 
-Xem [tài liệu API](docs/API.md#get-apinewsinternational) để biết chi tiết đầy đủ.
+Xem [tài liệu API](../docs/API.md#get-apinewsinternational) để biết chi tiết đầy đủ.
 
 ---
 
@@ -156,7 +156,7 @@ PWA sử dụng chiến lược cache thông minh:
 | `?` | Hiện tất cả phím tắt |
 | `Escape` | Đóng modal |
 
-📖 **Hướng dẫn người dùng đầy đủ:** [docs/USER-GUIDE.md](docs/USER-GUIDE.md)
+📖 **Hướng dẫn người dùng đầy đủ:** [docs/USER-GUIDE.md](../docs/USER-GUIDE.md)
 
 ---
 
@@ -274,15 +274,15 @@ for article in data['articles'][:5]:
 
 ### Một Click Deploy
 
-[![Deploy với Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nirholas/free-crypto-news)
-[![Deploy với Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https://github.com/nirholas/free-crypto-news)
+[![Deploy với Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nirholas/cryptocurrency.cv)
+[![Deploy với Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https://github.com/nirholas/cryptocurrency.cv)
 
 ### Cài Đặt Cục Bộ
 
 ```bash
 # Clone repository
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv
 
 # Cài dependencies
 npm install
@@ -309,19 +309,19 @@ NEXT_PUBLIC_ANALYTICS_ID=your_id
 
 | Tài liệu | Mô tả |
 |---|---|
-| [📚 Tham khảo API](docs/API.md) | Tài liệu endpoint đầy đủ |
-| [🏗️ Kiến trúc](docs/ARCHITECTURE.md) | Thiết kế hệ thống |
-| [🚀 Triển khai](docs/DEPLOYMENT.md) | Hướng dẫn production |
-| [🧪 Testing](docs/TESTING.md) | Hướng dẫn test |
-| [🔐 Bảo mật](docs/SECURITY.md) | Chính sách bảo mật |
-| [📖 Hướng dẫn người dùng](docs/USER-GUIDE.md) | Hướng dẫn PWA & tính năng |
-| [💻 Hướng dẫn phát triển](docs/DEVELOPER-GUIDE.md) | Tài liệu cho contributors |
+| [📚 Tham khảo API](../docs/API.md) | Tài liệu endpoint đầy đủ |
+| [🏗️ Kiến trúc](../docs/ARCHITECTURE.md) | Thiết kế hệ thống |
+| [🚀 Triển khai](../docs/DEPLOYMENT.md) | Hướng dẫn production |
+| [🧪 Testing](../docs/TESTING.md) | Hướng dẫn test |
+| [🔐 Bảo mật](../docs/SECURITY.md) | Chính sách bảo mật |
+| [📖 Hướng dẫn người dùng](../docs/USER-GUIDE.md) | Hướng dẫn PWA & tính năng |
+| [💻 Hướng dẫn phát triển](../docs/DEVELOPER-GUIDE.md) | Tài liệu cho contributors |
 
 ---
 
 ## Đóng Góp
 
-Đóng góp được chào đón! Xem [CONTRIBUTING.md](CONTRIBUTING.md) để biết hướng dẫn.
+Đóng góp được chào đón! Xem [CONTRIBUTING.md](../CONTRIBUTING.md) để biết hướng dẫn.
 
 ```bash
 # Fork repo
@@ -339,14 +339,14 @@ git push origin feature/amazing-feature
 
 ## Giấy Phép
 
-MIT License - xem file [LICENSE](LICENSE).
+MIT License - xem file [LICENSE](../LICENSE).
 
 ---
 
 ## Liên Hệ
 
-- 🐛 **Bugs**: [GitHub Issues](https://github.com/nirholas/free-crypto-news/issues)
-- 💬 **Thảo luận**: [GitHub Discussions](https://github.com/nirholas/free-crypto-news/discussions)
+- 🐛 **Bugs**: [GitHub Issues](https://github.com/nirholas/cryptocurrency.cv/issues)
+- 💬 **Thảo luận**: [GitHub Discussions](https://github.com/nirholas/cryptocurrency.cv/discussions)
 - 🐦 **Twitter**: [@nirholas](https://twitter.com/nirholas)
 
 ---

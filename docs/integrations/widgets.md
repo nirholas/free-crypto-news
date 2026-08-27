@@ -300,4 +300,4 @@ sed -i 's|https://cryptocurrency.cv|https://your-domain.com|g' *.js
 
 ## Source Code
 
-View widget source code: [widget/](https://github.com/nirholas/free-crypto-news/tree/main/widget)
+View widget source code: [widget/](https://github.com/nirholas/cryptocurrency.cv/tree/main/widget)

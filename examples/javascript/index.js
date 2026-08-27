@@ -1,7 +1,7 @@
 /**
  * @copyright 2024-2026 nirholas. All rights reserved.
  * @license SPDX-License-Identifier: SEE LICENSE IN LICENSE
- * @see https://github.com/nirholas/free-crypto-news
+ * @see https://github.com/nirholas/cryptocurrency.cv
  *
  * This file is part of free-crypto-news.
  * Unauthorized copying, modification, or distribution is strictly prohibited.
@@ -10,7 +10,7 @@
 
 /**
  * Free Crypto News API - JavaScript/Node.js Examples
- * https://github.com/nirholas/free-crypto-news
+ * https://github.com/nirholas/cryptocurrency.cv
  * 
  * Complete SDK with examples for all API endpoints.
  */
@@ -78,5 +78,5 @@ Example:
   const sentiment = await getSentiment({ asset: 'BTC' });
   const coins = await getCoins({ limit: 100 });
 
-Documentation: https://github.com/nirholas/free-crypto-news
+Documentation: https://github.com/nirholas/cryptocurrency.cv
 `);

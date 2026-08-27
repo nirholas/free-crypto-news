@@ -278,4 +278,4 @@ git push heroku main
 
 ## Full Example
 
-See the complete Slack bot: [examples/slack-bot.js](https://github.com/nirholas/free-crypto-news/blob/main/examples/slack-bot.js)
+See the complete Slack bot: [examples/slack-bot.js](https://github.com/nirholas/cryptocurrency.cv/blob/main/examples/slack-bot.js)

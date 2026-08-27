@@ -8,14 +8,14 @@ Official SDKs for Free Crypto News API, available in **8 languages**. All SDKs a
 
     ```bash
     # Zero dependencies - just copy the file
-    curl -O https://raw.githubusercontent.com/nirholas/free-crypto-news/main/sdk/python/crypto_news.py
+    curl -O https://raw.githubusercontent.com/nirholas/cryptocurrency.cv/main/sdk/python/crypto_news.py
     ```
 
 === "JavaScript"
 
     ```bash
     # Zero dependencies - just copy the file
-    curl -O https://raw.githubusercontent.com/nirholas/free-crypto-news/main/sdk/javascript/crypto-news.js
+    curl -O https://raw.githubusercontent.com/nirholas/cryptocurrency.cv/main/sdk/javascript/crypto-news.js
     ```
 
 === "TypeScript"
@@ -33,7 +33,7 @@ Official SDKs for Free Crypto News API, available in **8 languages**. All SDKs a
 === "Go"
 
     ```bash
-    go get github.com/nirholas/free-crypto-news/sdk/go
+    go get github.com/nirholas/cryptocurrency.cv/sdk/go
     ```
 
 === "Rust"
@@ -52,7 +52,7 @@ Official SDKs for Free Crypto News API, available in **8 languages**. All SDKs a
 
     ```bash
     # Zero dependencies - just copy the file
-    curl -O https://raw.githubusercontent.com/nirholas/free-crypto-news/main/sdk/php/CryptoNews.php
+    curl -O https://raw.githubusercontent.com/nirholas/cryptocurrency.cv/main/sdk/php/CryptoNews.php
     ```
 
 ## Feature Parity Matrix

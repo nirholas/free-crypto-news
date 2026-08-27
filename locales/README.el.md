@@ -1,12 +1,12 @@
-🌐 **Γλώσσες:** [English](README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Ελληνικά](README.el.md)
+🌐 **Γλώσσες:** [English](../README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Ελληνικά](README.el.md)
 
 ---
 
 # 🆓 Δωρεάν Crypto News API
 
 <p align="center">
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers"><img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=for-the-badge&logo=github&color=yellow" alt="GitHub Stars"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/free-crypto-news?style=for-the-badge&color=blue" alt="Άδεια"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers"><img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=for-the-badge&logo=github&color=yellow" alt="GitHub Stars"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/cryptocurrency.cv?style=for-the-badge&color=blue" alt="Άδεια"></a>
 </p>
 
 > ⭐ **Αν το βρίσκετε χρήσιμο, βάλτε αστέρι στο repo!** Βοηθάει άλλους να ανακαλύψουν αυτό το project.
@@ -131,7 +131,7 @@ curl "https://cryptocurrency.cv/api/news/international?language=ko&translate=tru
 
 ## 📱 Mobile App
 
-Η React Native mobile app βρίσκεται στον φάκελο [mobile/](mobile/):
+Η React Native mobile app βρίσκεται στον φάκελο [mobile/](../mobile/):
 
 ```bash
 cd mobile
@@ -145,13 +145,13 @@ npm start
 
 - **API**: https://cryptocurrency.cv
 - **Τεκμηρίωση**: https://cryptocurrency.cv/docs
-- **GitHub**: https://github.com/AItoolsbyai/free-crypto-news
+- **GitHub**: https://github.com/nirholas/cryptocurrency.cv
 
 ---
 
 ## 📄 Άδεια
 
-MIT License - δείτε [LICENSE](LICENSE) για λεπτομέρειες.
+MIT License - δείτε [LICENSE](../LICENSE) για λεπτομέρειες.
 
 ---
 

@@ -508,7 +508,7 @@ Any language supported by the AI provider (100+ languages including Chinese, Jap
 ### JavaScript/TypeScript
 
 ```typescript
-import { CryptoNewsClient } from '@cryptonews/sdk';
+import { CryptoNewsClient } from '@nirholas/crypto-news';
 
 const client = new CryptoNewsClient();
 
@@ -575,7 +575,8 @@ spanish = news.ai.translate(content, "Spanish")
 ### React Hook
 
 ```tsx
-import { useAI } from '@cryptonews/react';
+// React hooks ship in sdk/react of the repository (not yet on npm)
+import { useAI } from './sdk/react';
 
 function ArticleAnalysis({ article }) {
   const { summarize, sentiment, loading, error } = useAI();
@@ -1493,8 +1494,8 @@ The new `/api/ai` endpoint provides a unified interface with more options.
 ## Need Help?
 
 - 📖 [API Documentation](./API.md)
-- 💬 [GitHub Discussions](https://github.com/nirholas/free-crypto-news/discussions)
-- 🐛 [Report Issues](https://github.com/nirholas/free-crypto-news/issues)
+- 💬 [GitHub Discussions](https://github.com/nirholas/cryptocurrency.cv/discussions)
+- 🐛 [Report Issues](https://github.com/nirholas/cryptocurrency.cv/issues)
 ---
 
 ## The Oracle (AI Chat Interface)

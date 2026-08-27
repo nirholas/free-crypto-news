@@ -294,4 +294,4 @@ if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTime) {
 
 ## Source Code
 
-View the full PHP SDK: [sdk/php](https://github.com/nirholas/free-crypto-news/tree/main/sdk/php)
+View the full PHP SDK: [sdk/php](https://github.com/nirholas/cryptocurrency.cv/tree/main/sdk/php)

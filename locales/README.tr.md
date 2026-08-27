@@ -1,16 +1,16 @@
-🌐 **Dil:** [English](README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Tiếng Việt](README.vi.md) | [ไทย](README.th.md) | [Bahasa Indonesia](README.id.md)
+🌐 **Dil:** [English](../README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Tiếng Việt](README.vi.md) | [ไทย](README.th.md) | [Bahasa Indonesia](README.id.md)
 
 ---
 
 # 🆓 Ücretsiz Kripto Haber API'si
 
 <p align="center">
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers"><img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=for-the-badge&logo=github&color=yellow" alt="GitHub Yıldızları"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/free-crypto-news?style=for-the-badge&color=blue" alt="Lisans"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers"><img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=for-the-badge&logo=github&color=yellow" alt="GitHub Yıldızları"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/cryptocurrency.cv?style=for-the-badge&color=blue" alt="Lisans"></a>
 </p>
 
 <p align="center">
-  <img src=".github/demo.svg" alt="Free Crypto News API Demo" width="700">
+  <img src="../.github/demo.svg" alt="Free Crypto News API Demo" width="700">
 </p>
 
 > ⭐ **Faydalı bulursanız, depoya yıldız verin!** Bu, başkalarının projeyi keşfetmesine yardımcı olur ve sürekli geliştirme için motivasyon sağlar.
@@ -146,12 +146,12 @@ Free Crypto News, çevrimdışı desteğiyle **tamamen yüklenebilir bir PWA**'d
 
 | Paket | Açıklama |
 |---------|-------------|
-| [React](sdk/react/) | `<CryptoNews />` tak-çalıştır bileşeni |
-| [TypeScript](sdk/typescript/) | Tam TypeScript SDK |
-| [Python](sdk/python/) | Bağımlılıksız Python istemcisi |
-| [JavaScript](sdk/javascript/) | Tarayıcı ve Node.js SDK |
-| [Go](sdk/go/) | Go istemci kütüphanesi |
-| [PHP](sdk/php/) | PHP SDK |
+| [React](../sdk/react/) | `<CryptoNews />` tak-çalıştır bileşeni |
+| [TypeScript](../sdk/typescript/) | Tam TypeScript SDK |
+| [Python](../sdk/python/) | Bağımlılıksız Python istemcisi |
+| [JavaScript](../sdk/javascript/) | Tarayıcı ve Node.js SDK |
+| [Go](../sdk/go/) | Go istemci kütüphanesi |
+| [PHP](../sdk/php/) | PHP SDK |
 
 **Base URL:** `https://cryptocurrency.cv`
 
@@ -161,13 +161,13 @@ Free Crypto News, çevrimdışı desteğiyle **tamamen yüklenebilir bir PWA**'d
 
 ## Tek Tıkla Dağıtım
 
-[![Vercel ile Dağıt](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnirholas%2Ffree-crypto-news)
+[![Vercel ile Dağıt](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnirholas%2Fcryptocurrency.cv)
 
 ## Manuel
 
 ```bash
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv
 pnpm install
 pnpm dev
 ```
@@ -190,8 +190,8 @@ MIT © 2025 [nich](https://github.com/nirholas)
 <p align="center">
   <br>
   ⭐ <b>Faydalı buldunuz mu? Yıldız verin!</b> ⭐<br>
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers">
-    <img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=social" alt="GitHub'da Yıldızla">
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers">
+    <img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=social" alt="GitHub'da Yıldızla">
   </a>
 </p>
 

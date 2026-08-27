@@ -2,7 +2,7 @@
 
 # Copyright 2024-2026 nirholas. All rights reserved.
 # SPDX-License-Identifier: SEE LICENSE IN LICENSE
-# https://github.com/nirholas/free-crypto-news
+# https://github.com/nirholas/cryptocurrency.cv
 #
 # This file is part of free-crypto-news.
 # Unauthorized copying, modification, or distribution is strictly prohibited.
@@ -10,7 +10,7 @@
 
 """
 Macro & Economic API Examples - Python
-Free Crypto News API - https://github.com/nirholas/free-crypto-news
+Free Crypto News API - https://github.com/nirholas/cryptocurrency.cv
 
 Examples for macroeconomic data endpoints that provide context
 for crypto market movements.

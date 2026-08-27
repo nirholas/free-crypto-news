@@ -1,13 +1,13 @@
 // Copyright 2024-2026 nirholas. All rights reserved.
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
-// https://github.com/nirholas/free-crypto-news
+// https://github.com/nirholas/cryptocurrency.cv
 //
 // This file is part of free-crypto-news.
 // Unauthorized copying, modification, or distribution is strictly prohibited.
 // For licensing inquiries: nirholas@users.noreply.github.com
 
 // Package cryptonews provides a Go client for the Free Crypto News API.
-// https://github.com/nirholas/free-crypto-news
+// https://github.com/nirholas/cryptocurrency.cv
 package main
 
 import (

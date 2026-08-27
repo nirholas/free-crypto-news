@@ -935,5 +935,5 @@ undefined
 ## 需要帮助？
 
 - 📖 [主文档](index.md)
-- 💬 [GitHub 讨论](https://github.com/nirholas/free-crypto-news/discussions)
-- 🐛 [报告问题](https://github.com/nirholas/free-crypto-news/issues)
+- 💬 [GitHub 讨论](https://github.com/nirholas/cryptocurrency.cv/discussions)
+- 🐛 [报告问题](https://github.com/nirholas/cryptocurrency.cv/issues)

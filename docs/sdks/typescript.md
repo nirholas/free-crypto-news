@@ -242,4 +242,4 @@ try {
 
 ## Source Code
 
-View the full SDK source with type definitions: [sdk/typescript](https://github.com/nirholas/free-crypto-news/tree/main/sdk/typescript)
+View the full SDK source with type definitions: [sdk/typescript](https://github.com/nirholas/cryptocurrency.cv/tree/main/sdk/typescript)

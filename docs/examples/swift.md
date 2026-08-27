@@ -20,7 +20,7 @@ Full-featured Swift client with async/await support for all Apple platforms.
 ```swift
 // Package.swift
 dependencies: [
-    .package(url: "https://github.com/nirholas/free-crypto-news-swift", from: "1.0.0")
+    .package(url: "https://github.com/nirholas/cryptocurrency.cv-swift", from: "1.0.0")
 ]
 ```
 

@@ -1,18 +1,18 @@
-🌐 **語言:** [English](README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Tiếng Việt](README.vi.md) | [ไทย](README.th.md) | [Bahasa Indonesia](README.id.md)
+🌐 **語言:** [English](../README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Tiếng Việt](README.vi.md) | [ไทย](README.th.md) | [Bahasa Indonesia](README.id.md)
 
 ---
 
 # 🆓 免費加密貨幣新聞 API
 
 <p align="center">
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers"><img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=for-the-badge&logo=github&color=yellow" alt="GitHub 星標"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/free-crypto-news?style=for-the-badge&color=blue" alt="授權"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/issues"><img src="https://img.shields.io/github/issues/nirholas/free-crypto-news?style=for-the-badge&color=orange" alt="Issues"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/pulls"><img src="https://img.shields.io/github/issues-pr/nirholas/free-crypto-news?style=for-the-badge&color=purple" alt="Pull Requests"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers"><img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=for-the-badge&logo=github&color=yellow" alt="GitHub 星標"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/cryptocurrency.cv?style=for-the-badge&color=blue" alt="授權"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/issues"><img src="https://img.shields.io/github/issues/nirholas/cryptocurrency.cv?style=for-the-badge&color=orange" alt="Issues"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/pulls"><img src="https://img.shields.io/github/issues-pr/nirholas/cryptocurrency.cv?style=for-the-badge&color=purple" alt="Pull Requests"></a>
 </p>
 
 <p align="center">
-  <img src=".github/demo.svg" alt="Free Crypto News API 展示" width="700">
+  <img src="../.github/demo.svg" alt="Free Crypto News API 展示" width="700">
 </p>
 
 > ⭐ **如果您覺得有用，請給倉庫點星！** 這有助於其他人發現這個專案並激勵持續開發。
@@ -92,7 +92,7 @@ curl "https://cryptocurrency.cv/api/news/international?region=asia&limit=20"
 - ✅ 不可用來源的**備用處理**
 - ✅ 跨來源**去重**
 
-查看 [API 文檔](docs/API.md#get-apinewsinternational) 了解完整詳情。
+查看 [API 文檔](../docs/API.md#get-apinewsinternational) 了解完整詳情。
 
 ---
 
@@ -156,7 +156,7 @@ PWA 使用智慧快取策略：
 | `?` | 顯示所有快捷鍵 |
 | `Escape` | 關閉彈窗 |
 
-📖 **完整用戶指南：** [docs/USER-GUIDE.md](docs/USER-GUIDE.md)
+📖 **完整用戶指南：** [docs/USER-GUIDE.md](../docs/USER-GUIDE.md)
 
 ---
 
@@ -274,15 +274,15 @@ for article in data['articles'][:5]:
 
 ### 一鍵部署
 
-[![使用 Vercel 部署](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nirholas/free-crypto-news)
-[![使用 Railway 部署](https://railway.app/button.svg)](https://railway.app/new/template?template=https://github.com/nirholas/free-crypto-news)
+[![使用 Vercel 部署](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nirholas/cryptocurrency.cv)
+[![使用 Railway 部署](https://railway.app/button.svg)](https://railway.app/new/template?template=https://github.com/nirholas/cryptocurrency.cv)
 
 ### 本地安裝
 
 ```bash
 # 克隆倉庫
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv
 
 # 安裝依賴
 npm install
@@ -309,19 +309,19 @@ NEXT_PUBLIC_ANALYTICS_ID=your_id
 
 | 文檔 | 描述 |
 |---|---|
-| [📚 API 參考](docs/API.md) | 完整端點文檔 |
-| [🏗️ 架構](docs/ARCHITECTURE.md) | 系統設計 |
-| [🚀 部署](docs/DEPLOYMENT.md) | 生產指南 |
-| [🧪 測試](docs/TESTING.md) | 測試指南 |
-| [🔐 安全](docs/SECURITY.md) | 安全政策 |
-| [📖 用戶指南](docs/USER-GUIDE.md) | PWA 和功能指南 |
-| [💻 開發者指南](docs/DEVELOPER-GUIDE.md) | 貢獻者文檔 |
+| [📚 API 參考](../docs/API.md) | 完整端點文檔 |
+| [🏗️ 架構](../docs/ARCHITECTURE.md) | 系統設計 |
+| [🚀 部署](../docs/DEPLOYMENT.md) | 生產指南 |
+| [🧪 測試](../docs/TESTING.md) | 測試指南 |
+| [🔐 安全](../docs/SECURITY.md) | 安全政策 |
+| [📖 用戶指南](../docs/USER-GUIDE.md) | PWA 和功能指南 |
+| [💻 開發者指南](../docs/DEVELOPER-GUIDE.md) | 貢獻者文檔 |
 
 ---
 
 ## 貢獻
 
-歡迎貢獻！請參閱 [CONTRIBUTING.md](CONTRIBUTING.md) 了解指南。
+歡迎貢獻！請參閱 [CONTRIBUTING.md](../CONTRIBUTING.md) 了解指南。
 
 ```bash
 # Fork 倉庫
@@ -339,14 +339,14 @@ git push origin feature/amazing-feature
 
 ## 授權
 
-MIT License - 請參閱 [LICENSE](LICENSE) 文件。
+MIT License - 請參閱 [LICENSE](../LICENSE) 文件。
 
 ---
 
 ## 聯繫
 
-- 🐛 **Bugs**: [GitHub Issues](https://github.com/nirholas/free-crypto-news/issues)
-- 💬 **討論**: [GitHub Discussions](https://github.com/nirholas/free-crypto-news/discussions)
+- 🐛 **Bugs**: [GitHub Issues](https://github.com/nirholas/cryptocurrency.cv/issues)
+- 💬 **討論**: [GitHub Discussions](https://github.com/nirholas/cryptocurrency.cv/discussions)
 - 🐦 **Twitter**: [@nirholas](https://twitter.com/nirholas)
 
 ---

@@ -1,5 +1,7 @@
 # Security Policy
 
+> This is the detailed security architecture and policy document. The short, GitHub-recognized policy (supported versions, how to report) is the root [SECURITY.md](../SECURITY.md); both point at the same advisory process.
+
 ## Supported Versions
 
 | Version | Supported          |
@@ -262,7 +264,7 @@ When using this API:
 ## Contact
 
 - **Security issues**: security@cryptocurrency.cv
-- **General questions**: [GitHub Discussions](https://github.com/nirholas/free-crypto-news/discussions)
+- **General questions**: [GitHub Discussions](https://github.com/nirholas/cryptocurrency.cv/discussions)
 
 ---
 
@@ -271,7 +273,7 @@ When using this API:
 - [Architecture](ARCHITECTURE.md) — system design and security layers
 - [API Reference](API.md) — endpoint documentation
 - [Deployment](DEPLOYMENT.md) — secure deployment configuration
-- [Scalability](SCALABILITY.md) — rate limiting architecture
+- [Scaling](SCALING.md) — rate limiting architecture
 
-For security concerns: Open a [GitHub Security Advisory](https://github.com/nirholas/free-crypto-news/security/advisories/new)
+For security concerns: Open a [GitHub Security Advisory](https://github.com/nirholas/cryptocurrency.cv/security/advisories/new)
 

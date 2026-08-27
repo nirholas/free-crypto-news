@@ -1,7 +1,7 @@
 /**
  * @copyright 2024-2026 nirholas. All rights reserved.
  * @license SPDX-License-Identifier: SEE LICENSE IN LICENSE
- * @see https://github.com/nirholas/free-crypto-news
+ * @see https://github.com/nirholas/cryptocurrency.cv
  *
  * This file is part of free-crypto-news.
  * Unauthorized copying, modification, or distribution is strictly prohibited.
@@ -10,7 +10,7 @@
 
 /**
  * Free Crypto News API - TypeScript SDK
- * https://github.com/nirholas/free-crypto-news
+ * https://github.com/nirholas/cryptocurrency.cv
  * 
  * Complete TypeScript SDK with type definitions for all 184 API endpoints.
  */

@@ -228,4 +228,4 @@ setInterval(checkBreakingNews, 5 * 60 * 1000);
 
 ## Full Example
 
-See the complete Discord bot: [examples/discord-bot.js](https://github.com/nirholas/free-crypto-news/blob/main/examples/discord-bot.js)
+See the complete Discord bot: [examples/discord-bot.js](https://github.com/nirholas/cryptocurrency.cv/blob/main/examples/discord-bot.js)

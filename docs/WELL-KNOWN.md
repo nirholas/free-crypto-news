@@ -92,7 +92,7 @@ GET /.well-known/x402
   "links": {
     "documentation": "https://cryptocurrency.cv/docs",
     "openapi": "https://cryptocurrency.cv/api/openapi.json",
-    "github": "https://github.com/nirholas/free-crypto-news"
+    "github": "https://github.com/nirholas/cryptocurrency.cv"
   }
 }
 ```

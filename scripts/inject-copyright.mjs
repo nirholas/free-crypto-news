@@ -14,7 +14,7 @@ const DRY_RUN = process.argv.includes('--dry-run');
 
 const OWNER = 'nirholas';
 const YEARS = '2024-2026';
-const REPO = 'https://github.com/nirholas/free-crypto-news';
+const REPO = 'https://github.com/nirholas/cryptocurrency.cv';
 const MARKER = 'This file is part of free-crypto-news';
 
 // ── Directories to skip (exact folder names) ────────────────────────────────

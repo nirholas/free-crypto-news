@@ -2,11 +2,11 @@ cff-version: 1.2.0
 message: 'If you use this software in your research, please cite it as below.'
 type: software
 title: 'Free Crypto News API'
-abstract: 'Open-source crypto news aggregator with 200+ sources, real-time updates, and multi-language support.'
+abstract: 'Source-available crypto news aggregator with 200+ sources, real-time updates, and multi-language support.'
 authors:
   - family-names: 'Nirholas'
     affiliation: 'Free Crypto News'
-repository-code: 'https://github.com/nirholas/free-crypto-news'
+repository-code: 'https://github.com/nirholas/cryptocurrency.cv'
 url: 'https://cryptocurrency.cv'
 license: LicenseRef-SEE-LICENSE
 version: '1.0.2'

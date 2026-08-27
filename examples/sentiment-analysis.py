@@ -2,7 +2,7 @@
 
 # Copyright 2024-2026 nirholas. All rights reserved.
 # SPDX-License-Identifier: SEE LICENSE IN LICENSE
-# https://github.com/nirholas/free-crypto-news
+# https://github.com/nirholas/cryptocurrency.cv
 #
 # This file is part of free-crypto-news.
 # Unauthorized copying, modification, or distribution is strictly prohibited.
@@ -32,7 +32,7 @@ Usage:
 Requirements:
     pip install requests nltk pandas
 
-Author: Free Crypto News (https://github.com/nirholas/free-crypto-news)
+Author: Free Crypto News (https://github.com/nirholas/cryptocurrency.cv)
 License: MIT
 """
 
@@ -510,7 +510,7 @@ Examples:
   python sentiment-analysis.py --verbose           # Show individual articles
   python sentiment-analysis.py --limit 50          # 50 articles per coin
 
-Powered by Free Crypto News API - https://github.com/nirholas/free-crypto-news
+Powered by Free Crypto News API - https://github.com/nirholas/cryptocurrency.cv
         """
     )
     

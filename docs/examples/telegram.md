@@ -297,4 +297,4 @@ app.job_queue.run_daily(
 
 ## Full Example
 
-See the complete Telegram bot: [examples/telegram-bot.py](https://github.com/nirholas/free-crypto-news/blob/main/examples/telegram-bot.py)
+See the complete Telegram bot: [examples/telegram-bot.py](https://github.com/nirholas/cryptocurrency.cv/blob/main/examples/telegram-bot.py)

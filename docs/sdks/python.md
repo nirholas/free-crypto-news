@@ -11,8 +11,8 @@ pip install fcn-sdk
 Or install from source:
 
 ```bash
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news/sdk/python
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv/sdk/python
 pip install -e .
 ```
 
@@ -177,4 +177,4 @@ The Free Crypto News API has generous rate limits:
 
 ## Source Code
 
-View the full SDK source on GitHub: [sdk/python](https://github.com/nirholas/free-crypto-news/tree/main/sdk/python)
+View the full SDK source on GitHub: [sdk/python](https://github.com/nirholas/cryptocurrency.cv/tree/main/sdk/python)

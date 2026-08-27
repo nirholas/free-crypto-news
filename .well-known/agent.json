@@ -77,10 +77,10 @@
     "llms_full_txt": "https://cryptocurrency.cv/llms-full.txt",
     "api_docs": "https://cryptocurrency.cv/docs/api",
     "quickstart": "https://cryptocurrency.cv/docs/quickstart",
-    "skills": "https://github.com/nirholas/free-crypto-news/blob/main/SKILLS.md",
-    "agents": "https://github.com/nirholas/free-crypto-news/blob/main/AGENTS.md"
+    "skills": "https://github.com/nirholas/cryptocurrency.cv/blob/main/SKILLS.md",
+    "agents": "https://github.com/nirholas/cryptocurrency.cv/blob/main/AGENTS.md"
   },
-  "repository": "https://github.com/nirholas/free-crypto-news",
+  "repository": "https://github.com/nirholas/cryptocurrency.cv",
   "contact": "nirholas@users.noreply.github.com",
   "keywords": [
     "cryptocurrency", "news", "api", "bitcoin", "ethereum", "defi", "solana",

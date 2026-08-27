@@ -9,7 +9,7 @@ info:
   version: 2.0.0
   contact:
     name: GitHub
-    url: https://github.com/nirholas/free-crypto-news
+    url: https://github.com/nirholas/cryptocurrency.cv
 
 servers:
   - url: https://cryptocurrency.cv

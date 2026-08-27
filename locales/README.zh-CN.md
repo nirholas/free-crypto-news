@@ -1,16 +1,16 @@
-🌐 **语言:** [English](README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Tiếng Việt](README.vi.md) | [ไทย](README.th.md) | [Bahasa Indonesia](README.id.md)
+🌐 **语言:** [English](../README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Tiếng Việt](README.vi.md) | [ไทย](README.th.md) | [Bahasa Indonesia](README.id.md)
 
 ---
 
 # 🆓 免费加密货币新闻 API
 
 <p align="center">
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers"><img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=for-the-badge&logo=github&color=yellow" alt="GitHub 星标"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/free-crypto-news?style=for-the-badge&color=blue" alt="许可证"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers"><img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=for-the-badge&logo=github&color=yellow" alt="GitHub 星标"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/cryptocurrency.cv?style=for-the-badge&color=blue" alt="许可证"></a>
 </p>
 
 <p align="center">
-  <img src=".github/demo.svg" alt="Free Crypto News API 演示" width="700">
+  <img src="../.github/demo.svg" alt="Free Crypto News API 演示" width="700">
 </p>
 
 > ⭐ **如果您觉得有用，请给仓库点星！** 这有助于其他人发现这个项目并激励持续开发。
@@ -151,12 +151,12 @@ Free Crypto News 是一个**完全可安装的 PWA**，支持离线使用！
 
 | 包 | 描述 |
 |---------|-------------|
-| [React](sdk/react/) | `<CryptoNews />` 即插即用组件 |
-| [TypeScript](sdk/typescript/) | 完整的 TypeScript SDK |
-| [Python](sdk/python/) | 零依赖 Python 客户端 |
-| [JavaScript](sdk/javascript/) | 浏览器和 Node.js SDK |
-| [Go](sdk/go/) | Go 客户端库 |
-| [PHP](sdk/php/) | PHP SDK |
+| [React](../sdk/react/) | `<CryptoNews />` 即插即用组件 |
+| [TypeScript](../sdk/typescript/) | 完整的 TypeScript SDK |
+| [Python](../sdk/python/) | 零依赖 Python 客户端 |
+| [JavaScript](../sdk/javascript/) | 浏览器和 Node.js SDK |
+| [Go](../sdk/go/) | Go 客户端库 |
+| [PHP](../sdk/php/) | PHP SDK |
 
 **基础 URL：** `https://cryptocurrency.cv`
 
@@ -194,7 +194,7 @@ Free Crypto News 是一个**完全可安装的 PWA**，支持离线使用！
 **零依赖。** 只需复制文件。
 
 ```bash
-curl -O https://raw.githubusercontent.com/nirholas/free-crypto-news/main/sdk/python/crypto_news.py
+curl -O https://raw.githubusercontent.com/nirholas/cryptocurrency.cv/main/sdk/python/crypto_news.py
 ```
 
 ```python
@@ -237,13 +237,13 @@ const health = await client.getHealth();
 
 ## 一键部署
 
-[![使用 Vercel 部署](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnirholas%2Ffree-crypto-news)
+[![使用 Vercel 部署](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnirholas%2Fcryptocurrency.cv)
 
 ## 手动
 
 ```bash
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv
 pnpm install
 pnpm dev
 ```
@@ -286,11 +286,11 @@ pnpm dev
 
 | 文档 | 描述 |
 |----------|-------------|
-| [用户指南](docs/USER-GUIDE.md) | 终端用户功能、键盘快捷键、PWA |
-| [开发者指南](docs/DEVELOPER-GUIDE.md) | 架构、组件、扩展应用 |
-| [贡献](CONTRIBUTING.md) | 如何贡献 |
-| [变更日志](CHANGELOG.md) | 版本历史 |
-| [安全](SECURITY.md) | 安全政策 |
+| [用户指南](../docs/USER-GUIDE.md) | 终端用户功能、键盘快捷键、PWA |
+| [开发者指南](../docs/DEVELOPER-GUIDE.md) | 架构、组件、扩展应用 |
+| [贡献](../CONTRIBUTING.md) | 如何贡献 |
+| [变更日志](../CHANGELOG.md) | 版本历史 |
+| [安全](../SECURITY.md) | 安全政策 |
 
 ---
 
@@ -309,8 +309,8 @@ MIT © 2025 [nich](https://github.com/nirholas)
   <br>
   ⭐ <b>觉得有用？请点星！</b> ⭐<br>
   <sub>帮助其他人发现这个项目并保持开发活跃</sub><br><br>
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers">
-    <img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=social" alt="在 GitHub 上点星">
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers">
+    <img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=social" alt="在 GitHub 上点星">
   </a>
 </p>
 

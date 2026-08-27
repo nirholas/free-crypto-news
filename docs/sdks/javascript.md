@@ -214,4 +214,4 @@ discord.login(process.env.DISCORD_TOKEN);
 
 ## Source Code
 
-View the full SDK source on GitHub: [sdk/javascript](https://github.com/nirholas/free-crypto-news/tree/main/sdk/javascript)
+View the full SDK source on GitHub: [sdk/javascript](https://github.com/nirholas/cryptocurrency.cv/tree/main/sdk/javascript)

@@ -29,8 +29,8 @@ Best for testing and development.
 
 ```bash
 # Clone and install
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news/mcp
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv/mcp
 npm install
 
 # Start HTTP/SSE server
@@ -52,7 +52,7 @@ Best for reliable access from anywhere.
 npm i -g @railway/cli
 
 # Login and deploy
-cd free-crypto-news/mcp
+cd cryptocurrency.cv/mcp
 railway login
 railway init
 railway up
@@ -80,7 +80,7 @@ railway open
 curl -L https://fly.io/install.sh | sh
 
 # Deploy
-cd free-crypto-news/mcp
+cd cryptocurrency.cv/mcp
 fly launch
 fly deploy
 ```
@@ -258,7 +258,7 @@ I found 15 articles about Bitcoin ETF:
 
 ## Support
 
-- **Issues:** https://github.com/nirholas/free-crypto-news/issues
+- **Issues:** https://github.com/nirholas/cryptocurrency.cv/issues
 - **API Docs:** https://cryptocurrency.cv/api/docs
 - **MCP Spec:** https://modelcontextprotocol.io
 

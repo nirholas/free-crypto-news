@@ -25,8 +25,8 @@ The Free Crypto News Raycast extension provides quick access to crypto news from
 ### Manual Installation
 
 ```bash
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news/raycast
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv/raycast
 npm install
 npm run dev
 ```
@@ -201,4 +201,4 @@ raycast/
 
 ## Source Code
 
-View the Raycast extension source: [raycast/](https://github.com/nirholas/free-crypto-news/tree/main/raycast)
+View the Raycast extension source: [raycast/](https://github.com/nirholas/cryptocurrency.cv/tree/main/raycast)

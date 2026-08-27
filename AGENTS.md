@@ -1,8 +1,8 @@
-# free-crypto-news — AI Agent Integration Guide
+# cryptocurrency.cv (Free Crypto News) — AI Agent Integration Guide
 
 > Free, real-time cryptocurrency news API aggregating 200+ sources. No API key required.
 > REST JSON, RSS/Atom, WebSocket, GraphQL, AI analysis, MCP server, ChatGPT plugin.
-> Open source (MIT). https://cryptocurrency.cv
+> Source-available (all rights reserved); the hosted API at https://cryptocurrency.cv is free to use. See LICENSE for the code terms. https://cryptocurrency.cv
 
 ---
 
@@ -41,29 +41,43 @@ curl "https://cryptocurrency.cv/api/sentiment?asset=BTC"
 
 ## MCP Server (Model Context Protocol)
 
-Install for Claude Desktop, Claude Code, or any MCP-compatible client:
+Two ways to use the MCP server (40+ tools, full list in [mcp/README.md](mcp/README.md)):
 
-```bash
-npx -y @smithery/cli install cryptocurrency-news
-```
-
-Or configure manually:
+**Hosted, zero install.** A Streamable-HTTP endpoint runs at `https://cryptocurrency.cv/api/mcp`. Any client that speaks Streamable HTTP (Claude Desktop, Claude Code, Cursor, and others) can use it:
 
 ```json
 {
   "mcpServers": {
     "crypto-news": {
-      "command": "npx",
-      "args": ["-y", "@anthropic-ai/mcp-server-crypto-news"]
+      "url": "https://cryptocurrency.cv/api/mcp"
     }
   }
 }
 ```
 
-### MCP Tools (20)
+```bash
+claude mcp add --transport http crypto-news https://cryptocurrency.cv/api/mcp
+```
 
-| Tool | Description |
-|------|-------------|
+**Local stdio server** (package `free-crypto-news-mcp` in [mcp/](mcp/)):
+
+```bash
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv/mcp && npm install && node index.js
+```
+
+```json
+{
+  "mcpServers": {
+    "crypto-news": {
+      "command": "node",
+      "args": ["/path/to/cryptocurrency.cv/mcp/index.js"]
+    }
+  }
+}
+```
+
+------|-------------|
 | `get_crypto_news` | Latest news from 200+ sources (category, limit, ticker) |
 | `search_crypto_news` | Full-text search across archive |
 | `get_bitcoin_news` | Bitcoin-specific news |
@@ -168,22 +182,22 @@ OpenAPI: `https://cryptocurrency.cv/api/openapi.json`
 ## SDKs
 
 ```typescript
-// TypeScript / JavaScript
-import { CryptoNewsClient } from 'free-crypto-news';
-const client = new CryptoNewsClient();
-const news = await client.getLatestNews({ limit: 10 });
+// TypeScript / JavaScript: npm install @nirholas/crypto-news
+import { CryptoNews } from '@nirholas/crypto-news';
+const client = new CryptoNews();
+const news = await client.getLatest(10);
 ```
 
 ```python
-# Python
-from free_crypto_news import CryptoNewsClient
-client = CryptoNewsClient()
-news = client.get_latest_news(limit=10)
+# Python: copy sdk/python/crypto_news.py into your project (no PyPI package)
+from crypto_news import CryptoNews
+client = CryptoNews()
+news = client.get_latest(limit=10)
 ```
 
 ```tsx
-// React Hook
-import { useCryptoNews } from 'free-crypto-news/react';
+// React hook: copy sdk/react/src into your project (no npm package)
+import { useCryptoNews } from './crypto-news/useCryptoNews';
 const { articles, loading } = useCryptoNews({ limit: 10 });
 ```
 
@@ -224,7 +238,7 @@ LangChain agents, AutoGPT, CrewAI, and Swarm multi-agent orchestration.
       "discovery": "/.well-known/agent.json",
       "openapi": "/api/openapi.json",
       "llms_txt": "/llms.txt",
-      "mcp": "npx @anthropic-ai/mcp-server-crypto-news"
+      "mcp": "https://cryptocurrency.cv/api/mcp"
     }
   }
 }
@@ -290,8 +304,8 @@ Premium endpoints (optional) use `X-API-Key` header.
 ## Project
 
 - **Live site:** https://cryptocurrency.cv
-- **GitHub:** https://github.com/nirholas/free-crypto-news
-- **License:** MIT
+- **GitHub:** https://github.com/nirholas/cryptocurrency.cv
+- **License:** Source-available (all rights reserved); the hosted API at https://cryptocurrency.cv is free to use. See LICENSE for the code terms.
 - **Author:** [nirholas](https://github.com/nirholas)
 - **Skills catalog:** [SKILLS.md](SKILLS.md)
 - **Full LLM docs:** [llms-full.txt](https://cryptocurrency.cv/llms-full.txt)

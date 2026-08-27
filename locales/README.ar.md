@@ -1,4 +1,4 @@
-🌐 **اللغة:** [English](README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Tiếng Việt](README.vi.md) | [ไทย](README.th.md) | [Bahasa Indonesia](README.id.md)
+🌐 **اللغة:** [English](../README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Tiếng Việt](README.vi.md) | [ไทย](README.th.md) | [Bahasa Indonesia](README.id.md)
 
 ---
 
@@ -7,14 +7,14 @@
 # 🆓 واجهة برمجة تطبيقات أخبار العملات المشفرة المجانية
 
 <p align="center">
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers"><img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=for-the-badge&logo=github&color=yellow" alt="نجوم GitHub"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/free-crypto-news?style=for-the-badge&color=blue" alt="الترخيص"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/issues"><img src="https://img.shields.io/github/issues/nirholas/free-crypto-news?style=for-the-badge&color=orange" alt="المشاكل"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/pulls"><img src="https://img.shields.io/github/issues-pr/nirholas/free-crypto-news?style=for-the-badge&color=purple" alt="طلبات السحب"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers"><img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=for-the-badge&logo=github&color=yellow" alt="نجوم GitHub"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/cryptocurrency.cv?style=for-the-badge&color=blue" alt="الترخيص"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/issues"><img src="https://img.shields.io/github/issues/nirholas/cryptocurrency.cv?style=for-the-badge&color=orange" alt="المشاكل"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/pulls"><img src="https://img.shields.io/github/issues-pr/nirholas/cryptocurrency.cv?style=for-the-badge&color=purple" alt="طلبات السحب"></a>
 </p>
 
 <p align="center">
-  <img src=".github/demo.svg" alt="عرض Free Crypto News API" width="700">
+  <img src="../.github/demo.svg" alt="عرض Free Crypto News API" width="700">
 </p>
 
 > ⭐ **إذا وجدت هذا مفيدًا، يرجى إعطاء نجمة للمستودع!** هذا يساعد الآخرين على اكتشاف هذا المشروع ويحفز على التطوير المستمر.
@@ -94,7 +94,7 @@ curl "https://cryptocurrency.cv/api/news/international?region=asia&limit=20"
 - ✅ **تراجع سلس** للمصادر غير المتاحة
 - ✅ **إزالة التكرار** عبر المصادر
 
-راجع [وثائق API](docs/API.md#get-apinewsinternational) للتفاصيل الكاملة.
+راجع [وثائق API](../docs/API.md#get-apinewsinternational) للتفاصيل الكاملة.
 
 ---
 
@@ -158,7 +158,7 @@ Free Crypto News هو **PWA قابل للتثبيت بالكامل** يعمل د
 | `?` | عرض جميع الاختصارات |
 | `Escape` | إغلاق النافذة المنبثقة |
 
-📖 **دليل المستخدم الكامل:** [docs/USER-GUIDE.md](docs/USER-GUIDE.md)
+📖 **دليل المستخدم الكامل:** [docs/USER-GUIDE.md](../docs/USER-GUIDE.md)
 
 ---
 
@@ -276,15 +276,15 @@ for article in data['articles'][:5]:
 
 ### نشر بنقرة واحدة
 
-[![انشر مع Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nirholas/free-crypto-news)
-[![انشر مع Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https://github.com/nirholas/free-crypto-news)
+[![انشر مع Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nirholas/cryptocurrency.cv)
+[![انشر مع Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https://github.com/nirholas/cryptocurrency.cv)
 
 ### التثبيت المحلي
 
 ```bash
 # استنساخ المستودع
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv
 
 # تثبيت التبعيات
 npm install
@@ -311,19 +311,19 @@ NEXT_PUBLIC_ANALYTICS_ID=your_id
 
 | الوثيقة | الوصف |
 |---|---|
-| [📚 مرجع API](docs/API.md) | وثائق نقاط النهاية الكاملة |
-| [🏗️ الهندسة](docs/ARCHITECTURE.md) | تصميم النظام |
-| [🚀 النشر](docs/DEPLOYMENT.md) | دليل الإنتاج |
-| [🧪 الاختبار](docs/TESTING.md) | دليل الاختبار |
-| [🔐 الأمان](docs/SECURITY.md) | سياسة الأمان |
-| [📖 دليل المستخدم](docs/USER-GUIDE.md) | دليل PWA والميزات |
-| [💻 دليل المطور](docs/DEVELOPER-GUIDE.md) | وثائق المساهمين |
+| [📚 مرجع API](../docs/API.md) | وثائق نقاط النهاية الكاملة |
+| [🏗️ الهندسة](../docs/ARCHITECTURE.md) | تصميم النظام |
+| [🚀 النشر](../docs/DEPLOYMENT.md) | دليل الإنتاج |
+| [🧪 الاختبار](../docs/TESTING.md) | دليل الاختبار |
+| [🔐 الأمان](../docs/SECURITY.md) | سياسة الأمان |
+| [📖 دليل المستخدم](../docs/USER-GUIDE.md) | دليل PWA والميزات |
+| [💻 دليل المطور](../docs/DEVELOPER-GUIDE.md) | وثائق المساهمين |
 
 ---
 
 ## المساهمة
 
-المساهمات مرحب بها! راجع [CONTRIBUTING.md](CONTRIBUTING.md) للإرشادات.
+المساهمات مرحب بها! راجع [CONTRIBUTING.md](../CONTRIBUTING.md) للإرشادات.
 
 ```bash
 # Fork المستودع
@@ -341,14 +341,14 @@ git push origin feature/amazing-feature
 
 ## الترخيص
 
-MIT License - راجع ملف [LICENSE](LICENSE).
+MIT License - راجع ملف [LICENSE](../LICENSE).
 
 ---
 
 ## التواصل
 
-- 🐛 **الأخطاء**: [GitHub Issues](https://github.com/nirholas/free-crypto-news/issues)
-- 💬 **النقاشات**: [GitHub Discussions](https://github.com/nirholas/free-crypto-news/discussions)
+- 🐛 **الأخطاء**: [GitHub Issues](https://github.com/nirholas/cryptocurrency.cv/issues)
+- 💬 **النقاشات**: [GitHub Discussions](https://github.com/nirholas/cryptocurrency.cv/discussions)
 - 🐦 **Twitter**: [@nirholas](https://twitter.com/nirholas)
 
 ---

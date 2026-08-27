@@ -1,12 +1,12 @@
-🌐 **Jazyky:** [English](README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Čeština](README.cs.md)
+🌐 **Jazyky:** [English](../README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Čeština](README.cs.md)
 
 ---
 
 # 🆓 Bezplatné Crypto News API
 
 <p align="center">
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers"><img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=for-the-badge&logo=github&color=yellow" alt="GitHub Stars"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/free-crypto-news?style=for-the-badge&color=blue" alt="Licence"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers"><img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=for-the-badge&logo=github&color=yellow" alt="GitHub Stars"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/cryptocurrency.cv?style=for-the-badge&color=blue" alt="Licence"></a>
 </p>
 
 > ⭐ **Pokud vám to přijde užitečné, dejte repozitáři hvězdičku!** Pomáhá to ostatním objevit tento projekt.
@@ -131,7 +131,7 @@ curl "https://cryptocurrency.cv/api/news/international?language=ko&translate=tru
 
 ## 📱 Mobilní aplikace
 
-React Native mobilní aplikace je v složce [mobile/](mobile/):
+React Native mobilní aplikace je v složce [mobile/](../mobile/):
 
 ```bash
 cd mobile
@@ -145,13 +145,13 @@ npm start
 
 - **API**: https://cryptocurrency.cv
 - **Dokumentace**: https://cryptocurrency.cv/docs
-- **GitHub**: https://github.com/AItoolsbyai/free-crypto-news
+- **GitHub**: https://github.com/nirholas/cryptocurrency.cv
 
 ---
 
 ## 📄 Licence
 
-MIT License - viz [LICENSE](LICENSE) pro detaily.
+MIT License - viz [LICENSE](../LICENSE) pro detaily.
 
 ---
 

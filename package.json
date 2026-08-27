@@ -2,7 +2,7 @@
   "name": "free-crypto-news",
   "version": "1.0.10",
   "mcpName": "io.github.nirholas/free-crypto-news",
-  "description": "Real-time crypto news aggregator with AI analysis, 12+ sources, sentiment tracking, and full market data. Works with Claude, ChatGPT, Discord, Telegram & more.",
+  "description": "Free crypto news API and website: 300+ sources, 450+ endpoints, AI analysis, a 662k-article historical archive, MCP server, widgets and SDK examples. No API key required for the hosted API at cryptocurrency.cv.",
   "private": false,
   "scripts": {
     "dev": "next dev",
@@ -94,24 +94,32 @@
   },
   "keywords": [
     "crypto",
+    "cryptocurrency",
     "news",
     "api",
     "bitcoin",
+    "ethereum",
+    "solana",
     "defi",
     "free",
     "rss",
     "aggregator",
-    "pwa"
+    "mcp",
+    "ai",
+    "archive",
+    "pwa",
+    "nextjs"
   ],
   "author": "nirholas",
   "license": "SEE LICENSE IN LICENSE",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nirholas/cryptocurrency.cv.git"
+    "url": "git+https://github.com/nirholas/cryptocurrency.cv.git"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@heroicons/react": "^2.2.0",
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "@neondatabase/serverless": "^1.1.0",
     "@next/third-parties": "^16.2.12",
     "@noble/curves": "^2.2.0",
@@ -251,7 +259,8 @@
     "node": ">=20.0.0"
   },
   "bugs": {
-    "url": "https://github.com/nirholas/free-crypto-news/issues"
+    "url": "https://github.com/nirholas/cryptocurrency.cv/issues"
   },
-  "homepage": "https://github.com/nirholas/free-crypto-news#readme"
+  "homepage": "https://cryptocurrency.cv",
+  "packageManager": "pnpm@10.32.1"
 }

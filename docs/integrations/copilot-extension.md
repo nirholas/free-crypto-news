@@ -36,7 +36,7 @@ You can also ask free-form questions:
 
 ## Source Code
 
-The extension source lives in [`copilot-extension/`](https://github.com/nirholas/free-crypto-news/tree/main/copilot-extension) and is built with TypeScript.
+The extension source lives in [`copilot-extension/`](https://github.com/nirholas/cryptocurrency.cv/tree/main/copilot-extension) and is built with TypeScript.
 
 ```
 copilot-extension/

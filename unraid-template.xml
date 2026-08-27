@@ -5,8 +5,8 @@
   <Registry>https://hub.docker.com/r/nirholas/free-crypto-news</Registry>
   <Network>bridge</Network>
   <Privileged>false</Privileged>
-  <Support>https://github.com/nirholas/free-crypto-news/issues</Support>
-  <Project>https://github.com/nirholas/free-crypto-news</Project>
+  <Support>https://github.com/nirholas/cryptocurrency.cv/issues</Support>
+  <Project>https://github.com/nirholas/cryptocurrency.cv</Project>
   <Overview>Real-time crypto news from 200+ sources. No API key required. AI-powered analysis, market data, DeFi tools.</Overview>
   <Category>Tools: News:</Category>
   <WebUI>http://[IP]:[PORT:3000]</WebUI>

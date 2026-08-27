@@ -12,7 +12,7 @@ import (
 	"log"
 	"time"
 
-	cryptonews "github.com/nirholas/free-crypto-news/sdk/go"
+	cryptonews "github.com/nirholas/cryptocurrency.cv/sdk/go"
 )
 
 func main() {

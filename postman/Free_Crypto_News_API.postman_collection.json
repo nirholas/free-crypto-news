@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "free-crypto-news-api-v2",
     "name": "Free Crypto News API",
-    "description": "🆓 100% FREE crypto news API — real-time aggregator for Bitcoin, Ethereum, DeFi, Solana & altcoins.\n\nNo API key required for public endpoints.\nAggregates news from 75+ sources across 18 languages.\n\nBase URL: https://cryptocurrency.cv/api\nGitHub: https://github.com/nirholas/free-crypto-news\nDocs: https://cryptocurrency.cv/docs",
+    "description": "🆓 100% FREE crypto news API — real-time aggregator for Bitcoin, Ethereum, DeFi, Solana & altcoins.\n\nNo API key required for public endpoints.\nAggregates news from 75+ sources across 18 languages.\n\nBase URL: https://cryptocurrency.cv/api\nGitHub: https://github.com/nirholas/cryptocurrency.cv\nDocs: https://cryptocurrency.cv/docs",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [

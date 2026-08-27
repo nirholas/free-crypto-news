@@ -29,7 +29,7 @@ pip install requests
 # No installation needed!
 
 # Go — standard library is enough
-# Or use the SDK: go get github.com/nirholas/free-crypto-news/sdk/go
+# Or use the SDK: go get github.com/nirholas/cryptocurrency.cv/sdk/go
 ```
 
 ### Your First API Call
@@ -934,6 +934,42 @@ ws.onmessage = (event) => {
 
 ---
 
+## 🧾 Quick cURL Recipes
+
+Copy-paste requests that need no key. Every one of them works against the hosted API.
+
+```bash
+# Latest news, Bitcoin sentiment, search, translated international news
+curl "https://cryptocurrency.cv/api/news?limit=10"
+curl "https://cryptocurrency.cv/api/ai/sentiment?asset=BTC"
+curl "https://cryptocurrency.cv/api/search?q=ethereum%20upgrade"
+curl "https://cryptocurrency.cv/api/news/international?language=ko&translate=true"
+
+# Historical archive: by month, by ticker, full-text
+curl "https://cryptocurrency.cv/api/archive?date=2024-01"
+curl "https://cryptocurrency.cv/api/archive?ticker=BTC&limit=100"
+curl "https://cryptocurrency.cv/api/archive?q=bitcoin%20etf"
+
+# Research categories (institutional, on-chain, ETF, macro, quant) and the category list
+curl "https://cryptocurrency.cv/api/news?category=institutional"
+curl "https://cryptocurrency.cv/api/news?category=onchain"
+curl "https://cryptocurrency.cv/api/news?category=etf"
+curl "https://cryptocurrency.cv/api/news?category=macro"
+curl "https://cryptocurrency.cv/api/news?category=quant"
+curl "https://cryptocurrency.cv/api/news/categories"
+
+# Localized feeds via the lang parameter
+curl "https://cryptocurrency.cv/api/news?lang=es"
+curl "https://cryptocurrency.cv/api/breaking?lang=ja"
+curl "https://cryptocurrency.cv/api/defi?lang=ar"
+curl "https://cryptocurrency.cv/api/bitcoin?lang=zh-CN"
+
+# Backtest a sentiment-based strategy
+curl -X POST "https://cryptocurrency.cv/api/research/backtest" \
+  -H "Content-Type: application/json" \
+  -d '{"strategy": "sentiment_momentum", "asset": "BTC", "period": "1y"}'
+```
+
 ## 📁 Example Files
 
 All examples are available as runnable files:
@@ -977,11 +1013,11 @@ Official SDKs for quick integration:
 
 | SDK | Install | Docs |
 |-----|---------|------|
-| **Python** | `pip install free-crypto-news` | [Python SDK](./sdks/python.md) |
+| **Python** | `pip install ./sdk/python` (from a clone; not on PyPI yet) | [Python SDK](./sdks/python.md) |
 | **JavaScript** | `npm install free-crypto-news` | [JS SDK](./sdks/javascript.md) |
 | **TypeScript** | Full type definitions included | [TS SDK](./sdks/typescript.md) |
 | **React** | `npm install @free-crypto-news/react` | [React SDK](./sdks/react.md) |
-| **Go** | `go get github.com/nirholas/free-crypto-news/sdk/go` | [Go SDK](./sdks/go.md) |
+| **Go** | `go get github.com/nirholas/cryptocurrency.cv/sdk/go` | [Go SDK](./sdks/go.md) |
 | **PHP** | Composer package | [PHP SDK](./sdks/php.md) |
 | **Ruby** | Gem package | [Ruby SDK](./sdks/ruby.md) |
 | **Rust** | Cargo crate | [Rust SDK](./sdks/rust.md) |
@@ -1065,5 +1101,5 @@ async function fetchNews(retries = 3) {
 
 - 📖 [Full API Reference](./API.md)
 - 🎓 [Tutorials](./tutorials/index.md)
-- 💬 [GitHub Discussions](https://github.com/nirholas/free-crypto-news/discussions)
-- 🐛 [Report Issues](https://github.com/nirholas/free-crypto-news/issues)
+- 💬 [GitHub Discussions](https://github.com/nirholas/cryptocurrency.cv/discussions)
+- 🐛 [Report Issues](https://github.com/nirholas/cryptocurrency.cv/issues)

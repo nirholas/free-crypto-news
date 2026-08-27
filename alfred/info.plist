@@ -35,6 +35,6 @@ Get crypto news directly from Alfred.
     <key>version</key>
     <string>1.0.0</string>
     <key>webaddress</key>
-    <string>https://github.com/nirholas/free-crypto-news</string>
+    <string>https://github.com/nirholas/cryptocurrency.cv</string>
 </dict>
 </plist>

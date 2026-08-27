@@ -578,7 +578,7 @@ node scripts/analyze-commits.js --update
 node scripts/commit-stats.js
 ```
 
-📚 **Full documentation:** [scripts/CHANGELOG-AUTOMATION.md](https://github.com/nirholas/free-crypto-news/blob/main/scripts/CHANGELOG-AUTOMATION.md)
+📚 **Full documentation:** [scripts/CHANGELOG-AUTOMATION.md](https://github.com/nirholas/cryptocurrency.cv/blob/main/scripts/CHANGELOG-AUTOMATION.md)
 
 ### Accessibility Audits
 
@@ -610,7 +610,7 @@ node scripts/archive/collect.js
 node scripts/archive/stats.js
 ```
 
-📚 **All scripts:** [scripts/README.md](https://github.com/nirholas/free-crypto-news/blob/main/scripts/README.md)
+📚 **All scripts:** [scripts/README.md](https://github.com/nirholas/cryptocurrency.cv/blob/main/scripts/README.md)
 
 ---
 
@@ -863,7 +863,7 @@ export const myJob = inngest.createFunction(
 - [Deployment](DEPLOYMENT.md) — Vercel, Docker, Railway
 - [Real-Time](REALTIME.md) — SSE, WebSocket, push notifications
 - [AI Features](AI-FEATURES.md) — Summarisation, sentiment, RAG
-- [Scalability](SCALABILITY.md) — Caching, edge runtime, load handling
+- [Scaling](SCALING.md) — Caching, edge runtime, load handling, 1M+ user runbook
 - [Security](SECURITY.md) — Security policy and architecture
 
 ### External documentation
@@ -880,4 +880,56 @@ export const myJob = inngest.createFunction(
 
 ## 🤝 Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+See the root [CONTRIBUTING.md](../CONTRIBUTING.md) for the code of conduct, PR workflow, coverage ratchet, and migration rules.
+
+### Local setup checklist
+
+Prerequisites:
+
+- **Node.js 18+**: [Download](https://nodejs.org/)
+- **pnpm**: `npm install -g pnpm` (package manager)
+- **Bun**: `curl -fsSL https://bun.sh/install | bash` (script runner; `npm run` works too)
+- **Git**: [Download](https://git-scm.com/)
+
+```bash
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv
+pnpm install
+cp .env.example .env.local   # optional
+bun run dev                  # or: npm run dev
+# open http://localhost:3000
+```
+
+The app runs with zero configuration: Redis, the database, and AI keys are all optional and the app falls back gracefully without them.
+
+Before opening a PR:
+
+```bash
+bun run build        # Verify build succeeds
+bun run lint         # Check code style
+bun run typecheck    # Check TypeScript types
+bun run test         # Run unit tests
+```
+
+Annotated tree of the directories you will touch most:
+
+```
+src/
+├── app/           # Next.js pages and 150+ API routes
+│   ├── [locale]/  # i18n-wrapped user-facing pages
+│   └── api/       # Serverless API routes (Edge Runtime)
+├── components/    # 170+ React components
+├── hooks/         # Custom React hooks
+├── lib/           # 200+ utility modules
+├── types/         # TypeScript type definitions
+└── __tests__/     # Unit tests
+archive/           # Static JSON data store
+sdk/               # 13 language SDKs
+mcp/               # MCP server (local stdio + HTTP transport)
+widget/            # Embeddable HTML widgets
+messages/          # i18n translations (42 locales)
+drizzle/           # Database migrations
+e2e/               # Playwright E2E tests
+stories/           # Storybook component stories
+docs/              # Documentation (MkDocs)
+```

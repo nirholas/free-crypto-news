@@ -243,8 +243,8 @@ For ChatGPT Pro users with Developer Mode access.
 
 ```bash
 # Clone the repo
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news/mcp
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv/mcp
 
 # Install dependencies
 npm install
@@ -411,5 +411,5 @@ You are a crypto research assistant. For every query:
 
 - **OpenAPI Schema:** https://cryptocurrency.cv/chatgpt/openapi.yaml
 - **API Documentation:** https://cryptocurrency.cv/docs/api
-- **MCP Server:** https://github.com/nirholas/free-crypto-news/tree/main/mcp
+- **MCP Server:** https://github.com/nirholas/cryptocurrency.cv/tree/main/mcp
 - **Live API:** https://cryptocurrency.cv/api/news

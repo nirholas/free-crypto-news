@@ -14,23 +14,21 @@ Get crypto news directly in your terminal with the Free Crypto News CLI.
 
 ## Installation
 
-### NPM (Recommended)
+### From the repository
+
+The CLI lives in the `cli/` directory of the repository and is not published to npm yet:
 
 ```bash
-npm install -g crypto-news-cli
-```
-
-### Run Without Installing
-
-```bash
-npx crypto-news-cli
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv/cli && npm install
+node index.js
 ```
 
 ### From Source
 
 ```bash
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news/cli
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv/cli
 npm install
 npm link
 ```
@@ -246,7 +244,8 @@ crontab -e
 
 ```dockerfile
 FROM node:20-alpine
-RUN npm install -g crypto-news-cli
+COPY cli/ /cli
+RUN cd /cli && npm install
 ENTRYPOINT ["crypto-news"]
 ```
 
@@ -268,7 +267,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install CLI
-        run: npm install -g crypto-news-cli
+        run: cd cli && npm install
       
       - name: Check Breaking News
         run: |
@@ -317,7 +316,7 @@ jobs:
 
 ## Contributing
 
-Found a bug or want a feature? [Open an issue](https://github.com/nirholas/free-crypto-news/issues)!
+Found a bug or want a feature? [Open an issue](https://github.com/nirholas/cryptocurrency.cv/issues)!
 
 ## License
 

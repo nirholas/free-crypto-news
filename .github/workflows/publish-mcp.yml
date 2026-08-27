@@ -1,0 +1,29 @@
+name: Publish MCP server
+
+# Publishes mcp/ (@nirholas/free-crypto-news-mcp) to npm when a GitHub Release
+# is published. Requires the NPM_TOKEN repository secret; the job is skipped
+# cleanly when it is absent so forks are not broken.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    if: ${{ vars.PUBLISH_MCP != 'false' }}
+    defaults:
+      run:
+        working-directory: mcp
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+      - name: Publish (skipped without NPM_TOKEN)
+        if: ${{ env.NODE_AUTH_TOKEN != '' }}
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

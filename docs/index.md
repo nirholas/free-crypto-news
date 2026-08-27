@@ -178,6 +178,13 @@ No API keys, no sign-up, no rate limits. Just make requests and get data. Start 
 
 ## :bar_chart: API Endpoints
 
+!!! info "Which API doc do I read?"
+    - [API.md](API.md): the **public REST API reference** for `cryptocurrency.cv` (every endpoint we serve, auto-generated).
+    - [API-INVENTORY.md](API-INVENTORY.md): gap analysis of the **third-party providers we consume** (used vs. unused upstream endpoints).
+    - [EXTERNAL-API-ROUTES.md](EXTERNAL-API-ROUTES.md): catalog of **every external API and RSS feed** the platform calls, by category.
+    - [apis/](apis/README.md): the same external catalog **split into one file per category**.
+    - [SOURCES.md](SOURCES.md): the news feeds and market-data providers behind the API, with their keyless / free-tier status.
+
 | Endpoint | Description |
 |----------|-------------|
 | `GET /api/news` | Latest aggregated news |
@@ -199,7 +206,7 @@ No API keys, no sign-up, no rate limits. Just make requests and get data. Start 
 
 <div class="card" markdown>
 ### :fontawesome-brands-python: Python
-`pip install free-crypto-news`
+`pip install ./sdk/python` (from a clone)
 
 [:material-arrow-right: Python SDK](sdks/python.md)
 </div>
@@ -227,7 +234,7 @@ Hooks & components
 
 <div class="card" markdown>
 ### :fontawesome-brands-golang: Go
-`go get github.com/nirholas/free-crypto-news/sdk/go`
+`go get github.com/nirholas/cryptocurrency.cv/sdk/go`
 
 [:material-arrow-right: Go SDK](sdks/go.md)
 </div>
@@ -318,8 +325,8 @@ Unified storage abstraction supporting multiple backends:
 
 ---
 
-## :heart: Open Source
+## :heart: Source and License
 
-Free Crypto News is MIT licensed and open source. Contributions welcome!
+Free Crypto News is source-available (all rights reserved) and the hosted API is free to use; see [LICENSE](https://github.com/nirholas/cryptocurrency.cv/blob/main/LICENSE). Contributions welcome!
 
-[:fontawesome-brands-github: View on GitHub](https://github.com/nirholas/free-crypto-news){ .md-button }
+[:fontawesome-brands-github: View on GitHub](https://github.com/nirholas/cryptocurrency.cv){ .md-button }

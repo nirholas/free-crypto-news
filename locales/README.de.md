@@ -1,16 +1,16 @@
-🌐 **Sprachen:** [English](README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Tiếng Việt](README.vi.md) | [ไทย](README.th.md) | [Bahasa Indonesia](README.id.md)
+🌐 **Sprachen:** [English](../README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Tiếng Việt](README.vi.md) | [ไทย](README.th.md) | [Bahasa Indonesia](README.id.md)
 
 ---
 
 # 🆓 Free Crypto News API
 
 <p align="center">
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers"><img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=for-the-badge&logo=github&color=yellow" alt="GitHub Sterne"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/free-crypto-news?style=for-the-badge&color=blue" alt="Lizenz"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers"><img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=for-the-badge&logo=github&color=yellow" alt="GitHub Sterne"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/cryptocurrency.cv?style=for-the-badge&color=blue" alt="Lizenz"></a>
 </p>
 
 <p align="center">
-  <img src=".github/demo.svg" alt="Free Crypto News API Demo" width="700">
+  <img src="../.github/demo.svg" alt="Free Crypto News API Demo" width="700">
 </p>
 
 > ⭐ **Wenn Sie das nützlich finden, geben Sie dem Repo einen Stern!** Es hilft anderen, dieses Projekt zu entdecken und motiviert die kontinuierliche Entwicklung.
@@ -151,12 +151,12 @@ Wir aggregieren von **7 vertrauenswürdigen Medien**:
 
 | Paket | Beschreibung |
 |---------|-------------|
-| [React](sdk/react/) | `<CryptoNews />` Drop-in-Komponenten |
-| [TypeScript](sdk/typescript/) | Vollständiges TypeScript SDK |
-| [Python](sdk/python/) | Zero-Dependency Python-Client |
-| [JavaScript](sdk/javascript/) | Browser & Node.js SDK |
-| [Go](sdk/go/) | Go-Client-Bibliothek |
-| [PHP](sdk/php/) | PHP SDK |
+| [React](../sdk/react/) | `<CryptoNews />` Drop-in-Komponenten |
+| [TypeScript](../sdk/typescript/) | Vollständiges TypeScript SDK |
+| [Python](../sdk/python/) | Zero-Dependency Python-Client |
+| [JavaScript](../sdk/javascript/) | Browser & Node.js SDK |
+| [Go](../sdk/go/) | Go-Client-Bibliothek |
+| [PHP](../sdk/php/) | PHP SDK |
 
 **Basis-URL:** `https://cryptocurrency.cv`
 
@@ -194,7 +194,7 @@ Wählen Sie Ihre Plattform. Kopieren Sie den Code. Deployen Sie.
 **Keine Abhängigkeiten.** Kopieren Sie einfach die Datei.
 
 ```bash
-curl -O https://raw.githubusercontent.com/nirholas/free-crypto-news/main/sdk/python/crypto_news.py
+curl -O https://raw.githubusercontent.com/nirholas/cryptocurrency.cv/main/sdk/python/crypto_news.py
 ```
 
 ```python
@@ -237,13 +237,13 @@ const health = await client.getHealth();
 
 ## Ein-Klick-Deployment
 
-[![Mit Vercel deployen](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnirholas%2Ffree-crypto-news)
+[![Mit Vercel deployen](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnirholas%2Fcryptocurrency.cv)
 
 ## Manuell
 
 ```bash
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv
 pnpm install
 pnpm dev
 ```
@@ -286,11 +286,11 @@ PRs sind willkommen! Ideen:
 
 | Dokument | Beschreibung |
 |----------|-------------|
-| [Benutzerhandbuch](docs/USER-GUIDE.md) | Endbenutzer-Funktionen, Tastaturkürzel, PWA |
-| [Entwicklerhandbuch](docs/DEVELOPER-GUIDE.md) | Architektur, Komponenten, App erweitern |
-| [Beitragen](CONTRIBUTING.md) | Wie man beiträgt |
-| [Changelog](CHANGELOG.md) | Versionshistorie |
-| [Sicherheit](SECURITY.md) | Sicherheitsrichtlinie |
+| [Benutzerhandbuch](../docs/USER-GUIDE.md) | Endbenutzer-Funktionen, Tastaturkürzel, PWA |
+| [Entwicklerhandbuch](../docs/DEVELOPER-GUIDE.md) | Architektur, Komponenten, App erweitern |
+| [Beitragen](../CONTRIBUTING.md) | Wie man beiträgt |
+| [Changelog](../CHANGELOG.md) | Versionshistorie |
+| [Sicherheit](../SECURITY.md) | Sicherheitsrichtlinie |
 
 ---
 
@@ -309,8 +309,8 @@ MIT © 2025 [nich](https://github.com/nirholas)
   <br>
   ⭐ <b>Fanden Sie das nützlich? Geben Sie einen Stern!</b> ⭐<br>
   <sub>Es hilft anderen, dieses Projekt zu entdecken und hält die Entwicklung am Laufen</sub><br><br>
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers">
-    <img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=social" alt="Stern auf GitHub">
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers">
+    <img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=social" alt="Stern auf GitHub">
   </a>
 </p>
 

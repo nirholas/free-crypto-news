@@ -305,7 +305,7 @@ For the dedicated mobile app, see the [Mobile App docs](./integrations/mobile.md
 
 ## 🆘 Getting Help
 
-- **GitHub Issues**: [Report bugs or request features](https://github.com/nirholas/free-crypto-news/issues)
-- **Discussions**: [Ask questions](https://github.com/nirholas/free-crypto-news/discussions)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/nirholas/cryptocurrency.cv/issues)
+- **Discussions**: [Ask questions](https://github.com/nirholas/cryptocurrency.cv/discussions)
 - **API Docs**: See [API.md](API.md)
 - **Contributing**: See [CONTRIBUTING.md](CONTRIBUTING.md)

@@ -1,4 +1,4 @@
-🌐 **زبان‌ها:** [English](README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [فارسی](README.fa.md)
+🌐 **زبان‌ها:** [English](../README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [فارسی](README.fa.md)
 
 ---
 
@@ -7,8 +7,8 @@
 # 🆓 API اخبار رمزارز رایگان
 
 <p align="center">
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers"><img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=for-the-badge&logo=github&color=yellow" alt="GitHub Stars"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/free-crypto-news?style=for-the-badge&color=blue" alt="مجوز"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers"><img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=for-the-badge&logo=github&color=yellow" alt="GitHub Stars"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/cryptocurrency.cv?style=for-the-badge&color=blue" alt="مجوز"></a>
 </p>
 
 > ⭐ **اگر مفید بود، به ریپو ستاره بدهید!** این به دیگران کمک می‌کند این پروژه را پیدا کنند.
@@ -140,7 +140,7 @@ curl "https://cryptocurrency.cv/api/news/international?language=fa&translate=tru
 
 ## 📱 اپلیکیشن موبایل
 
-اپلیکیشن موبایل React Native در پوشه [mobile/](mobile/) موجود است:
+اپلیکیشن موبایل React Native در پوشه [mobile/](../mobile/) موجود است:
 
 ```bash
 cd mobile
@@ -154,13 +154,13 @@ npm start
 
 - **API**: https://cryptocurrency.cv
 - **مستندات**: https://cryptocurrency.cv/docs
-- **GitHub**: https://github.com/AItoolsbyai/free-crypto-news
+- **GitHub**: https://github.com/nirholas/cryptocurrency.cv
 
 ---
 
 ## 📄 مجوز
 
-MIT License - برای جزئیات [LICENSE](LICENSE) را ببینید.
+MIT License - برای جزئیات [LICENSE](../LICENSE) را ببینید.
 
 ---
 

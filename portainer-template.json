@@ -9,7 +9,7 @@
       "platform": "linux",
       "logo": "https://cryptocurrency.cv/favicon.ico",
       "repository": {
-        "url": "https://github.com/nirholas/free-crypto-news",
+        "url": "https://github.com/nirholas/cryptocurrency.cv",
         "stackfile": "docker-compose.yml"
       },
       "env": [

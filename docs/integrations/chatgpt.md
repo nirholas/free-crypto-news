@@ -178,4 +178,4 @@ News is cached for 5 minutes. For the freshest data, wait and retry.
 
 ## Source Code
 
-View the ChatGPT integration: [chatgpt/](https://github.com/nirholas/free-crypto-news/tree/main/chatgpt)
+View the ChatGPT integration: [chatgpt/](https://github.com/nirholas/cryptocurrency.cv/tree/main/chatgpt)

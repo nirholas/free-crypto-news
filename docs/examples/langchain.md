@@ -296,4 +296,4 @@ class CryptoNewsTool(BaseTool):
 
 ## Full Example
 
-See the complete LangChain integration: [examples/langchain-tool.py](https://github.com/nirholas/free-crypto-news/blob/main/examples/langchain-tool.py)
+See the complete LangChain integration: [examples/langchain-tool.py](https://github.com/nirholas/cryptocurrency.cv/blob/main/examples/langchain-tool.py)

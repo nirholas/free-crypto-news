@@ -1,12 +1,12 @@
-🌐 **Nyelvek:** [English](README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Magyar](README.hu.md)
+🌐 **Nyelvek:** [English](../README.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md) | [Português](README.pt.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [العربية](README.ar.md) | [Русский](README.ru.md) | [Italiano](README.it.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Türkçe](README.tr.md) | [Magyar](README.hu.md)
 
 ---
 
 # 🆓 Ingyenes Crypto News API
 
 <p align="center">
-  <a href="https://github.com/nirholas/free-crypto-news/stargazers"><img src="https://img.shields.io/github/stars/nirholas/free-crypto-news?style=for-the-badge&logo=github&color=yellow" alt="GitHub Stars"></a>
-  <a href="https://github.com/nirholas/free-crypto-news/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/free-crypto-news?style=for-the-badge&color=blue" alt="Licenc"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/stargazers"><img src="https://img.shields.io/github/stars/nirholas/cryptocurrency.cv?style=for-the-badge&logo=github&color=yellow" alt="GitHub Stars"></a>
+  <a href="https://github.com/nirholas/cryptocurrency.cv/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nirholas/cryptocurrency.cv?style=for-the-badge&color=blue" alt="Licenc"></a>
 </p>
 
 > ⭐ **Ha hasznosnak találod, adj csillagot a repónak!** Segít másoknak felfedezni ezt a projektet.
@@ -131,7 +131,7 @@ curl "https://cryptocurrency.cv/api/news/international?language=ko&translate=tru
 
 ## 📱 Mobil alkalmazás
 
-A React Native mobil alkalmazás a [mobile/](mobile/) mappában található:
+A React Native mobil alkalmazás a [mobile/](../mobile/) mappában található:
 
 ```bash
 cd mobile
@@ -145,13 +145,13 @@ npm start
 
 - **API**: https://cryptocurrency.cv
 - **Dokumentáció**: https://cryptocurrency.cv/docs
-- **GitHub**: https://github.com/AItoolsbyai/free-crypto-news
+- **GitHub**: https://github.com/nirholas/cryptocurrency.cv
 
 ---
 
 ## 📄 Licenc
 
-MIT License - lásd a [LICENSE](LICENSE) fájlt a részletekért.
+MIT License - lásd a [LICENSE](../LICENSE) fájlt a részletekért.
 
 ---
 

@@ -753,8 +753,8 @@ We welcome translation contributions! Here's how:
 ### 1. Fork the Repository
 
 ```bash
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv
 ```
 
 ### 2. Edit Translation Files

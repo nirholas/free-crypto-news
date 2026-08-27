@@ -1,160 +1,39 @@
-# 📖 Documentation Index
+# Free Crypto News documentation
 
-Welcome to the **Free Crypto News** documentation — the open-source, no-auth crypto news API and aggregator.
+This folder is the source of the MkDocs site. The full landing page, with the feature grid, quick start, and endpoint highlights, is [index.md](./index.md). This file is the short index GitHub renders when you browse the folder.
 
-Whether you're a **developer** building a trading bot, a **researcher** analyzing market sentiment, or a **trader** who wants a personalized news feed, this documentation will help you get started quickly.
+Free Crypto News is a free, no-auth crypto news and market intelligence API served at https://cryptocurrency.cv. Source-available, all rights reserved; the hosted API is free to use. See [LICENSE](../LICENSE).
 
----
+## Start here
 
-## What Is Free Crypto News?
+| I want to... | Read |
+|---|---|
+| Call the API right now | [Quick Start](./QUICKSTART.md) |
+| See who the platform is for and what it does | [index.md: Who Is This For](./index.md) and [Features](./FEATURES.md) |
+| Read the public REST reference | [API.md](./API.md) (the "Which API doc do I read?" block at the top explains the neighboring API files) |
+| Copy working requests | [Examples](./EXAMPLES.md), [Tutorials](./tutorials/index.md) |
+| Wire it into an AI agent (MCP, ChatGPT, LangChain, x402) | [AI Agents guide](./AGENTS.md), [MCP server](./integrations/mcp.md), [AI Features](./AI-FEATURES.md) |
+| Use an SDK | [SDKs overview](./sdks/index.md) |
+| Run or contribute to the codebase | [Developer Guide](./DEVELOPER-GUIDE.md), [Contributing](../CONTRIBUTING.md), [Testing](./TESTING.md) |
+| Deploy your own instance | [Deployment](./DEPLOYMENT.md), [Architecture](./ARCHITECTURE.md), [Scaling](./SCALING.md) |
 
-Free Crypto News is a **100% free, open-source** cryptocurrency news API and web application. It aggregates real-time news from 200+ professional sources (CoinDesk, The Block, Decrypt, Cointelegraph, and more), enriches articles with AI-powered sentiment analysis and summaries, and exposes everything via a REST API — **no API key required**.
+## Reference
 
-**What you can build with it:**
+| Area | Docs |
+|---|---|
+| Real-time | [REALTIME.md](./REALTIME.md), [WEBSOCKET.md](./WEBSOCKET.md) |
+| Payments and premium | [X402.md](./X402.md), [PREMIUM.md](./PREMIUM.md), [WELL-KNOWN.md](./WELL-KNOWN.md) |
+| Data | [SOURCES.md](./SOURCES.md) (news feeds and market-data providers), [DATABASE.md](./DATABASE.md), [RAG.md](./RAG.md) |
+| Frontend | [COMPONENTS.md](./COMPONENTS.md), [HOOKS.md](./HOOKS.md), [LIBRARIES.md](./LIBRARIES.md), [INTERNATIONALIZATION.md](./INTERNATIONALIZATION.md), [SEO.md](./SEO.md) |
+| Integrations | [integrations/](./integrations/index.md): CLI, Alfred, Raycast, widgets, Postman, Copilot |
+| Platform examples | [examples/](./examples/index.md): Discord, Slack, Telegram, LangChain, React, Rust, C#, Kotlin, Swift |
+| Other SDK sources | Java [`sdk/java`](../sdk/java/), R [`sdk/r`](../sdk/r/), C# [`sdk/csharp`](../sdk/csharp/), Kotlin [`sdk/kotlin`](../sdk/kotlin/), Swift [`sdk/swift`](../sdk/swift/) |
+| Postman and OpenAPI | [Postman collection](../postman/README.md), [OpenAPI spec](../chatgpt/openapi.yaml) |
+| Security | [SECURITY.md](./SECURITY.md) (architecture) and the root [security policy](../SECURITY.md) |
+| Changelog | [../CHANGELOG.md](../CHANGELOG.md) |
 
-- 🤖 **Chat bots** — Discord, Slack, or Telegram bots that post crypto news
-- 📊 **Trading dashboards** — Combine news sentiment with market data
-- 🔬 **Research tools** — Analyze media coverage and market narratives
-- 📱 **Mobile apps** — Real-time news feeds with push notifications
-- 🧠 **AI agents** — Feed crypto news into LangChain, ChatGPT, or Claude
+## Links
 
----
-
-## 🧭 Choose Your Path
-
-| I want to... | Start here |
-|--------------|------------|
-| **Call the API right now** | [Quick Start →](./QUICKSTART.md) |
-| **Read the full API reference** | [API Reference →](./API.md) |
-| **Browse features as a user** | [User Guide →](./USER-GUIDE.md) |
-| **Set up a dev environment** | [Developer Guide →](./DEVELOPER-GUIDE.md) |
-| **Use an SDK** | [SDKs →](./sdks/index.md) |
-| **Integrate with AI tools** | [Integrations →](./integrations/index.md) |
-
----
-
-## Getting Started
-
-| Guide | Description |
-|-------|-------------|
-| [Quick Start](./QUICKSTART.md) | Get up and running in 5 minutes |
-| [API Reference](./API.md) | Complete API documentation (180+ endpoints) |
-| [User Guide](./USER-GUIDE.md) | Guide for web app end users |
-| [Developer Guide](./DEVELOPER-GUIDE.md) | Guide for developers and contributors |
-| [Examples](./EXAMPLES.md) | Code examples in Python, JS, Go, cURL |
-
----
-
-## Features
-
-| Guide | Description |
-|-------|-------------|
-| [All Features](./FEATURES.md) | Complete feature catalog |
-| [AI Features](./AI-FEATURES.md) | Summarization, sentiment, fact-checking, RAG |
-| [Advanced Features](./ADVANCED-FEATURES.md) | Terminal CLI, trading signals, Farcaster Frames, oracles |
-| [Real-Time](./REALTIME.md) | WebSocket, SSE, push notifications |
-
-
----
-
-## Tutorials
-
-Step-by-step guides for common use cases:
-
-| Tutorial | Description |
-|----------|-------------|
-| [News Basics](./tutorials/news-basics.md) | Fetching and filtering news |
-| [Search & Filtering](./tutorials/search-filtering.md) | Advanced search techniques |
-| [AI Features](./tutorials/ai-features.md) | Using AI-powered endpoints |
-| [Market Data](./tutorials/market-data.md) | Prices, charts, and market metrics |
-| [Real-Time Streaming](./tutorials/realtime-sse.md) | SSE and WebSocket feeds |
-| [All Tutorials →](./tutorials/index.md) | Browse all tutorials |
-
----
-
-## SDKs & Integrations
-
-### SDKs
-
-| SDK | Install |
-|-----|---------|
-| [Python](./sdks/python.md) | `pip install free-crypto-news` |
-| [JavaScript](./sdks/javascript.md) | `npm install free-crypto-news` |
-| [TypeScript](./sdks/typescript.md) | Full type definitions included |
-| [React](./sdks/react.md) | Hooks & components |
-| [Go](./sdks/go.md) | `go get github.com/nirholas/free-crypto-news/sdk/go` |
-| [PHP](./sdks/php.md) | Composer package |
-| [Ruby](./sdks/ruby.md) | Gem package |
-| [Rust](./sdks/rust.md) | Cargo crate || [Java](./sdks/java.md) | Maven / Gradle |
-| [Kotlin](./sdks/kotlin.md) | Kotlin Multiplatform |
-| [Swift](./sdks/swift.md) | Swift Package Manager |
-| [C#](./sdks/csharp.md) | NuGet package |
-| [R](./sdks/r.md) | R package |
-### Integrations
-
-| Integration | Description |
-|-------------|-------------|
-| [Claude MCP](./integrations/mcp.md) | Use as a Claude MCP server |
-| [ChatGPT Plugin](./integrations/chatgpt.md) | ChatGPT actions & plugins |
-| [GitHub Copilot](./integrations/copilot-extension.md) | Copilot extension |
-| [CLI](./integrations/cli.md) | Command-line interface |
-| [Alfred](./integrations/alfred.md) | macOS Alfred workflow |
-| [Raycast](./integrations/raycast.md) | Raycast extension |
-| [Widgets](./integrations/widgets.md) | Embeddable HTML widgets |
-| [Postman](./integrations/postman.md) | Postman collection |
-| [All Integrations →](./integrations/index.md) | Browse all integrations |
-
-### Platform Examples
-
-| Platform | Description |
-|----------|-------------|
-| [Discord Bot](./examples/discord.md) | Build a Discord news bot |
-| [Slack Bot](./examples/slack.md) | Build a Slack news bot |
-| [Telegram Bot](./examples/telegram.md) | Build a Telegram news bot |
-| [LangChain](./examples/langchain.md) | Use with LangChain agents |
-| [React App](./examples/react.md) | Build a React news app |
-| [All Examples →](./examples/index.md) | Browse all platform examples |
-
----
-
-## Development
-
-| Guide | Description |
-|-------|-------------|
-| [Architecture](./ARCHITECTURE.md) | System design, data flow, storage, security |
-| [Developer Guide](./DEVELOPER-GUIDE.md) | Setup, components, API routes, debugging |
-| [Components](./COMPONENTS.md) | React component documentation |
-| [Testing](./TESTING.md) | Unit, integration, and E2E tests |
-| [Database](./DATABASE.md) | Storage backends, Drizzle ORM, migrations |
-| [Deployment](./DEPLOYMENT.md) | Deploy your own instance (Vercel, Docker, Railway) |
-| [Scalability](./SCALABILITY.md) | Edge runtime, caching tiers, load handling |
-| [Data Sources](./DATA-SOURCES-RUNBOOK.md) | Adding and managing RSS/Atom news sources |
-| [Hooks](./HOOKS.md) | Custom React hooks reference |
-| [SEO](./SEO.md) | Search engine optimization configuration |
-| [Internationalization](./INTERNATIONALIZATION.md) | i18n setup and translation guide |
-
----
-
-## Other Resources
-
-| Resource | Description |
-|----------|-------------|
-| [Contributing](./CONTRIBUTING.md) | How to contribute |
-| [Security](./SECURITY.md) | Security policy, architecture, and reporting |
-| [Changelog](../CHANGELOG.md) | Version history |
-| [License](../LICENSE) | MIT License |
-| [Postman Collection](../postman/) | Import into Postman |
-| [OpenAPI Spec](../chatgpt/openapi.yaml) | OpenAPI / Swagger definition |
-| [RAG](./RAG.md) | Retrieval-Augmented Generation pipeline |
-| [Premium](./PREMIUM.md) | Premium tier features and pricing |
-| [Well-Known](./WELL-KNOWN.md) | `.well-known` endpoint documentation |
-| [x402](./X402.md) | Crypto-native HTTP 402 payments |
-
----
-
-## Quick Links
-
-- **Live API:** https://cryptocurrency.cv
-- **GitHub:** https://github.com/nirholas/free-crypto-news
-- **Discussions:** https://github.com/nirholas/free-crypto-news/discussions
-- **Issues:** https://github.com/nirholas/free-crypto-news/issues
+- Live API: https://cryptocurrency.cv
+- GitHub: https://github.com/nirholas/cryptocurrency.cv
+- Issues: https://github.com/nirholas/cryptocurrency.cv/issues

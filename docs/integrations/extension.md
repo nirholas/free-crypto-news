@@ -23,7 +23,7 @@ The Free Crypto News browser extension brings crypto news directly to your brows
 
 1. Download or clone the repository:
    ```bash
-   git clone https://github.com/nirholas/free-crypto-news.git
+   git clone https://github.com/nirholas/cryptocurrency.cv.git
    ```
 
 2. Open Chrome and navigate to `chrome://extensions/`
@@ -181,4 +181,4 @@ extension/
 
 ## Source Code
 
-View the extension source: [extension/](https://github.com/nirholas/free-crypto-news/tree/main/extension)
+View the extension source: [extension/](https://github.com/nirholas/cryptocurrency.cv/tree/main/extension)

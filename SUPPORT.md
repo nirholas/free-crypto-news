@@ -1,6 +1,6 @@
 # Support
 
-Thanks for using **free-crypto-news**! Here's how to get help.
+Thanks for using **Free Crypto News** (cryptocurrency.cv)! Here's how to get help.
 
 ## Documentation
 
@@ -13,12 +13,12 @@ Thanks for using **free-crypto-news**! Here's how to get help.
 
 | Channel | Use for |
 |---|---|
-| [GitHub Issues](https://github.com/nirholas/free-crypto-news/issues) | Bug reports and feature requests |
-| [GitHub Discussions](https://github.com/nirholas/free-crypto-news/discussions) | Questions, ideas, and community chat |
+| [GitHub Issues](https://github.com/nirholas/cryptocurrency.cv/issues) | Bug reports and feature requests |
+| [GitHub Discussions](https://github.com/nirholas/cryptocurrency.cv/discussions) | Questions, ideas, and community chat |
 
 ### Before opening an issue
 
-1. Search [existing issues](https://github.com/nirholas/free-crypto-news/issues) to avoid duplicates
+1. Search [existing issues](https://github.com/nirholas/cryptocurrency.cv/issues) to avoid duplicates
 2. Check the [FAQ in the docs](docs/DEVELOPER-GUIDE.md) for common questions
 3. Include reproduction steps, expected vs actual behavior, and your environment
 

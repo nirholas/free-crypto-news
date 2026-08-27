@@ -10,7 +10,7 @@ Free Crypto News provides multiple integration points for AI agents:
 
 | Integration | Protocol | Tools/Actions | Use Case |
 |-------------|----------|---------------|----------|
-| **MCP Server** | Model Context Protocol | 40 tools | Claude, ChatGPT Dev Mode |
+| **MCP Server** | Model Context Protocol | Local stdio server (`mcp/`) or hosted Streamable HTTP at `https://cryptocurrency.cv/api/mcp` | Claude Code, Claude Desktop, ChatGPT Dev Mode, any MCP client |
 | **ChatGPT Plugin** | OpenAI Actions | 6 endpoints | ChatGPT Plus/Enterprise |
 | **LangChain Tools** | LangChain | 5 tools | Custom AI agents |
 | **x402 Discovery** | x402 Protocol | 10 paid endpoints | Autonomous payments |
@@ -29,10 +29,10 @@ Free Crypto News provides multiple integration points for AI agents:
 
 ```bash
 # CORRECT - Always start with cd and pwd
-cd /workspaces/free-crypto-news && pwd && npm run build
+cd /workspaces/cryptocurrency.cv && pwd && npm run build
 
 # CORRECT - Use absolute paths
-node /workspaces/free-crypto-news/scripts/archive/import-historical-dataset.js
+node /workspaces/cryptocurrency.cv/scripts/archive/import-historical-dataset.js
 
 # WRONG - Don't assume current directory
 npm run build  # Could be in wrong directory!
@@ -46,16 +46,21 @@ Before ANY destructive operation (rm, mv, overwrite), verify:
 
 ```bash
 # CORRECT - Verify before removing
-cd /workspaces/free-crypto-news && pwd && ls scripts/archive/*.js && rm scripts/archive/old-file.js
+cd /workspaces/cryptocurrency.cv && pwd && ls scripts/archive/*.js && rm scripts/archive/old-file.js
 ```
 
 ---
 
-## MCP Server (40 Tools)
+## MCP Server
 
-The Model Context Protocol server provides 40 read-only tools for AI assistants across 6 categories.
+The Model Context Protocol server exposes the news, sentiment, market, DeFi, archive and alert endpoints as read-only tools for AI assistants. It ships two ways:
 
-### Core News Tools (11)
+- **Hosted (no install):** Streamable HTTP at `https://cryptocurrency.cv/api/mcp`. Claude Code: `claude mcp add --transport http crypto-news https://cryptocurrency.cv/api/mcp`.
+- **Local stdio server:** the `mcp/` directory of this repository. Clone, then `cd mcp && npm install && node index.js`.
+
+The tool list below is grouped by category; the server's `tools/list` response is the authoritative inventory.
+
+### Core News Tools
 
 | Tool | Description | Parameters |
 |------|-------------|------------|
@@ -71,7 +76,7 @@ The Model Context Protocol server provides 40 read-only tools for AI assistants 
 | `get_news_sources` | List all sources | - |
 | `get_api_health` | API health status | - |
 
-### Analytics & Sentiment (7)
+### Analytics & Sentiment
 
 | Tool | Description | Parameters |
 |------|-------------|------------|
@@ -83,7 +88,7 @@ The Model Context Protocol server provides 40 read-only tools for AI assistants 
 | `get_fear_greed` | Fear & Greed Index | - |
 | `get_social_sentiment` | Social media sentiment | `coin` |
 
-### Trading & Market Data (9)
+### Trading & Market Data
 
 | Tool | Description | Parameters |
 |------|-------------|------------|
@@ -97,7 +102,7 @@ The Model Context Protocol server provides 40 read-only tools for AI assistants 
 | `get_liquidations` | Liquidation events | - |
 | `get_whale_alerts` | Large transactions | - |
 
-### DeFi & Token Tools (4)
+### DeFi & Token Tools
 
 | Tool | Description | Parameters |
 |------|-------------|------------|
@@ -106,7 +111,7 @@ The Model Context Protocol server provides 40 read-only tools for AI assistants 
 | `get_gas_prices` | Ethereum gas | - |
 | `get_tvl_rankings` | DeFi TVL rankings | - |
 
-### Archive & Research (4)
+### Archive & Research
 
 | Tool | Description | Parameters |
 |------|-------------|------------|
@@ -115,7 +120,7 @@ The Model Context Protocol server provides 40 read-only tools for AI assistants 
 | `find_original_sources` | Find article origin | `url` |
 | `get_events_calendar` | Upcoming events | - |
 
-### Alerts & Monitoring (5)
+### Alerts & Monitoring
 
 | Tool | Description | Parameters |
 |------|-------------|------------|
@@ -147,14 +152,25 @@ All tools are marked as `readOnlyHint: true` for ChatGPT compatibility (no confi
 
 ### Setup
 
-=== "Claude Desktop"
+=== "Claude Code (hosted)"
+
+    ```bash
+    claude mcp add --transport http crypto-news https://cryptocurrency.cv/api/mcp
+    ```
+
+=== "Claude Desktop (local)"
+
+    ```bash
+    git clone https://github.com/nirholas/cryptocurrency.cv.git
+    cd cryptocurrency.cv/mcp && npm install
+    ```
 
     ```json title="claude_desktop_config.json"
     {
       "mcpServers": {
         "crypto-news": {
           "command": "node",
-          "args": ["/path/to/free-crypto-news/mcp/index.js"]
+          "args": ["/path/to/cryptocurrency.cv/mcp/index.js"]
         }
       }
     }
@@ -163,18 +179,12 @@ All tools are marked as `readOnlyHint: true` for ChatGPT compatibility (no confi
 === "ChatGPT Developer Mode"
 
     1. Enable Developer Mode in Settings → Apps → Advanced
-    2. Add MCP server: `https://plugins.support/sse`
+    2. Add MCP server: `https://cryptocurrency.cv/api/mcp`
     3. Authorize the connection
 
-=== "Remote HTTP"
+=== "Any Streamable-HTTP client"
 
-    ```bash
-    # Start HTTP server
-    cd mcp && npm start -- --http
-
-    # Or deploy to Railway
-    railway up
-    ```
+    Point the client at `https://cryptocurrency.cv/api/mcp`. No API key is needed. To self-host the HTTP transport instead, run `cd mcp && npm install && node http-server.js`.
 
 ### Example Usage
 
@@ -293,7 +303,7 @@ response = agent.run("What's the current market sentiment for Bitcoin?")
 print(response)
 ```
 
-See full example: [examples/langchain-tool.py](https://github.com/nirholas/free-crypto-news/blob/main/examples/langchain-tool.py)
+See full example: [examples/langchain-tool.py](https://github.com/nirholas/cryptocurrency.cv/blob/main/examples/langchain-tool.py)
 
 ---
 
@@ -367,7 +377,7 @@ The API is compatible with Google's Agent-to-Agent protocol:
     "endpoints": {
       "discovery": "/.well-known/x402",
       "openapi": "/api/openapi.json",
-      "mcp": "https://plugins.support/sse"
+      "mcp": "https://cryptocurrency.cv/api/mcp"
     }
   }
 }

@@ -15,5 +15,5 @@ Imports:
     jsonlite (>= 1.8.0)
 Suggests:
     testthat (>= 3.0.0)
-URL: https://github.com/nirholas/free-crypto-news
-BugReports: https://github.com/nirholas/free-crypto-news/issues
+URL: https://github.com/nirholas/cryptocurrency.cv
+BugReports: https://github.com/nirholas/cryptocurrency.cv/issues

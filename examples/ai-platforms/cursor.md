@@ -26,7 +26,7 @@ Complete guide for using Free Crypto News with Cursor AI IDE.
 ```bash
 # Clone the repo
 git clone https://github.com/BurtTheCoder/free-crypto-news.git
-cd free-crypto-news/mcp
+cd cryptocurrency.cv/mcp
 
 # Install dependencies
 npm install

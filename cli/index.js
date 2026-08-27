@@ -3,7 +3,7 @@
 /**
  * @copyright 2024-2026 nirholas. All rights reserved.
  * @license SPDX-License-Identifier: SEE LICENSE IN LICENSE
- * @see https://github.com/nirholas/free-crypto-news
+ * @see https://github.com/nirholas/cryptocurrency.cv
  *
  * This file is part of free-crypto-news.
  * Unauthorized copying, modification, or distribution is strictly prohibited.
@@ -709,7 +709,7 @@ ${C.bold}EXAMPLES${C.reset}
   fcn news --no-color | less          Pipe to a pager
 
 ${C.bold}MORE INFO${C.reset}
-  ${C.underline}https://github.com/nirholas/free-crypto-news${C.reset}
+  ${C.underline}https://github.com/nirholas/cryptocurrency.cv${C.reset}
 `);
 }
 

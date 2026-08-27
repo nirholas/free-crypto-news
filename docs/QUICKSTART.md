@@ -89,7 +89,7 @@ for article in news.get_latest(5):
 
 **JavaScript:**
 ```javascript
-import { CryptoNews } from '@cryptonews/sdk';
+import { CryptoNews } from '@nirholas/crypto-news';
 
 const client = new CryptoNews();
 const articles = await client.getLatest(5);
@@ -102,7 +102,7 @@ package main
 
 import (
 	"fmt"
-	cryptonews "github.com/nirholas/free-crypto-news/sdk/go"
+	cryptonews "github.com/nirholas/cryptocurrency.cv/sdk/go"
 )
 
 func main() {
@@ -116,7 +116,8 @@ func main() {
 
 **React:**
 ```jsx
-import { useCryptoNews } from '@cryptonews/react';
+// React hooks ship in sdk/react of the repository (not yet on npm): copy or link that package
+import { useCryptoNews } from './sdk/react';
 
 function NewsFeed() {
   const { articles, loading } = useCryptoNews({ limit: 10 });
@@ -240,14 +241,14 @@ curl -X POST https://cryptocurrency.cv/api/ai \
 
 ### Option 1: One-Click Deploy
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nirholas/free-crypto-news)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nirholas/cryptocurrency.cv)
 
 ### Option 2: Local Setup
 
 ```bash
 # Clone the repo
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv
 
 # Install dependencies
 pnpm install
@@ -279,8 +280,8 @@ docker run -p 3000:3000 ghcr.io/nirholas/free-crypto-news
 
 ```bash
 # Clone
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv
 
 # Install
 pnpm install
@@ -468,6 +469,6 @@ curl -fsSL https://bun.sh/install | bash
 
 ## Get Help
 
-- 💬 [GitHub Discussions](https://github.com/nirholas/free-crypto-news/discussions) — Ask questions
-- 🐛 [Report Issues](https://github.com/nirholas/free-crypto-news/issues) — File bug reports
-- ⭐ [Star the repo](https://github.com/nirholas/free-crypto-news) if you find it useful!
+- 💬 [GitHub Discussions](https://github.com/nirholas/cryptocurrency.cv/discussions) — Ask questions
+- 🐛 [Report Issues](https://github.com/nirholas/cryptocurrency.cv/issues) — File bug reports
+- ⭐ [Star the repo](https://github.com/nirholas/cryptocurrency.cv) if you find it useful!

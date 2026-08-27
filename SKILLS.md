@@ -1,4 +1,4 @@
-# free-crypto-news — Skills & Capabilities Catalog
+# cryptocurrency.cv (Free Crypto News) — Skills & Capabilities Catalog
 
 > Machine-readable skill catalog for AI agents, orchestrators, and frameworks.
 > Each skill maps to one or more REST API endpoints. No authentication required.
@@ -132,7 +132,7 @@
 
 | Protocol | Entry Point | Status |
 |----------|-------------|--------|
-| **MCP** (Claude, ChatGPT Dev) | `npx @anthropic-ai/mcp-server-crypto-news` | Production |
+| **MCP** (Claude Desktop, Claude Code, Cursor) | `https://cryptocurrency.cv/api/mcp` (Streamable HTTP, zero install) or local stdio server in [mcp/](mcp/README.md) | Production |
 | **OpenAI Plugin** | `/.well-known/ai-plugin.json` | Production |
 | **OpenAPI 3.1** | `/api/openapi.json` | Production |
 | **LangChain Tools** | See [AGENTS.md](AGENTS.md#langchain-integration) | Production |
@@ -165,5 +165,5 @@ https://cryptocurrency.cv
 - [LLM reference (compact)](https://cryptocurrency.cv/llms.txt)
 - [LLM reference (full)](https://cryptocurrency.cv/llms-full.txt)
 - [OpenAPI spec](https://cryptocurrency.cv/api/openapi.json)
-- [GitHub](https://github.com/nirholas/free-crypto-news)
-- [License: MIT](LICENSE)
+- [GitHub](https://github.com/nirholas/cryptocurrency.cv)
+- [License](LICENSE): source-available, all rights reserved; the hosted API is free to use

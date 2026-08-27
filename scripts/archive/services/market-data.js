@@ -3,7 +3,7 @@
 /**
  * @copyright 2024-2026 nirholas. All rights reserved.
  * @license SPDX-License-Identifier: SEE LICENSE IN LICENSE
- * @see https://github.com/nirholas/free-crypto-news
+ * @see https://github.com/nirholas/cryptocurrency.cv
  *
  * This file is part of free-crypto-news.
  * Unauthorized copying, modification, or distribution is strictly prohibited.
@@ -66,7 +66,7 @@ async function rateLimitedFetch(service, url, options = {}, timeout = 15000) {
       signal: controller.signal,
       headers: {
         'Accept': 'application/json',
-        'User-Agent': 'FreeCryptoNews/2.0 (https://github.com/nirholas/free-crypto-news)',
+        'User-Agent': 'FreeCryptoNews/2.0 (https://github.com/nirholas/cryptocurrency.cv)',
         ...options.headers
       }
     });

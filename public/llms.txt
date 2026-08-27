@@ -97,4 +97,4 @@ Network: Arbitrum (eip155:42161) | Asset: USDC | Default price: $0.001
 
 ## Repository
 
-- [GitHub](https://github.com/nirholas/free-crypto-news): source code and issues
+- [GitHub](https://github.com/nirholas/cryptocurrency.cv): source code and issues

@@ -30,8 +30,8 @@ gem 'fcn-sdk', '~> 0.2'
 ### From Source
 
 ```bash
-git clone https://github.com/nirholas/free-crypto-news.git
-cd free-crypto-news/sdk/ruby
+git clone https://github.com/nirholas/cryptocurrency.cv.git
+cd cryptocurrency.cv/sdk/ruby
 gem build fcn-sdk.gemspec
 gem install fcn-sdk-*.gem
 ```

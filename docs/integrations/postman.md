@@ -24,7 +24,7 @@ Import our Postman collection to explore and test the Free Crypto News API inter
 4. Paste this URL:
 
 ```
-https://raw.githubusercontent.com/nirholas/free-crypto-news/main/postman/Free_Crypto_News_API.postman_collection.json
+https://raw.githubusercontent.com/nirholas/cryptocurrency.cv/main/postman/Free_Crypto_News_API.postman_collection.json
 ```
 
 5. Click **Import**
@@ -33,7 +33,7 @@ https://raw.githubusercontent.com/nirholas/free-crypto-news/main/postman/Free_Cr
 
 1. Download the collection:
    ```bash
-   curl -O https://raw.githubusercontent.com/nirholas/free-crypto-news/main/postman/Free_Crypto_News_API.postman_collection.json
+   curl -O https://raw.githubusercontent.com/nirholas/cryptocurrency.cv/main/postman/Free_Crypto_News_API.postman_collection.json
    ```
 2. Open Postman → **Import** → Drag the file
 
@@ -328,7 +328,7 @@ Set up monitors for uptime testing:
 
 ## Resources
 
-- [Collection JSON](https://github.com/nirholas/free-crypto-news/blob/main/postman/Free_Crypto_News_API.postman_collection.json)
+- [Collection JSON](https://github.com/nirholas/cryptocurrency.cv/blob/main/postman/Free_Crypto_News_API.postman_collection.json)
 - [API Documentation](../API.md)
 - [Tutorials](../tutorials/index.md)
 
