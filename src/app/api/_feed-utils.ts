@@ -12,7 +12,14 @@
  * Shared utilities for RSS/Atom feed generation.
  */
 
-import { getLatestNews, getDefiNews, getBitcoinNews } from '@/lib/crypto-news';
+import {
+  getLatestNews,
+  getDefiNews,
+  getBitcoinNews,
+  getNewsByCategory,
+  getFeedCategoryIds,
+  getCategories,
+} from '@/lib/crypto-news';
 
 const BASE_URL = 'https://cryptocurrency.cv';
 
@@ -32,16 +39,44 @@ export interface FeedMeta {
 }
 
 /**
+ * Every feed slug this endpoint serves: the two hand-written variants plus one
+ * per category the source registry actually carries. The registry is the source
+ * of truth, so a category added to RSS_SOURCES gets a syndicatable feed with no
+ * change here.
+ */
+export function feedSlugs(): string[] {
+  return [...new Set(['all', 'defi', 'bitcoin', ...getFeedCategoryIds()])];
+}
+
+/** Human-readable name and blurb for a category slug, for the feed's channel. */
+function categoryMeta(slug: string): { name: string; description: string } {
+  const hit = getCategories().categories.find((c) => c.id === slug);
+  if (hit) return { name: hit.name, description: hit.description };
+  const name = slug.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+  return { name, description: `${name} news aggregated from top crypto sources` };
+}
+
+/**
  * Fetch articles and return metadata for the requested feed variant.
- * @param feed  "all" | "defi" | "bitcoin"
- * @param format  "rss" | "atom" — controls the feedUrl API path
+ *
+ * Only `all`, `defi` and `bitcoin` used to resolve, so the other categories the
+ * aggregator already indexes had no syndicatable feed even though /api/news
+ * accepted them as a filter. Any slug in `feedSlugs()` now resolves; an unknown
+ * slug returns null so the caller can answer 400 rather than silently serving
+ * the firehose under the wrong title.
+ *
+ * @param feed  a slug from `feedSlugs()`
+ * @param format  "rss" | "atom", controls the feedUrl API path
  * @param limit  max articles to fetch
  */
 export async function resolveFeed(
   feed: string,
   format: 'rss' | 'atom',
-  limit: number
-): Promise<{ articles: Awaited<ReturnType<typeof getLatestNews>>['articles']; meta: FeedMeta }> {
+  limit: number,
+): Promise<{
+  articles: Awaited<ReturnType<typeof getLatestNews>>['articles'];
+  meta: FeedMeta;
+} | null> {
   const path = `/api/${format}`;
   switch (feed) {
     case 'defi': {
@@ -66,7 +101,8 @@ export async function resolveFeed(
         },
       };
     }
-    default: {
+    case '':
+    case 'all': {
       const data = await getLatestNews(limit);
       return {
         articles: data.articles,
@@ -74,6 +110,19 @@ export async function resolveFeed(
           title: 'Crypto Vision News - All Sources',
           description: 'Crypto news aggregated from 200+ top sources - 100% FREE',
           feedUrl: `${BASE_URL}${path}`,
+        },
+      };
+    }
+    default: {
+      if (!getFeedCategoryIds().includes(feed)) return null;
+      const { name, description } = categoryMeta(feed);
+      const data = await getNewsByCategory(feed, limit);
+      return {
+        articles: data.articles,
+        meta: {
+          title: `Crypto Vision News - ${name} Feed`,
+          description,
+          feedUrl: `${BASE_URL}${path}?feed=${encodeURIComponent(feed)}`,
         },
       };
     }

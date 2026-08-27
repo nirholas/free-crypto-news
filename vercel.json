@@ -4,7 +4,14 @@
     {
       "path": "/api/cron/warm",
       "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/cron/archive",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/expire-subscriptions",
+      "schedule": "15 3 * * *"
     }
   ]
 }
-

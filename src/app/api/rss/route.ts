@@ -9,13 +9,15 @@
  */
 
 import { type NextRequest, NextResponse } from 'next/server';
-import { escapeXml, resolveFeed } from '@/app/api/_feed-utils';
+import { escapeXml, resolveFeed, feedSlugs } from '@/app/api/_feed-utils';
 
 export const runtime = 'edge';
 export const revalidate = 300; // 5 minutes
 
 function generateRSS(articles: any[], title: string, description: string, feedUrl: string): string {
-  const items = articles.map(article => `
+  const items = articles
+    .map(
+      (article) => `
     <item>
       <title><![CDATA[${article.title}]]></title>
       <link>${escapeXml(article.link)}</link>
@@ -24,7 +26,9 @@ function generateRSS(articles: any[], title: string, description: string, feedUr
       <source url="${escapeXml(article.link)}">${escapeXml(article.source)}</source>
       <guid isPermaLink="true">${escapeXml(article.link)}</guid>
       <category>${escapeXml(article.category)}</category>
-    </item>`).join('\n');
+    </item>`,
+    )
+    .join('\n');
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
@@ -50,11 +54,20 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const feed = searchParams.get('feed') || 'all';
   const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 50);
-  
+
   try {
-    const { articles, meta } = await resolveFeed(feed, 'rss', limit);
+    const resolved = await resolveFeed(feed, 'rss', limit);
+    if (!resolved) {
+      // An unknown slug used to fall through to the firehose under the wrong
+      // title. Naming the valid ones makes the mistake self-correcting.
+      return NextResponse.json(
+        { error: 'unknown_feed', feed, available: feedSlugs() },
+        { status: 400 },
+      );
+    }
+    const { articles, meta } = resolved;
     const rss = generateRSS(articles, meta.title, meta.description, meta.feedUrl);
-    
+
     return new NextResponse(rss, {
       headers: {
         'Content-Type': 'application/rss+xml; charset=utf-8',
@@ -62,10 +75,7 @@ export async function GET(request: NextRequest) {
         'Access-Control-Allow-Origin': '*',
       },
     });
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to generate RSS feed' },
-      { status: 500 }
-    );
+  } catch {
+    return NextResponse.json({ error: 'Failed to generate RSS feed' }, { status: 500 });
   }
 }

@@ -9,15 +9,18 @@
  */
 
 import { type NextRequest, NextResponse } from 'next/server';
-import { escapeXml, resolveFeed } from '@/app/api/_feed-utils';
+import { escapeXml, resolveFeed, feedSlugs } from '@/app/api/_feed-utils';
 
 export const runtime = 'edge';
 export const revalidate = 300; // 5 minutes
 
 function generateAtom(articles: any[], title: string, subtitle: string, feedUrl: string): string {
-  const updated = articles.length > 0 ? new Date(articles[0].pubDate).toISOString() : new Date().toISOString();
-  
-  const entries = articles.map(article => `
+  const updated =
+    articles.length > 0 ? new Date(articles[0].pubDate).toISOString() : new Date().toISOString();
+
+  const entries = articles
+    .map(
+      (article) => `
   <entry>
     <title><![CDATA[${article.title}]]></title>
     <link href="${escapeXml(article.link)}" rel="alternate" type="text/html"/>
@@ -29,7 +32,9 @@ function generateAtom(articles: any[], title: string, subtitle: string, feedUrl:
       <name>${escapeXml(article.source)}</name>
     </author>
     <category term="${escapeXml(article.category)}"/>
-  </entry>`).join('\n');
+  </entry>`,
+    )
+    .join('\n');
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
@@ -49,11 +54,20 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const feed = searchParams.get('feed') || 'all';
   const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 50);
-  
+
   try {
-    const { articles, meta } = await resolveFeed(feed, 'atom', limit);
+    const resolved = await resolveFeed(feed, 'atom', limit);
+    if (!resolved) {
+      // An unknown slug used to fall through to the firehose under the wrong
+      // title. Naming the valid ones makes the mistake self-correcting.
+      return NextResponse.json(
+        { error: 'unknown_feed', feed, available: feedSlugs() },
+        { status: 400 },
+      );
+    }
+    const { articles, meta } = resolved;
     const atom = generateAtom(articles, meta.title, meta.description, meta.feedUrl);
-    
+
     return new NextResponse(atom, {
       headers: {
         'Content-Type': 'application/atom+xml; charset=utf-8',
@@ -61,10 +75,7 @@ export async function GET(request: NextRequest) {
         'Access-Control-Allow-Origin': '*',
       },
     });
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to generate Atom feed' },
-      { status: 500 }
-    );
+  } catch {
+    return NextResponse.json({ error: 'Failed to generate Atom feed' }, { status: 500 });
   }
 }
