@@ -1,26 +1,59 @@
 {
   "name": "free-crypto-news-mcp",
-  "version": "3.0.0",
-  "description": "MCP server for cryptocurrency.cv: real-time crypto news, prices and market intelligence for Claude, Cursor, ChatGPT and any MCP client",
-  "main": "index.js",
+  "version": "4.0.0",
+  "description": "MCP server for cryptocurrency.cv: real-time crypto news, prices, DeFi, derivatives and on-chain data for Claude, Cursor, ChatGPT and any Model Context Protocol client",
   "type": "module",
-  "private": true,
+  "main": "dist/index.js",
   "bin": {
-    "free-crypto-news-mcp": "./index.js"
+    "free-crypto-news-mcp": "dist/index.js"
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
-    "start": "node index.js",
-    "start:stdio": "node index.js",
-    "start:http": "node http-server.js",
-    "test": "node test.js"
+    "build": "tsc -p tsconfig.json && node scripts/mark-executable.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "start": "node dist/index.js",
+    "start:http": "node dist/http.js",
+    "dev": "tsx src/index.ts",
+    "dev:http": "tsx src/http.ts",
+    "test": "node test/smoke.mjs",
+    "test:live": "node test/smoke.mjs --live",
+    "docs:tools": "node scripts/docs-tools.mjs",
+    "prepublishOnly": "npm run build && npm test"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=18.17"
   },
-  "keywords": ["mcp", "model-context-protocol", "crypto", "news", "claude", "cursor", "chatgpt", "x402"],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "crypto",
+    "cryptocurrency",
+    "news",
+    "bitcoin",
+    "ethereum",
+    "defi",
+    "claude",
+    "cursor",
+    "chatgpt"
+  ],
   "author": "nirholas",
   "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nirholas/cryptocurrency.cv.git",
+    "directory": "mcp"
+  },
+  "homepage": "https://cryptocurrency.cv",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.30.0"
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsx": "^4.23.12",
+    "typescript": "^5.9.0"
   }
 }
