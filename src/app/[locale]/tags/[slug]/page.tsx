@@ -19,7 +19,8 @@ import {
   extractTagsFromArticle,
   generateTagStructuredData,
 } from '@/lib/tags';
-import { getLatestNews } from '@/lib/crypto-news';
+import type { NewsArticle } from '@/lib/crypto-news';
+import { getCachedLatestNews } from '@/lib/news-cache';
 import { generateSEOMetadata } from '@/lib/seo';
 import { Link } from '@/i18n/navigation';
 import type { Metadata } from 'next';
@@ -58,9 +59,9 @@ export default async function TagPage({ params }: Props) {
   const relatedTags = getRelatedTags(slug);
 
   // Fetch articles and filter by tag keywords
-  let articles: Awaited<ReturnType<typeof getLatestNews>>['articles'] = [];
+  let articles: NewsArticle[] = [];
   try {
-    const data = await getLatestNews(50);
+    const data = await getCachedLatestNews(50);
     articles = data.articles.filter((article) => {
       const matched = extractTagsFromArticle(article);
       return matched.some((t) => t.slug === tag.slug);

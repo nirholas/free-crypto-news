@@ -8,7 +8,7 @@ import { setRequestLocale } from 'next-intl/server';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { generateSEOMetadata } from '@/lib/seo';
-import { getNewsByCategory } from '@/lib/crypto-news';
+import { getCachedCategoryNews } from '@/lib/news-cache';
 import { NewsCardCompact } from '@/components/NewsCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -170,7 +170,7 @@ export default async function RegulationPage({ params }: Props) {
 
   let regulationNews;
   try {
-    regulationNews = await getNewsByCategory('regulation', 10);
+    regulationNews = await getCachedCategoryNews('regulation', 10);
   } catch {
     regulationNews = { articles: [] };
   }

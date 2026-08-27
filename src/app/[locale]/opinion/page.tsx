@@ -9,7 +9,8 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import PageShareSection from '@/components/PageShareSection';
 import { FeaturedOpinionCard, OpinionCard } from '@/components/OpinionCard';
-import { getOpinionNews, type NewsResponse } from '@/lib/crypto-news';
+import { type NewsResponse } from '@/lib/crypto-news';
+import { getCachedOpinionNews } from '@/lib/news-cache';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
 import { SITE_URL } from '@/lib/constants';
@@ -53,7 +54,7 @@ export default async function OpinionPage({ params, searchParams }: Props) {
 
   let data: NewsResponse | null = null;
   try {
-    data = await getOpinionNews(21, {
+    data = await getCachedOpinionNews(21, {
       category: activeTopic !== 'all' ? activeTopic : undefined,
       page: currentPage,
       perPage: 21,

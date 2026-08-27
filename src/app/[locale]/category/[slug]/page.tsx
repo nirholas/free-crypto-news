@@ -9,7 +9,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShareSection from "@/components/PageShareSection";
 import { FeaturedCard, NewsCardDefault } from "@/components/NewsCard";
-import { getNewsByCategory, type NewsResponse } from "@/lib/crypto-news";
+import { type NewsResponse } from "@/lib/crypto-news";
+import { getCachedCategoryNews } from "@/lib/news-cache";
 import { getCategoryBySlug, categories } from "@/lib/categories";
 import { generateCategoryMetadata } from "@/lib/seo";
 import { CollectionPageStructuredData } from "@/components/StructuredData";
@@ -50,7 +51,7 @@ export default async function CategoryPage({ params }: Props) {
 
   let data: NewsResponse | null = null;
   try {
-    data = await getNewsByCategory(slug, 20);
+    data = await getCachedCategoryNews(slug, 20);
   } catch {
     // Render empty state on failure
   }

@@ -6,7 +6,7 @@
 
 import { setRequestLocale } from 'next-intl/server';
 import { generateSEOMetadata } from '@/lib/seo';
-import { getNewsByCategory } from '@/lib/crypto-news';
+import { getCachedCategoryNews } from '@/lib/news-cache';
 import { NEWS_VERTICALS } from '@/lib/verticals';
 import { classifyArticle } from '@/lib/article-classifier';
 import VerticalPage from '@/components/VerticalPage';
@@ -35,7 +35,7 @@ export default async function TechPage({ params }: Props) {
 
   let allArticles;
   try {
-    allArticles = await getNewsByCategory('technology', 50);
+    allArticles = await getCachedCategoryNews('technology', 50);
   } catch {
     allArticles = { articles: [], totalCount: 0 };
   }

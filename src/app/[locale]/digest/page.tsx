@@ -14,6 +14,8 @@ import DigestSubscribeForm from "@/components/DigestSubscribeForm";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardContent } from "@/components/ui/Card";
 import { generateSEOMetadata } from "@/lib/seo";
+import { generateDigest, isDigestAIConfigured } from "@/lib/digest-summary";
+import { swrCached } from "@/lib/page-cache";
 import {
   Newspaper,
   TrendingUp,
@@ -23,7 +25,6 @@ import {
   Lightbulb,
 } from "lucide-react";
 import type { Metadata } from "next";
-import { SITE_URL } from "@/lib/constants";
 
 export const revalidate = 300;
 
@@ -100,22 +101,24 @@ const FEATURES = [
 ] as const;
 
 async function getLatestDigest(): Promise<LatestDigest | null> {
+  if (!isDigestAIConfigured()) return null;
   try {
-    const res = await fetch(`${SITE_URL}/api/digest?limit=1`, {
-      next: { revalidate: 300 },
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    const digest = data?.digests?.[0] ?? data?.items?.[0] ?? null;
-    if (!digest) return null;
+    // Generate in-process (same code path as /api/digest) and keep the result
+    // for five minutes: one AI call per interval instead of one per visit.
+    const { digest, meta } = await swrCached(
+      "digest:latest",
+      () => generateDigest("24h", "full"),
+      { fresh: 300 }
+    );
+    if (!digest?.headline && !digest?.tldr) return null;
+    const highlights: DigestHighlight[] = (digest.mustRead ?? [])
+      .slice(0, 5)
+      .map((item) => ({ text: item.why ? `${item.title}: ${item.why}` : item.title }));
     return {
-      title: digest.title ?? "Crypto Daily Digest",
-      date: digest.date ?? new Date().toISOString(),
-      summary: digest.summary ?? digest.description ?? "",
-      highlights: (digest.highlights ?? digest.items ?? []).slice(0, 5).map(
-        (h: string | DigestHighlight) =>
-          typeof h === "string" ? { text: h } : h
-      ),
+      title: digest.headline || "Crypto Daily Digest",
+      date: meta.generatedAt,
+      summary: digest.tldr || "",
+      highlights,
     };
   } catch {
     return null;

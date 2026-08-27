@@ -8,6 +8,7 @@
  */
 
 import { getLatestNews, type NewsArticle } from '@/lib/crypto-news';
+import { swrCached } from '@/lib/page-cache';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                             */
@@ -170,6 +171,35 @@ function buildAuthorMap(articles: NewsArticle[]): Map<string, Author> {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Shared author index                                               */
+/* ------------------------------------------------------------------ */
+
+interface AuthorIndex {
+  authors: Author[];
+  articles: NewsArticle[];
+}
+
+/**
+ * One aggregation feeds both the directory and every author profile.
+ * The all-sources feed behind it is the most expensive call on the site, so
+ * the derived index is held with a stale-while-revalidate window instead of
+ * being rebuilt from a cold feed on every request.
+ */
+function getAuthorIndex(): Promise<AuthorIndex> {
+  return swrCached(
+    'authors:index',
+    async () => {
+      const news = await getLatestNews(50);
+      return {
+        authors: Array.from(buildAuthorMap(news.articles).values()),
+        articles: news.articles,
+      };
+    },
+    { fresh: 300, shouldCache: (index) => index.articles.length > 0 },
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Public API                                                        */
 /* ------------------------------------------------------------------ */
 
@@ -184,10 +214,8 @@ export async function getAuthors(options?: {
 }): Promise<AuthorsResponse> {
   const { limit = 50, offset = 0, sort = 'articles', search } = options ?? {};
 
-  const news = await getLatestNews(50);
-  const authorMap = buildAuthorMap(news.articles);
-
-  let authors = Array.from(authorMap.values());
+  const index = await getAuthorIndex();
+  let authors = [...index.authors];
 
   // Search filter
   if (search) {
@@ -225,14 +253,13 @@ export async function getAuthorBySlug(
 ): Promise<AuthorWithArticles | null> {
   const { limit = 20, offset = 0, source } = options ?? {};
 
-  const news = await getLatestNews(50);
-  const authorMap = buildAuthorMap(news.articles);
-  const author = authorMap.get(slug);
+  const index = await getAuthorIndex();
+  const author = index.authors.find((a) => a.slug === slug);
 
   if (!author) return null;
 
   // Get articles for this author
-  let articles = news.articles.filter((a) => {
+  let articles = index.articles.filter((a) => {
     if (!a.author) return false;
     const normalized = normalizeAuthorName(a.author);
     return authorSlug(normalized) === slug;
