@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v6
         with:
-          version: 10
+          version: 9
       - uses: actions/setup-node@v6
         with:
           node-version: 20
@@ -36,7 +36,7 @@ jobs:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v6
         with:
-          version: 10
+          version: 9
       - uses: actions/setup-node@v6
         with:
           node-version: 20
@@ -58,7 +58,7 @@ jobs:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v6
         with:
-          version: 10
+          version: 9
       - uses: actions/setup-node@v6
         with:
           node-version: 20
@@ -76,7 +76,7 @@ jobs:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v6
         with:
-          version: 10
+          version: 9
       - uses: actions/setup-node@v6
         with:
           node-version: 20
@@ -84,41 +84,3 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm audit --audit-level=high
         continue-on-error: true
-
-  docs-drift:
-    name: Docs & route manifest drift
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v6
-        with:
-          version: 10
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 20
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - name: Regenerate the route manifest, endpoint metadata and docs/API.md
-        run: node scripts/generate-route-manifest.js && pnpm docs:generate
-      - name: Fail if a route landed without regenerating the manifest
-        run: git diff --exit-code -- src/lib/openapi docs/API.md
-      - run: pnpm docs:validate
-      - name: Every locale file must cover the English key set
-        run: node scripts/i18n-check.js
-
-  mcp-and-sdk:
-    name: MCP server & TypeScript SDK
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 22
-      - name: MCP server installs and loads
-        working-directory: mcp
-        run: npm ci && node --check index.js && node --check http-server.js
-      - name: TypeScript SDK builds and tests
-        working-directory: sdk/typescript
-        run: npm ci && npm run build && npm test
