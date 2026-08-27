@@ -13,6 +13,7 @@ import NewsCard, {
   NewsCardHeadline,
 } from "@/components/NewsCard";
 import type { NewsArticle } from "@/lib/crypto-news";
+import { getArticlePath } from "@/lib/article-url";
 
 // Mock BookmarkButton to avoid pulling in context dependencies
 vi.mock("@/components/BookmarkButton", () => ({
@@ -64,14 +65,13 @@ describe("FeaturedCard", () => {
     expect(screen.getByText("bitcoin")).toBeInTheDocument();
   });
 
-  it("links to the article", () => {
+  it("links to the on-site article page", () => {
     render(<FeaturedCard article={mockArticle} />);
+    const expectedPath = getArticlePath(mockArticle.title, mockArticle.pubDate);
     const links = screen.getAllByRole("link");
-    const articleLink = links.find(
-      (l) => l.getAttribute("href") === mockArticle.link
-    );
+    const articleLink = links.find((l) => l.getAttribute("href") === expectedPath);
     expect(articleLink).toBeDefined();
-    expect(articleLink).toHaveAttribute("href", mockArticle.link);
+    expect(articleLink).not.toHaveAttribute("target", "_blank");
   });
 
   it("renders article image", () => {
