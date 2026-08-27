@@ -12,7 +12,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\"",
     "format:all": "prettier --write \"**/*.{ts,tsx,js,jsx,css}\" --ignore-path .prettierignore",
-    "typecheck": "node -e \"require('./scripts/lib/translated-locales').writeTranslatedLocalesModule()\" && tsc --noEmit",
+    "typecheck": "node scripts/lib/translated-locales.js && tsc --noEmit",
     "lint:a11y": "eslint src/components/*.tsx src/app/**/*.tsx",
     "lint:css": "stylelint src/**/*.css",
     "test:a11y": "playwright test e2e/accessibility.spec.ts",
